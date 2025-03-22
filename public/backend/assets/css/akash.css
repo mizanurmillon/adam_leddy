@@ -1,0 +1,107 @@
+.fixed-width {
+  width: 350px; /* Set your desired width */
+  display: flex;
+  padding: 10px;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  color: #000;
+
+  /* Menu, Tabs, Labels */
+  font-family: Montserrat;
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: 100%; /* 16px */
+  border: none;
+  outline: none;
+}
+
+.ak-button {
+  display: flex;
+  padding: 8px 28px;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  border-radius: 3px;
+  background: var(--Neutral-100, #fff);
+  color: var(--Neutral-10, #1a1a1a);
+
+  /* Button/Small */
+  font-family: Montserrat;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: 100%; /* 14px */
+  letter-spacing: 0.5px;
+  border: none;
+  outline: none;
+}
+
+.ak-mr-4 {
+    margin-right: 16px;
+}
+
+.ak-bg-black{
+    background-color: #000;
+}
+
+.ak-mt-3{
+    margin-top: 12px;
+}
+
+.ak-w-34{
+    width: 530px;
+}
+
+.ak-my-3{
+    margin: 12px 0px;
+}
+
+.ak-flex{
+    display: flex;
+    align-items: center;
+    
+}
+
+.ak-flex .item{
+    width: 50%;
+}
+
+.ak-graph-flex{
+    display: flex;
+    gap: 20px;
+}
+
+.ak-graph-flex .item{
+    width: 75%;
+}
+.ak-legend-flex{
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+/* Default Bootstrap Switch */
+.form-check-input {
+    background-color: #ccc; /* Default OFF state */
+    border-color: #ccc;
+}
+
+/* When switch is turned ON */
+.form-check-input:checked {
+    background-color: red !important;
+    border-color: red !important;
+}
+
+.modal-header {
+    border: none !important;
+}
+
+.modal-footer {
+    border: none !important;
+}
+
+.form-flex{
+    display: flex;
+}

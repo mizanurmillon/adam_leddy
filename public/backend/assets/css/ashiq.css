@@ -1,0 +1,509 @@
+/* COMMON CSS  */
+.robi-trending-btn {
+    border-radius: 10000px;
+    background: #FFA640;
+    display: flex;
+    padding: 8px;
+    justify-content: center;
+    align-items: center;
+    gap: 4px;
+    border: none;
+    color: var(--Neutral-10, #1A1A1A);
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 600;
+    line-height: 110%;
+}
+.robi-approve-and-reject-buttons{
+    display: flex;
+    gap: 16px;
+    margin-left: auto;
+    margin-top: 32px;
+}
+.robi-approve-and-reject-btn1{
+    display: flex;
+padding: 12px;
+justify-content: center;
+align-items: center;
+gap: 8px;
+border-radius: 3px;
+background: var(--Neutral-100, #FFF);
+color: var(--Neutral-10, #1A1A1A);
+font-size: 16px;
+font-style: normal;
+font-weight: 600;
+line-height: 100%; /* 16px */
+letter-spacing: 0.5px;
+border:none;
+}
+.robi-approve-and-reject-btn2{
+    display: flex;
+padding: 12px;
+justify-content: center;
+align-items: center;
+gap: 8px;
+border-radius: 3px;
+background: var(--Neutral-100, #FF4040);
+color: var(--Neutral-10, #ececec);
+font-size: 16px;
+font-style: normal;
+font-weight: 600;
+line-height: 100%; /* 16px */
+letter-spacing: 0.5px;
+border:none;
+}
+.robi-select-tags-buttons {
+    display: flex;
+    gap: 10px;
+  }
+  
+/* Default Button Styles */
+.robi-select-tags-buttons button {
+  background: #333;
+  border: none;
+  color: #ede9e9;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 110%;
+  padding: 8px 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border-radius: 20px;
+  display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* Active States with Different Colors */
+.robi-trending-btn.active {
+  background-color: #FFA640; /* Orange */
+  color: rgb(3, 3, 3);
+}
+.robi-trending-btn.deactive {
+  background-color: #FFA640; /* Orange */
+  color: rgb(3, 3, 3);
+}
+
+.robi-trending-btn1.active {
+  background-color: #FF4040; /* Red */
+  color: rgb(3, 3, 3);
+}
+
+.robi-trending-btn2.active {
+  background-color: #29FF65; /* Dark Gray */
+  color: rgb(3, 3, 3);
+}
+
+  
+/* User container */
+/* .robi-main-container {
+    padding: 32px;
+    flex-grow: 1;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+} */
+
+/* .robi-page-header .title {
+    font-size: 40px;
+    font-weight: 700;
+    line-height: 110%;
+    /* 44px */
+}
+
+.robi-user-signup {
+    padding-bottom: 32px;
+} */
+
+.robi-user-signup p {
+    color: var(--Neutral-90, #E6E6E6);
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 600;
+    line-height: 100%;
+    /* 16px */
+}
+
+.robi-user-signup-total {
+    display: flex;
+    width: 160px;
+    padding: 16px;
+    flex-direction: column;
+
+    gap: 16px;
+    border-radius: 2px;
+    background: var(--Neutral-20, #333);
+    margin-top: 10px;
+}
+
+.robi-user-signup-total-this-month {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+}
+
+.robi-user-signup-total p {
+    color: #FFF;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 600;
+    line-height: 110%;
+    /* 15.4px */
+}
+
+.robi-user-signup-total h1 {
+    color: #FFF;
+    font-size: 28px;
+    font-weight: 700;
+    line-height: 110%;
+    /* 30.8px */
+}
+
+.robi-pagination {
+    display: flex;
+    gap: 8px;
+    margin-top: 32px;
+    justify-content: end;
+}
+
+.robi-page {
+    background-color: #333;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    font-size: 16px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.robi-page.active {
+    background-color: red;
+}
+
+.robi-page:hover {
+    background-color: #555;
+}
+
+.robi-dots {
+    color: white;
+    font-size: 18px;
+    align-self: center;
+}
+
+/* Center the table and control width */
+.robi-container {
+    width: 100%;
+
+}
+
+/* Table styling */
+.robi-table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: #333;
+    color: white;
+    font-family: Arial, sans-serif;
+    table-layout: fixed;
+    /* Ensures equal column width */
+}
+
+/* Header styling */
+.robi-table thead {
+    background-color: #444;
+}
+
+.robi-table th {
+    text-align: left;
+    padding: 15px;
+    font-size: 16px;
+}
+
+/* Table row styling */
+.robi-table td {
+    padding: 15px;
+    border-top: 1px solid #555;
+    max-width: 230px;
+    /* Limit column width */
+    overflow: hidden;
+    word-wrap: break-word;
+    text-overflow: ellipsis;
+}
+
+/* Alternate Row Colors */
+.robi-table tbody tr:nth-child(odd) {
+    background-color: #3a3a3a;
+}
+
+/* Hover Effect */
+.robi-table tbody tr:hover {
+    background-color: #555;
+    transition: 0.3s;
+}
+
+
+/* Course Content Start  */
+.robi-courde-content-header .title {
+    font-size: 40px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: 110%;
+    /* 44px */
+}
+
+.robi-courde-content-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.robi-course-content P {
+    color: #FFF;
+    font-size: 28px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: 110%;
+    margin-bottom: 10px;
+}
+
+
+.accordion {
+    /* background-color: #333; */
+    color: white;
+}
+
+.accordion-item {
+    background-color: #333;
+    border: none;
+    margin-bottom: 10px;
+}
+
+.accordion-button {
+    background-color: #444;
+    color: white;
+}
+
+.accordion-button:focus {
+    box-shadow: none;
+}
+
+.accordion-button:not(.collapsed) {
+    background-color: #555;
+    color: white;
+}
+
+.accordion-body {
+    background-color: #333;
+    color: white;
+}
+
+.accordion-button::after {
+    filter: brightness(0) invert(1);
+}
+
+.robi-select-tags {
+    margin-top: 32px;
+  
+}
+
+.robi-select-tags h1 {
+    color: #FFF;
+    font-size: 28px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: 110%;
+  
+}
+
+.robi-select-tags-buttons {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+    margin-top: 24px;
+    flex-wrap: wrap;
+}
+.robi-comp-watch-time{
+    color: #FFF;
+font-size: 28px;
+font-style: normal;
+font-weight: 700;
+line-height: 110%; /* 30.8px */
+margin-top: 32px;
+}
+/* course content end  */
+
+
+/* course content One Start  */
+
+.robi-programing{
+    color: #FFF;
+font-size: 16px;
+font-style: normal;
+font-weight: 600;
+line-height: 110%; /* 17.6px */
+}
+
+.robi-lesson-content {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+    margin-top: 10px;
+}
+.robi-lesson-content .robi-lesson{
+    color: #FFF;
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 600;
+    line-height: 100%; /* 16px */
+    display: flex;
+    gap: 18px;
+    align-items: center;
+}
+.robi-lesson-content .robi-new{
+    border-radius: 1000px;
+    background: var(--Default-Secondary, #ED1C24);
+    color: var(--Neutral-100, #FFF);
+font-size: 12px;
+font-style: normal;
+font-weight: 500;
+line-height: 140%; /* 16.8px */
+display: flex;
+padding: 0px 4px 2px 4px;
+justify-content: center;
+align-items: center;
+gap: 10px;
+}
+
+.robi-alert-modal-icon{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+}
+.modal-content{
+    background-color: #1A1A1A;
+}
+.modal-content .robi-modal-text-action{
+    color: #FFF;
+    font-size: 14px;    
+    font-style: normal;
+    font-weight: 600;
+    line-height: 100%; /* 16px */
+    padding: 10px 0;
+}
+.robi-modal-footer-buttons{
+    display: flex;
+    gap: 16px;
+    justify-content: center;
+    
+}
+.robi-modal-footer-btn1{
+    display: flex;
+padding: 12px;
+justify-content: center;
+align-items: center;
+gap: 8px;
+border-radius: 3px;
+border: none;
+width: 100%;
+}
+.robi-modal-footer-btn2{
+    display: flex;
+padding: 12px;
+justify-content: center;
+align-items: center;
+gap: 8px;
+border-radius: 3px;
+background: var(--Default-Warning, #FFD540);
+color: var(--Neutral-10, #1A1A1A);
+font-size: 16px;
+font-style: normal;
+font-weight: 600;
+border: none;
+width: 100%;
+}
+.robi-alert-modal-icon{
+    padding-bottom: 16px;
+}
+.modal-body{
+    padding: 32px !important;
+}
+/* course content One end  */
+/* course content two start  */
+.robi-select-tags-peta{
+    color: #FFF;
+font-size: 14px;
+font-weight: 500;
+padding: 8px 0;
+}
+/* course content two end  */
+/* course content Instructor course details start */
+.robi-instructor-active-btn{
+    color: #000;
+    border-radius: 10000px;
+    background: var(--Default-Success, #29FF65);
+    display: flex;
+    padding: 8px;
+    justify-content: center;
+    align-items: center;
+    gap: 4px;
+    border: none;
+font-size: 16px;
+font-style: normal;
+font-weight: 600;
+line-height: 110%; /* 17.6px */
+}
+.robi-chart{
+    margin: 32px 0;
+}
+.apexcharts-menu {
+    background: #333;
+
+}
+.robi-watch-time{
+    color: #FFF;
+font-size: 28px;
+font-style: normal;
+font-weight: 700;
+line-height: 110%; /* 30.8px */
+margin-bottom: 16px;
+}
+.robi-click{
+    margin-bottom: 16px;
+    color: #FFF;
+font-size: 28px;
+font-style: normal;
+font-weight: 700;
+line-height: 110%; /* 30.8px */
+}
+.robi-course-comprason-pera{
+    color: var(--Neutral-100, #FFF);
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 600;
+    line-height: 110%; /* 17.6px */
+    margin-bottom: 8px;
+    margin-top: 32px;
+}
+.robi-course-title{
+    color: #FFF;
+font-size: 24px;
+font-style: normal;
+font-weight: 700;
+line-height: 110%; /* 26.4px */
+margin-bottom: 16px;
+}
+.robi-chart-comprason{
+    display: flex;
+    gap: 16px;
+    align-items: center;
+    margin-top: 32px;
+    
+}
+
+.robi-chart-comprason .item{
+    width: 100%;
+}
+/* course content course details  end  */

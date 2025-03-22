@@ -1,0 +1,85 @@
+@media only screen and (min-width: 1600px) {
+}
+
+/* laptop devices */
+@media only screen and (min-width: 1365px) and (max-width: 1600px) {
+}
+
+/* laptop devices */
+@media only screen and (min-width: 1200px) and (max-width: 1365px) {
+}
+
+/* large tablet devices */
+@media only screen and (min-width: 992px) and (max-width: 1199px) {
+}
+
+/* medium tablet devices */
+@media only screen and (min-width: 768px) and (max-width: 991px) {
+}
+
+/* small tablet devices */
+@media only screen and (max-width: 767px) {
+    .ak-flex{
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
+    .ak-flex .item{
+        width: 100%;
+    }
+
+    .ak-graph-flex{
+        display: none;
+        flex-direction: column-reverse;
+    }
+
+    .ak-graph-flex .item{
+        width: 100%;
+    }
+
+    .ak-legend-flex{
+        display: flex;
+        flex-direction: row;
+        gap: 12px;
+    }
+
+    .fixed-width {
+        width: 260px; /* Set your desired width */
+        display: flex;
+        padding: 10px;
+        justify-content: center;
+        align-items: center;
+        gap: 10px;
+        color: #000;
+      
+        /* Menu, Tabs, Labels */
+        font-family: Montserrat;
+        font-size: 16px;
+        font-style: normal;
+        font-weight: 600;
+        line-height: 100%; /* 16px */
+        border: none;
+        outline: none;
+      }
+
+      .form-flex{
+        flex-direction: column;
+      }
+      .ak-w-34{
+        width: 100%;
+    }
+    
+}
+
+/* large mobile devices */
+@media only screen and (min-width: 480px) and (max-width: 575px) {
+}
+
+/* mobile devices */
+@media only screen and (min-width: 375px) and (max-width: 479px) {
+}
+
+/* extra small devices */
+@media only screen and (min-width: 320px) and (max-width: 374px) {
+}

@@ -1,0 +1,743 @@
+@media only screen and (min-width: 1600px) {
+}
+
+/* laptop devices */
+@media only screen and (min-width: 1365px) and (max-width: 1600px) {
+}
+
+/* laptop devices */
+@media only screen and (min-width: 1200px) and (max-width: 1365px) {
+  .chart2-investor-course{
+    width: 600px;
+  
+  }
+}
+
+/* large tablet devices */
+@media only screen and (min-width: 992px) and (max-width: 1199px) {
+  .chart2-investor-course{
+    width: 600px;
+  
+  }
+}
+
+/* medium tablet devices */
+@media only screen and (min-width: 768px) and (max-width: 991px) {
+  .se--subtext {
+    color: #fff;
+    font-family: Montserrat;
+    font-size: 20px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: 110%;
+  }
+  .se--overview-card {
+    display: flex;
+    flex-direction: column;
+    padding: 12px;
+    gap: 10px;
+    border-radius: 2px;
+    background: var(--Neutral-20, #333);
+  }
+  .se--card--number {
+    color: #fff;
+    font-family: Montserrat;
+    font-size: 24px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: 110%;
+  }
+  .se--subtext1 {
+    color: #fff;
+    font-family: Montserrat;
+    font-size: 20px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: 110%;
+    text-decoration: underline;
+    cursor: pointer;
+  }
+  .page-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    color: #fff;
+    font-family: Montserrat;
+    font-size: 32px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: 110%;
+  }
+  .se--main-layout {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+  .se-category-btn {
+    padding: 8px;
+    font-size: 14px;
+  }
+  .se--select-menu {
+    padding: 6px 8px;
+
+    font-size: 14px;
+  }
+  .se-th,
+  .se-td {
+    padding: 12px;
+    text-align: left;
+    font-size: 14px;
+  }
+  .se--show-btn-filters {
+    padding: 8px;
+
+    font-size: 12px;
+  }
+  .se--show-results {
+    padding: 8px;
+    font-size: 14px;
+  }
+  .se--main-layout {
+    gap: 24px;
+  }
+  .se--tag--category--layout {
+    gap: 24px;
+  }
+  .se--add-tags {
+    padding: 8px;
+  }
+  .se--category-button {
+    padding: 8px;
+
+    font-size: 14px;
+  }
+  .se--add-category {
+    padding: 8px;
+  }
+  .se-tags-layout {
+    gap: 20px;
+  }
+  .se--input--tags {
+    padding: 8px 12px;
+  }
+  .se-add-tag {
+    padding: 8px;
+    font-size: 14px;
+  }
+  .se--profile-name {
+    font-size: 32px;
+  }
+  .se--instructor-course-layout {
+    gap: 24px;
+  }
+  .se--common-subtext {
+    color: #fff;
+    font-family: Montserrat;
+    font-size: 24px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: 110%;
+  }
+  .se--card-font-layout h2 {
+    font-size: 20px;
+  }
+  .chart2-investor-course{
+    width: 600px;
+  
+  }
+}
+
+/* small tablet devices */
+@media only screen and (min-width: 576px) and (max-width: 767px) {
+  .se--subtext {
+    color: #fff;
+    font-family: Montserrat;
+    font-size: 20px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: 110%;
+  }
+  .se--overview-card {
+    display: flex;
+    flex-direction: column;
+    padding: 12px;
+    gap: 10px;
+    border-radius: 2px;
+    background: var(--Neutral-20, #333);
+  }
+  .se--pending-1 {
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    border-radius: 2px;
+    width: 200px;
+    background: var(--Default-Secondary, #ed1c24);
+  }
+  .se--card--number {
+    color: #fff;
+    font-family: Montserrat;
+    font-size: 24px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: 110%;
+  }
+  .se--subtext1 {
+    color: #fff;
+    font-family: Montserrat;
+    font-size: 20px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: 110%;
+    text-decoration: underline;
+    cursor: pointer;
+  }
+  .page-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    color: #fff;
+    font-family: Montserrat;
+    font-size: 32px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: 110%;
+  }
+  .se--main-layout {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+  .se-category-btn {
+    padding: 8px;
+    font-size: 14px;
+  }
+  .se--select-menu {
+    padding: 6px 8px;
+
+    font-size: 14px;
+  }
+  .se-th,
+  .se-td {
+    padding: 12px;
+    text-align: left;
+  }
+  .se--show-btn-filters {
+    padding: 8px;
+
+    font-size: 12px;
+  }
+  .se--show-results {
+    padding: 8px;
+
+    font-size: 14px;
+  }
+  .se-td {
+    padding: 12px;
+    text-align: left;
+    font-size: 14px;
+  }
+  .se--main-layout {
+    gap: 24px;
+  }
+  .se--tag--category--layout {
+    gap: 24px;
+  }
+  .se--add-tags {
+    padding: 8px;
+  }
+  .se--category-button {
+    padding: 8px;
+
+    font-size: 14px;
+  }
+  .se--add-category {
+    padding: 8px;
+  }
+  .se-tags-layout {
+    gap: 20px;
+  }
+  .se--input--tags {
+    padding: 8px 12px;
+  }
+  .se-add-tag {
+    padding: 8px;
+    font-size: 14px;
+  }
+  .se--profile-name {
+    font-size: 32px;
+  }
+  .se--instructor-course-layout {
+    gap: 24px;
+  }
+  .se--common-subtext {
+    color: #fff;
+    font-family: Montserrat;
+    font-size: 24px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: 110%;
+  }
+  .se--card-font-layout h2 {
+    font-size: 20px;
+  }
+  .chart1-investor-course {
+    width: 500px;
+  }
+  .chart2-investor-course{
+    width: 500px;
+  
+  }
+}
+
+/* large mobile devices */
+@media only screen and (min-width: 480px) and (max-width: 575px) {
+  .se--subtext {
+    color: #fff;
+    font-family: Montserrat;
+    font-size: 18px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: 110%;
+  }
+  .se--overview-card {
+    display: flex;
+    flex-direction: column;
+    padding: 12px;
+    gap: 10px;
+    border-radius: 2px;
+    background: var(--Neutral-20, #333);
+  }
+  .se--card--number {
+    color: #fff;
+    font-family: Montserrat;
+    font-size: 20px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: 110%;
+  }
+  .se--subtext1 {
+    color: #fff;
+    font-family: Montserrat;
+    font-size: 18px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: 110%;
+    text-decoration: underline;
+    cursor: pointer;
+  }
+  .page-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    color: #fff;
+    font-family: Montserrat;
+    font-size: 28px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: 110%;
+  }
+  .se--main-layout {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  .se--pending-1 {
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    border-radius: 2px;
+    width: 200px;
+    background: var(--Default-Secondary, #ed1c24);
+  }
+  .se-category-btn {
+    padding: 8px;
+    font-size: 14px;
+  }
+  .se--select-menu {
+    padding: 6px 8px;
+
+    font-size: 14px;
+  }
+  .se-th,
+  .se-td {
+    padding: 12px;
+    text-align: left;
+  }
+  .se--show-btn-filters {
+    padding: 8px;
+
+    font-size: 12px;
+  }
+  .se--show-results {
+    padding: 8px;
+
+    font-size: 14px;
+  }
+  .se-td {
+    padding: 12px;
+    text-align: left;
+    font-size: 14px;
+  }
+  .se--main-layout {
+    gap: 20px;
+  }
+  .se--tag--category--layout {
+    gap: 20px;
+  }
+  .se--add-tags {
+    padding: 8px;
+  }
+  .se--category-button {
+    padding: 8px;
+
+    font-size: 14px;
+  }
+  .se--add-category {
+    padding: 8px;
+  }
+  .se-tags-layout {
+    gap: 16px;
+  }
+  .se--input--tags {
+    padding: 8px 12px;
+  }
+  .se-add-tag {
+    padding: 8px;
+    font-size: 14px;
+  }
+  .se--profile-name {
+    font-size: 28px;
+  }
+  .se--profile-status {
+    padding: 8px;
+    font-size: 14px;
+  }
+  .se--instructor-course-layout {
+    gap: 20px;
+  }
+  .se--common-subtext {
+    color: #fff;
+    font-family: Montserrat;
+    font-size: 20px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: 110%;
+  }
+  .se--card-font-layout h2 {
+    font-size: 20px;
+  }
+  .chart1-investor-course {
+    width: 400px;
+  }
+  .chart2-investor-course{
+    width: 450px;
+  
+  }
+}
+
+/* mobile devices */
+@media only screen and (min-width: 375px) and (max-width: 479px) {
+  .se--subtext {
+    color: #fff;
+    font-family: Montserrat;
+    font-size: 18px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: 110%;
+  }
+  .se--overview-card {
+    display: flex;
+    flex-direction: column;
+    padding: 12px;
+    gap: 10px;
+    border-radius: 2px;
+    background: var(--Neutral-20, #333);
+  }
+  .se--card--number {
+    color: #fff;
+    font-family: Montserrat;
+    font-size: 20px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: 110%;
+  }
+  .se--subtext1 {
+    color: #fff;
+    font-family: Montserrat;
+    font-size: 18px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: 110%;
+    text-decoration: underline;
+    cursor: pointer;
+  }
+  .se--table--row1 {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+    align-items: start;
+    flex-direction: column;
+  }
+  .page-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    color: #fff;
+    font-family: Montserrat;
+    font-size: 28px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: 110%;
+  }
+  .se--main-layout {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  .se--pending-1 {
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    border-radius: 2px;
+    width: 200px;
+    background: var(--Default-Secondary, #ed1c24);
+  }
+  .se-category-btn {
+    padding: 8px;
+    font-size: 14px;
+  }
+  .se--select-menu {
+    padding: 6px 8px;
+
+    font-size: 14px;
+  }
+  .se-th,
+  .se-td {
+    padding: 8px;
+    text-align: left;
+    font-size: 14px;
+  }
+  .se--show-btn-filters {
+    padding: 8px;
+
+    font-size: 12px;
+  }
+  .se--show-results {
+    padding: 8px;
+
+    font-size: 14px;
+  }
+  .se--main-layout {
+    gap: 20px;
+  }
+  .se--tag--category--layout {
+    gap: 20px;
+  }
+  .se--add-tags {
+    padding: 8px;
+  }
+  .se--category-button {
+    padding: 8px;
+
+    font-size: 14px;
+  }
+  .se--add-category {
+    padding: 8px;
+  }
+  .se-tags-layout {
+    gap: 16px;
+  }
+  .se--input--tags {
+    padding: 8px 12px;
+  }
+  .se-add-tag {
+    padding: 8px;
+    font-size: 14px;
+  }
+  .se--profile-name {
+    font-size: 24px;
+  }
+  .se--profile-status {
+    padding: 8px;
+    font-size: 14px;
+  }
+  .se--instructor-course-layout {
+    gap: 20px;
+  }
+  .se--common-subtext {
+    color: #fff;
+    font-family: Montserrat;
+    font-size: 20px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: 110%;
+  }
+  .se--course--permission p {
+    font-size: 16px;
+  }
+  .se--card-font-layout h2 {
+    font-size: 18px;
+  }
+  .se--course-watch-layout{
+    display: none;
+  }
+}
+
+/* extra small devices */
+@media only screen and (min-width: 320px) and (max-width: 374px) {
+  .se--subtext {
+    color: #fff;
+    font-family: Montserrat;
+    font-size: 18px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: 110%;
+  }
+  .se--overview-card {
+    display: flex;
+    flex-direction: column;
+    padding: 12px;
+    gap: 10px;
+    border-radius: 2px;
+    background: var(--Neutral-20, #333);
+  }
+  .se--card--number {
+    color: #fff;
+    font-family: Montserrat;
+    font-size: 20px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: 110%;
+  }
+  .se--subtext1 {
+    color: #fff;
+    font-family: Montserrat;
+    font-size: 18px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: 110%;
+    text-decoration: underline;
+    cursor: pointer;
+  }
+  .se--table--row1 {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+    align-items: start;
+    flex-direction: column;
+  }
+  .page-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    color: #fff;
+    font-family: Montserrat;
+    font-size: 28px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: 110%;
+  }
+  .se--main-layout {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  .se--pending-1 {
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    border-radius: 2px;
+    width: 200px;
+    background: var(--Default-Secondary, #ed1c24);
+  }
+  .se-category-btn {
+    padding: 8px;
+    font-size: 14px;
+  }
+  .se--select-menu {
+    padding: 6px 8px;
+
+    font-size: 14px;
+  }
+  .se-th,
+  .se-td {
+    padding: 8px;
+    text-align: left;
+    font-size: 14px;
+  }
+  .se--show-btn-filters {
+    padding: 8px;
+
+    font-size: 12px;
+  }
+  .se--show-results {
+    padding: 8px;
+
+    font-size: 14px;
+  }
+  .se--main-layout {
+    gap: 20px;
+  }
+  .se--tag--category--layout {
+    gap: 20px;
+  }
+  .se--add-tags {
+    padding: 8px;
+  }
+  .se--category-button {
+    padding: 8px;
+
+    font-size: 14px;
+  }
+  .se--add-category {
+    padding: 8px;
+  }
+  .se-tags-layout {
+    gap: 16px;
+  }
+  .se--input--tags {
+    padding: 8px 12px;
+  }
+  .se-add-tag {
+    padding: 8px;
+    font-size: 14px;
+  }
+  .se--profile-name {
+    font-size: 24px;
+  }
+  .se--profile-status {
+    padding: 8px;
+    font-size: 14px;
+  }
+  .se--instructor-course-layout {
+    gap: 20px;
+  }
+  .se--common-subtext {
+    color: #fff;
+    font-family: Montserrat;
+    font-size: 20px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: 110%;
+  }
+  .se--course--permission p {
+    font-size: 16px;
+  }
+  .se--card-font-layout h2 {
+    font-size: 18px;
+  }
+  .se--course-watch-layout{
+    display: none;
+  }
+}

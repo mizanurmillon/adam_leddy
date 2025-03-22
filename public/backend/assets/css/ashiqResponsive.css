@@ -1,0 +1,281 @@
+@media only screen and (min-width: 1600px) {}
+
+/* laptop devices */
+@media only screen and (min-width: 1365px) and (max-width: 1600px) {}
+
+/* laptop devices */
+@media only screen and (min-width: 1200px) and (max-width: 1365px) {}
+
+/* large tablet devices */
+@media only screen and (min-width: 992px) and (max-width: 1199px) {}
+
+/* medium tablet devices */
+@media only screen and (min-width: 768px) and (max-width: 991px) {
+
+    /* User start  */
+    .robi-table th {
+
+        padding: 14px;
+        font-size: 14px;
+    }
+
+    .robi-table td {
+        padding: 14px;
+        text-overflow: ellipsis;
+        font-size: 14px;
+    }
+
+    /* user end  */
+}
+
+/* small tablet devices */
+@media only screen and (min-width: 576px) and (max-width: 767px) {
+
+    /* User start  */
+    .robi-table th {
+
+        padding: 14px;
+        font-size: 14px;
+    }
+
+    .robi-table td {
+        padding: 14px;
+        text-overflow: ellipsis;
+        font-size: 14px;
+    }
+
+    /* user end  */
+        /* course content  start  */
+        .robi-chart-comprason {
+            flex-direction: column;
+    
+        }
+        /* course content  end  */
+}
+
+/* large mobile devices */
+@media only screen and (min-width: 480px) and (max-width: 575px) {
+    /* User start  */
+
+    .robi-user-signup-total h1 {
+
+        font-size: 25px;
+    }
+
+    .robi-page {
+        padding: 10px 14px;
+        font-size: 14px;
+
+    }
+
+    .robi-table th {
+        padding: 10px;
+        font-size: 12px;
+    }
+
+    .robi-table td {
+        padding: 10px;
+        word-wrap: break-word;
+        text-overflow: ellipsis;
+        font-size: 12px;
+    }
+
+    /* user end  */
+    /* course content  start  */
+    .robi-chart-comprason {
+        flex-direction: column;
+
+    }
+    .accordion-body {
+        font-size: 14px;
+    }
+    /* course content  end  */
+
+      /* course content two  start  */
+    
+    /* course content two  end  */
+}
+
+/* mobile devices */
+@media only screen and (min-width: 375px) and (max-width: 479px) {
+
+    /* User start  */
+    .robi-user-signup-total {
+
+        width: auto;
+    }
+
+    .robi-user-signup-total h1 {
+
+        font-size: 24px;
+    }
+
+    .robi-pagination {
+        display: flex;
+        gap: 8px;
+        margin-top: 26px;
+        justify-content: center;
+    }
+
+    .robi-page {
+        padding: 8px 12px;
+        font-size: 12px;
+
+    }
+
+    .robi-table th {
+        text-align: left;
+        padding: 6px;
+        font-size: 12px;
+    }
+
+    .robi-table td {
+        padding: 6px;
+        word-wrap: break-word;
+        text-overflow: ellipsis;
+        font-size: 12px;
+    }
+
+    /* user end  */
+
+
+    /* course content  start  */
+    .robi-comp-watch-time {
+        display: none;
+    }
+    .robi-chart-comprason {
+        display: none ;
+    }
+    .robi-course-content P {
+        font-size: 24px;
+    }
+    .accordion-body {
+        font-size: 14px;
+    }
+    .robi-select-tags h1 {
+        font-size: 24px;
+    }
+    /* course content  end  */
+
+      /* course content two  start  */
+      .robi-approve-and-reject-btn1 {
+        font-size: 12px;
+
+    }
+    .robi-approve-and-reject-btn2 {
+        font-size: 12px;
+
+    }
+    .robi-lesson-content .robi-lesson {
+        font-size: 14px;
+
+    }
+    /* course content two  end  */
+    
+    /* instroctor course detail start  */
+    .robi-chart2 {
+        display: none;
+    }
+    .robi-chart{
+        display: none;
+    }
+    .robi-course-comprason-bottom{
+
+      display: none;
+    }
+     /* instroctor course detail end  */
+}
+
+/* extra small devices */
+@media only screen and (min-width: 320px) and (max-width: 374px) {
+
+    /* User start  */
+    .robi-user-signup-total {
+
+        width: auto;
+    }
+
+    .robi-user-signup-total h1 {
+
+        font-size: 24px;
+    }
+
+    .robi-pagination {
+        display: flex;
+        gap: 8px;
+        margin-top: 26px;
+        justify-content: center;
+    }
+
+    .robi-page {
+        padding: 6px 10px;
+        font-size: 12px;
+
+    }
+
+    .robi-table th {
+        text-align: left;
+        padding: 6px;
+        font-size: 12px;
+    }
+
+    .robi-table td {
+        padding: 6px;
+        word-wrap: break-word;
+        text-overflow: ellipsis;
+        font-size: 12px;
+    }
+
+    /* user end  */
+    /* course content  start  */
+    .robi-comp-watch-time {
+        display: none;
+    }
+    .robi-chart-comprason {
+
+        display: none ;
+    }
+    .robi-course-content P {
+        font-size: 22px;
+    }
+    .accordion-body {
+        font-size: 14px;
+    }
+    .robi-select-tags h1 {
+        font-size: 22px;
+
+    }
+    .robi-select-tags-buttons button {
+        font-size: 12px;
+
+    }
+    /* course content  end  */
+
+    /* course content two  start  */
+    .robi-approve-and-reject-btn1 {
+        font-size: 12px;
+
+    }
+    .robi-approve-and-reject-btn2 {
+        font-size: 12px;
+
+    }
+    .robi-lesson-content .robi-lesson {
+        font-size: 12px;
+
+    }
+    /* course content two  end  */
+
+    /* instroctor course detail start  */
+    .robi-chart2 {
+        display: none;
+    }
+    .robi-chart{
+        display: none;
+    }
+    .robi-course-comprason-bottom{
+
+      display: none;
+    }
+     /* instroctor course detail end  */
+}
