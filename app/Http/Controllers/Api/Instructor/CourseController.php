@@ -8,6 +8,7 @@ use App\Models\CourseVideo;
 use App\Models\User;
 use App\Traits\ApiResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Redis;
 use Illuminate\Support\Facades\Validator;
 
 class CourseController extends Controller
@@ -36,6 +37,10 @@ class CourseController extends Controller
         }
 
         $user = auth()->user();
+
+        if($user->status != "active") {
+            return $this->error([], 'You don’t have permission to upload courses', 404);
+        }
 
         $data = User::with('instructor')->where('id', $user->id)->first();
 
@@ -93,7 +98,7 @@ class CourseController extends Controller
         return $this->success($course, 'Course created successfully', 200);
     }
 
-    public function getCourse()
+    public function getCourse(Request $request)
     {
         $user = auth()->user();
 
@@ -103,7 +108,20 @@ class CourseController extends Controller
             return $this->error([], 'User Not Found', 404);
         }
 
-        $course = Course::with('instructor.user:id,first_name,last_name,role', 'category', 'tags', 'modules.videos')->where('instructor_id', $data->instructor->id)->get();
+        $course = Course::with('instructor.user:id,first_name,last_name,role', 'category', 'tags', 'modules.videos')->where('instructor_id', $data->instructor->id);
+
+        if ($request->status == 'pending') {
+            $course->where('status', 'pending');
+        }
+
+        if ($request->status == 'approved') {
+            $course->where('status', 'approved');
+        }
+
+        if ($request->status == 'rejected') {
+            $course->where('status', 'rejected');
+        }
+        $course = $course->get();
 
         if ($course->isEmpty()) {
             return $this->error([], 'Course Not Found', 404);
@@ -150,6 +168,10 @@ class CourseController extends Controller
         }
 
         $user = auth()->user();
+
+        if($user->status != "active") {
+            return $this->error([], 'You don’t have permission to upload courses', 404);
+        }
 
         $data = User::with('instructor')->where('id', $user->id)->first();
 
@@ -206,6 +228,10 @@ class CourseController extends Controller
         $user = auth()->user();
 
         $data = User::with('instructor')->where('id', $user->id)->first();
+
+        if($user->status != "active") {
+            return $this->error([], 'You don’t have permission to upload courses', 404);
+        }
 
         if (! $user) {
             return $this->error([], 'User Not Found', 404);
