@@ -17,7 +17,6 @@ Route::controller(RegisterController::class)->prefix('users')->group(function ()
 
     // Resend OTP
     Route::post('/otp-resend', 'otpResend');
-
 });
 
 //Login API
@@ -49,24 +48,16 @@ Route::group(['middleware' => ['jwt.verify']], function () {
         Route::post('/update-password', 'changePassword');
     });
 
-    Route::group(['middleware' => ['student']], function () {
-        
-    });
+    Route::group(['middleware' => ['student']], function () {});
 
     Route::group(['middleware' => ['instructor']], function () {
 
         Route::controller(CourseController::class)->prefix('instructor')->group(function () {
-            Route::post('/course-create', 'create');
-            Route::get('/get-course', 'getCourse');
-            Route::get('/course-details/{id}', 'getCourseDetails');
-
-            Route::post('/course-update/{id}', 'update');
-
-            Route::post('/course-delete/{id}', 'delete');
+            Route::post('/create/course', 'create');
+            Route::get('/courses', 'getCourse');
+            Route::get('/course/{id}', 'getCourseDetails');
+            Route::post('/edit/course/{id}', 'update');
+            Route::post('/delete/course/{id}', 'delete');
         });
-        
     });
-    
 });
-
-
