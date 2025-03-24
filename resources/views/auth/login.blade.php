@@ -4,19 +4,19 @@
 
     <h2 class="text-lg font-bold text-gray-900 dark:text-gray-100 text-center" style="color: #FFF">{{ __('Admin Login') }}</h2>
 
-    <form method="POST" action="{{ route('login') }}" class="bg-black">
+    <form method="POST" action="{{ route('login') }}">
         @csrf
 
         <!-- Email Address -->
         <div>
-            <x-input-label for="email" :value="__('Email')" style="color: #FFF" />
+            <x-input-label for="email" :value="__('Email')" />
             <x-text-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" required autofocus autocomplete="username" />
             <x-input-error :messages="$errors->get('email')" class="mt-2" />
         </div>
 
         <!-- Password -->
         <div class="mt-4">
-            <x-input-label for="password" :value="__('Password')" style="color: #FFF" />
+            <x-input-label for="password" :value="__('Password')" />
 
             <x-text-input id="password" class="block mt-1 w-full"
                             type="password"
