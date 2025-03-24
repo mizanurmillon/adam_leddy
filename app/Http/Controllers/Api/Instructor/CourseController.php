@@ -1,13 +1,13 @@
 <?php
 namespace App\Http\Controllers\Api\Instructor;
 
-use App\Models\User;
-use App\Models\Course;
-use App\Models\CourseVideo;
-use App\Traits\ApiResponse;
-use App\Models\CourseModule;
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Models\Course;
+use App\Models\CourseModule;
+use App\Models\CourseVideo;
+use App\Models\User;
+use App\Traits\ApiResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
 class CourseController extends Controller
@@ -26,11 +26,11 @@ class CourseController extends Controller
             'module_title.*' => 'required|string|max:255',
             'video_url'      => 'required|array',
             'video_url.*'    => 'required|url',
-            'file_url' => 'nullable|mimes:pdf,doc,docx|max:4096',
-            'tags' => 'nullable|array',
-            'tags.*' => 'nullable|string|max:255',
+            'file_url'       => 'nullable|mimes:pdf,doc,docx|max:4096',
+            'tags'           => 'nullable|array',
+            'tags.*'         => 'nullable|string|max:255',
         ]);
-
+        // dd($request->all());
         if ($validator->fails()) {
             return $this->error($validator->errors(), $validator->errors()->first(), 422);
         }
@@ -51,10 +51,10 @@ class CourseController extends Controller
         // Course Create
         $course = Course::create([
             'instructor_id' => $user->instructor->id,
-            'title'       => $request->title,
-            'description' => $request->description,
-            'category_id' => $request->category_id,
-            'thumbnail'   => $thumbnailName,
+            'title'         => $request->title,
+            'description'   => $request->description,
+            'category_id'   => $request->category_id,
+            'thumbnail'     => $thumbnailName,
         ]);
 
         // File Upload (Optional)
@@ -62,18 +62,24 @@ class CourseController extends Controller
         ? uploadImage($request->file('file_url'), 'course/file')
         : null;
 
-        // Modules & Videos
+        // Modules and Videos
         foreach ($request->module_title as $key => $moduleTitle) {
             $module = CourseModule::create([
                 'course_id'    => $course->id,
                 'module_title' => $moduleTitle,
             ]);
-
-            if (isset($request->video_url[$key])) {
+        
+            // Check if video URLs exist and properly formatted for each module
+            $videoUrls = isset($request->video_url[$key]) && is_array($request->video_url[$key]) 
+                         ? $request->video_url[$key] 
+                         : (isset($request->video_url[$key]) ? [$request->video_url[$key]] : []);
+        
+            // Insert videos into database
+            foreach ($videoUrls as $videoUrl) {
                 CourseVideo::create([
                     'course_module_id' => $module->id,
-                    'video_url'        => $request->video_url[$key],
-                    'file_url'         => $fileurlName,
+                    'video_url'        => $videoUrl,
+                    'file_url'         => $fileurlName, 
                 ]);
             }
         }
@@ -83,7 +89,7 @@ class CourseController extends Controller
             $course->tags()->attach($tag);
         }
 
-        $course->load('category','tags','modules.videos');
+        $course->load('category', 'tags', 'modules.videos');
         return $this->success($course, 'Course created successfully', 200);
     }
 
@@ -97,9 +103,9 @@ class CourseController extends Controller
             return $this->error([], 'User Not Found', 404);
         }
 
-        $course = Course::with('instructor.user:id,first_name,last_name,role','category','tags','modules.videos')->where('instructor_id', $data->instructor->id)->get();
+        $course = Course::with('instructor.user:id,first_name,last_name,role', 'category', 'tags', 'modules.videos')->where('instructor_id', $data->instructor->id)->get();
 
-        if($course->isEmpty()) {
+        if ($course->isEmpty()) {
             return $this->error([], 'Course Not Found', 404);
         }
 
@@ -116,9 +122,9 @@ class CourseController extends Controller
             return $this->error([], 'User Not Found', 404);
         }
 
-        $course = Course::with('instructor.user:id,first_name,last_name,role','category','tags','modules.videos')->where('instructor_id', $data->instructor->id)->where('id', $id)->first();
+        $course = Course::with('instructor.user:id,first_name,last_name,role', 'category', 'tags', 'modules.videos')->where('instructor_id', $data->instructor->id)->where('id', $id)->first();
 
-        if(! $course) {
+        if (! $course) {
             return $this->error([], 'Course Not Found', 404);
         }
 
@@ -136,7 +142,7 @@ class CourseController extends Controller
             'module_title.*' => 'required|string|max:255',
             'video_url'      => 'required|array',
             'video_url.*'    => 'required|url',
-            'file_url' => 'nullable|mimes:pdf,doc,docx|max:4096',
+            'file_url'       => 'nullable|mimes:pdf,doc,docx|max:4096',
         ]);
 
         if ($validator->fails()) {
@@ -153,7 +159,7 @@ class CourseController extends Controller
 
         $course = Course::with('modules.videos')->where('instructor_id', $data->instructor->id)->where('id', $id)->first();
 
-        if(! $course) {
+        if (! $course) {
             return $this->error([], 'Course Not Found', 404);
         }
 
@@ -207,7 +213,7 @@ class CourseController extends Controller
 
         $course = Course::with('modules.videos')->where('instructor_id', $data->instructor->id)->where('id', $id)->first();
 
-        if($course->thumbnail) {
+        if ($course->thumbnail) {
 
             $previousThumbnailPath = public_path($course->thumbnail);
 
@@ -227,7 +233,7 @@ class CourseController extends Controller
             }
         }
 
-        if(! $course) {
+        if (! $course) {
             return $this->error([], 'Course Not Found', 404);
         }
 
