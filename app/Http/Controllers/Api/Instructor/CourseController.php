@@ -8,7 +8,6 @@ use App\Models\CourseVideo;
 use App\Models\User;
 use App\Traits\ApiResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Redis;
 use Illuminate\Support\Facades\Validator;
 
 class CourseController extends Controller
@@ -112,6 +111,10 @@ class CourseController extends Controller
 
         if ($request->status == 'pending') {
             $course->where('status', 'pending');
+        }
+
+        if($request->status == 'drafts') {
+            $course->where('status', 'drafts');
         }
 
         if ($request->status == 'approved') {
