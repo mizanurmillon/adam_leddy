@@ -66,4 +66,9 @@ class User extends Authenticatable implements JWTSubject
             'password' => 'hashed',
         ];
     }
+
+    public function instructor()
+    {
+        return $this->hasOne(Instructor::class);
+    }
 }

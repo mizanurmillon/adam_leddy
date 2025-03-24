@@ -1,12 +1,13 @@
 <?php
 namespace App\Http\Controllers\Api\Instructor;
 
-use App\Http\Controllers\Controller;
+use App\Models\User;
 use App\Models\Course;
-use App\Models\CourseModule;
 use App\Models\CourseVideo;
 use App\Traits\ApiResponse;
+use App\Models\CourseModule;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
 
 class CourseController extends Controller
@@ -26,6 +27,8 @@ class CourseController extends Controller
             'video_url'      => 'required|array',
             'video_url.*'    => 'required|url',
             'file_url' => 'nullable|mimes:pdf,doc,docx|max:4096',
+            'tags' => 'nullable|array',
+            'tags.*' => 'nullable|string|max:255',
         ]);
 
         if ($validator->fails()) {
@@ -33,6 +36,8 @@ class CourseController extends Controller
         }
 
         $user = auth()->user();
+
+        $data = User::with('instructor')->where('id', $user->id)->first();
 
         if (! $user) {
             return $this->error([], 'User Not Found', 404);
@@ -45,7 +50,7 @@ class CourseController extends Controller
 
         // Course Create
         $course = Course::create([
-            'user_id'     => $user->id,
+            'instructor_id' => $user->instructor->id,
             'title'       => $request->title,
             'description' => $request->description,
             'category_id' => $request->category_id,
@@ -73,7 +78,12 @@ class CourseController extends Controller
             }
         }
 
-        $course->load('category', 'modules.videos');
+        // Tags
+        foreach ($request->tags as $tag) {
+            $course->tags()->attach($tag);
+        }
+
+        $course->load('category','tags','modules.videos');
         return $this->success($course, 'Course created successfully', 200);
     }
 
@@ -81,11 +91,13 @@ class CourseController extends Controller
     {
         $user = auth()->user();
 
+        $data = User::with('instructor')->where('id', $user->id)->first();
+
         if (! $user) {
             return $this->error([], 'User Not Found', 404);
         }
 
-        $course = Course::with('user:id,first_name,last_name,role','category', 'modules.videos')->where('user_id', $user->id)->get();
+        $course = Course::with('instructor.user:id,first_name,last_name,role','category','tags','modules.videos')->where('instructor_id', $data->instructor->id)->get();
 
         if($course->isEmpty()) {
             return $this->error([], 'Course Not Found', 404);
@@ -98,11 +110,13 @@ class CourseController extends Controller
     {
         $user = auth()->user();
 
+        $data = User::with('instructor')->where('id', $user->id)->first();
+
         if (! $user) {
             return $this->error([], 'User Not Found', 404);
         }
 
-        $course = Course::with('user:id,first_name,last_name,role','category', 'modules.videos')->where('user_id', $user->id)->where('id', $id)->first();
+        $course = Course::with('instructor.user:id,first_name,last_name,role','category','tags','modules.videos')->where('instructor_id', $data->instructor->id)->where('id', $id)->first();
 
         if(! $course) {
             return $this->error([], 'Course Not Found', 404);
@@ -131,11 +145,13 @@ class CourseController extends Controller
 
         $user = auth()->user();
 
+        $data = User::with('instructor')->where('id', $user->id)->first();
+
         if (! $user) {
             return $this->error([], 'User Not Found', 404);
         }
 
-        $course = Course::with('modules.videos')->where('user_id', $user->id)->where('id', $id)->first();
+        $course = Course::with('modules.videos')->where('instructor_id', $data->instructor->id)->where('id', $id)->first();
 
         if(! $course) {
             return $this->error([], 'Course Not Found', 404);
@@ -183,11 +199,13 @@ class CourseController extends Controller
     {
         $user = auth()->user();
 
+        $data = User::with('instructor')->where('id', $user->id)->first();
+
         if (! $user) {
             return $this->error([], 'User Not Found', 404);
         }
 
-        $course = Course::with('modules.videos')->where('user_id', $user->id)->where('id', $id)->first();
+        $course = Course::with('modules.videos')->where('instructor_id', $data->instructor->id)->where('id', $id)->first();
 
         if($course->thumbnail) {
 
