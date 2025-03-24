@@ -2,17 +2,19 @@
 
 namespace App\Http\Controllers\Api\Auth;
 
-use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-use App\Mail\RegistationOtp;
-use App\Models\EmailOtp;
-use App\Models\User;
-use App\Traits\ApiResponse;
 use Carbon\Carbon;
+use App\Models\User;
+use App\Models\EmailOtp;
+use App\Traits\ApiResponse;
+use App\Mail\RegistationOtp;
+use Illuminate\Http\Request;
+use App\Enum\NotificationType;
+use Tymon\JWTAuth\Facades\JWTAuth;
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
+use App\Notifications\UserNotification;
 use Illuminate\Support\Facades\Validator;
-use Tymon\JWTAuth\Facades\JWTAuth;
 
 class RegisterController extends Controller
 {
@@ -77,6 +79,12 @@ class RegisterController extends Controller
             $user->email_verified_at = now();
 
             $user->save();
+
+            $user->notify(new UserNotification(
+                message: 'Your account has been created successfully.',
+                channels: ['database'],
+                type: NotificationType::SUCCESS,
+            ));
 
             // $this->sendOtp($user);
 

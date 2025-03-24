@@ -123,4 +123,4 @@
 {{-- toastr end --}}
 
 
-@stack('script')
+@stack('style')

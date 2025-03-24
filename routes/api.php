@@ -5,7 +5,8 @@ use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\Auth\LoginController;
 use App\Http\Controllers\Api\Auth\RegisterController;
 use App\Http\Controllers\Api\Instructor\CourseController;
-
+use App\Http\Controllers\Api\Instructor\CategoryController;
+use App\Http\Controllers\Api\Instructor\TagsController;
 
 Route::controller(RegisterController::class)->prefix('users')->group(function () {
 
@@ -54,10 +55,20 @@ Route::group(['middleware' => ['jwt.verify']], function () {
 
         Route::controller(CourseController::class)->prefix('instructor')->group(function () {
             Route::post('/create/course', 'create');
-            Route::get('/courses', 'getCourse');
+            Route::get('/my/courses', 'getCourse');
             Route::get('/course/{id}', 'getCourseDetails');
             Route::post('/edit/course/{id}', 'update');
             Route::post('/delete/course/{id}', 'delete');
+
+            Route::get('/submit/for/approval/{id}', 'submitForApproval');
         });
     });
+
+});
+Route::controller(CategoryController::class)->prefix('categories')->group(function () {
+    Route::get('/', 'AllCategories');
+});
+
+Route::controller(TagsController::class)->prefix('tags')->group(function () {
+    Route::get('/', 'AllTags');
 });
