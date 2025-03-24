@@ -27,6 +27,9 @@ class UserController extends Controller
             return $this->error([], 'User Not Found', 404);
         }
 
+        if($user->role == 'instructor') {
+            $user->load('instructor');
+        }
         return $this->success($user, 'User data fetched successfully', 200);
     }
 
