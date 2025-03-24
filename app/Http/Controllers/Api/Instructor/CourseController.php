@@ -37,7 +37,7 @@ class CourseController extends Controller
 
         $user = auth()->user();
 
-        if($user->status != "active") {
+        if ($user->status != "active") {
             return $this->error([], 'You don’t have permission to upload courses', 404);
         }
 
@@ -73,17 +73,12 @@ class CourseController extends Controller
                 'module_title' => $moduleTitle,
             ]);
         
-            // Check if video URLs exist and properly formatted for each module
-            $videoUrls = isset($request->video_url[$key]) && is_array($request->video_url[$key]) 
-                         ? $request->video_url[$key] 
-                         : (isset($request->video_url[$key]) ? [$request->video_url[$key]] : []);
-        
-            // Insert videos into database
-            foreach ($videoUrls as $videoUrl) {
+            // Ensure video URL exists for this index
+            if (!empty($request->video_url[$key])) {
                 CourseVideo::create([
                     'course_module_id' => $module->id,
-                    'video_url'        => $videoUrl,
-                    'file_url'         => $fileurlName, 
+                    'video_url'        => $request->video_url[$key] ?? null,
+                    'file_url'         => $fileurlName, // If different file names are needed, adjust accordingly
                 ]);
             }
         }
@@ -113,7 +108,7 @@ class CourseController extends Controller
             $course->where('status', 'pending');
         }
 
-        if($request->status == 'drafts') {
+        if ($request->status == 'drafts') {
             $course->where('status', 'drafts');
         }
 
@@ -172,7 +167,7 @@ class CourseController extends Controller
 
         $user = auth()->user();
 
-        if($user->status != "active") {
+        if ($user->status != "active") {
             return $this->error([], 'You don’t have permission to upload courses', 404);
         }
 
@@ -232,7 +227,7 @@ class CourseController extends Controller
 
         $data = User::with('instructor')->where('id', $user->id)->first();
 
-        if($user->status != "active") {
+        if ($user->status != "active") {
             return $this->error([], 'You don’t have permission to upload courses', 404);
         }
 
@@ -269,6 +264,25 @@ class CourseController extends Controller
         $course->delete();
 
         return $this->success([], 'Course deleted successfully', 200);
+    }
+
+    public function submitForApproval($id)
+    {
+        $user = auth()->user();
+
+        if ($user->status != "active") {
+            return $this->error([], 'You don’t have permission to upload courses', 404);
+        }
+
+        $course = Course::where('id', $id)->update([
+            'status' => 'pending',
+        ]);
+
+        if (! $course) {
+            return $this->error([], 'Course Not Found', 404);
+        }
+
+        return $this->success($course, 'Course submitted for approval successfully', 200);
     }
 
 }

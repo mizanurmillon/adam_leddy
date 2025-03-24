@@ -3,10 +3,15 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Web\Backend\CategoryController;
 use App\Http\Controllers\Web\Backend\DashboardController;
+use App\Http\Controllers\Web\Backend\UsreController;
 
 Route::get('/dashboard', [DashboardController::class, 'index'])->name('admin.dashboard');
 
 Route::controller(CategoryController::class)->prefix('categories')->group(function () {
     Route::get('/admin/categories/index', 'index')->name('admin.categories.index');
     Route::post('/admin/categories/store', 'store')->name('admin.categories.store');
+});
+
+Route::controller(UsreController::class)->prefix('users')->group(function () {
+    Route::get('/index', 'index')->name('admin.users.index');
 });

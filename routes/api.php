@@ -59,6 +59,8 @@ Route::group(['middleware' => ['jwt.verify']], function () {
             Route::get('/course/{id}', 'getCourseDetails');
             Route::post('/edit/course/{id}', 'update');
             Route::post('/delete/course/{id}', 'delete');
+
+            Route::get('/submit/for/approval/{id}', 'submitForApproval');
         });
     });
 
