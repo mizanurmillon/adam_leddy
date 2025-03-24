@@ -32,4 +32,9 @@ class Tag extends Model
             'id' => 'integer',
         ];
     }
+
+    public function courses()
+    {
+        return $this->belongsToMany(Course::class, 'course_tags');
+    }
 }

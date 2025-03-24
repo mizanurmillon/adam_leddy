@@ -35,8 +35,8 @@ class Course extends Model
         ];
     }
 
-    public function user(){
-        return $this->belongsTo(User::class);
+    public function instructor(){
+        return $this->belongsTo(Instructor::class);
     }
 
     public function category(){
@@ -46,5 +46,10 @@ class Course extends Model
     public function modules()
     {
         return $this->hasMany(CourseModule::class, 'course_id');
+    }
+
+    public function tags()
+    {
+        return $this->belongsToMany(Tag::class, 'course_tags');
     }
 }

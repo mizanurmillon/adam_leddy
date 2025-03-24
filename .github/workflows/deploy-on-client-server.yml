@@ -14,6 +14,6 @@ jobs:
       - name: FTP-Deploy-Action
         uses: SamKirkland/FTP-Deploy-Action@4.3.0
         with:
-          server: ftp.bjjsource.com
+          server: ftp.node619.namehero.net
           username: dashboard.bjjsource@dashboard.bjjsource.com
           password: "dashboard.bjjsource"
