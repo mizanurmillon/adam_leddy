@@ -74,39 +74,52 @@ class CourseController extends Controller
         $courseVideoEmbedUrls = [];
 
         foreach ($request->file('video_url', []) as $videoFile) {
-            if ($videoFile->isValid()) {
-                $allowedMimeTypes = ['video/mp4', 'video/quicktime', 'video/x-ms-wmv', 'video/x-msvideo'];
-                if (!in_array($videoFile->getMimeType(), $allowedMimeTypes)) {
-                    return $this->error([], "Unsupported video format", 422);
-                }
-                $courseVideoPath     = $videoFile->getPathname();
+            if (!$videoFile->isValid()) {
+                return $this->error([], "Invalid video file", 422);
+            }
+        
+            $allowedMimeTypes = ['video/mp4', 'video/quicktime', 'video/x-ms-wmv', 'video/x-msvideo'];
+            if (!in_array($videoFile->getMimeType(), $allowedMimeTypes)) {
+                return $this->error([], "Unsupported video format", 422);
+            }
+        
+            $courseVideoPath = $videoFile->getPathname();
+            try {
+                // Upload video to Vimeo
                 $courseVideoResponse = $vimeo->upload($courseVideoPath, [
                     'name'        => $request->title,
                     'description' => $request->description,
-                    'privacy'     => [
-                        'view' => 'unlisted',
-                    ],
+                    'privacy'     => ['view' => 'unlisted'],
                     'embed'       => [
-                        'title'   => [
-                            'name'     => 'hide',
-                            'owner'    => 'hide',
-                            'portrait' => 'hide',
-                        ],
-                        'buttons' => [
-                            'like'       => false,
-                            'watchlater' => false,
-                            'share'      => false,
-                            'embed'      => false,
-                        ],
-                        'logos'   => [
-                            'vimeo' => false,
-                        ],
+                        'title'   => ['name' => 'hide', 'owner' => 'hide', 'portrait' => 'hide'],
+                        'buttons' => ['like' => false, 'watchlater' => false, 'share' => false, 'embed' => false],
+                        'logos'   => ['vimeo' => false],
                     ],
                 ]);
-
-                $courseVideoData        = $vimeo->request($courseVideoResponse, [], 'GET')['body'];
-                $courseVideoId          = trim($courseVideoData['uri'], '/videos/');
-                $courseVideoEmbedUrls[] = "https://player.vimeo.com/video/" . $courseVideoId. "?dnt=1&autoplay=1&show_title=1&show_byline=1&show_portrait=1&color=00adef&related=0&controls=0&logo=0";
+        
+                $courseVideoData = $vimeo->request($courseVideoResponse, [], 'GET')['body'];
+                $courseVideoId = trim($courseVideoData['uri'], '/videos/');
+                $courseVideoEmbedUrls[] = "https://player.vimeo.com/video/{$courseVideoId}?dnt=1&autoplay=1&show_title=1&show_byline=1&show_portrait=1&color=00adef&related=0&controls=0&logo=0";
+        
+                // Get video duration with retries
+                $courseVideoDuration = 0;
+                $retryCount = 0;
+                while ($courseVideoDuration == 0 && $retryCount < 5) {
+                    sleep(5);  // Wait for the video to process
+                    $courseVideoData = $vimeo->request($courseVideoResponse, [], 'GET')['body'];
+                    $courseVideoDuration = $courseVideoData['duration'];
+                    $retryCount++;
+                }
+        
+                // Format the duration to HH:MM:SS
+                if ($courseVideoDuration > 0) {
+                    $formattedDuration = gmdate("H:i:s", $courseVideoDuration);
+                } else {
+                    return $this->error([], "Video duration retrieval failed", 422);
+                }
+        
+            } catch (\Exception $e) {
+                return $this->error([], "Video upload failed: " . $e->getMessage(), 500);
             }
         }
 
@@ -123,6 +136,7 @@ class CourseController extends Controller
                     'course_module_id' => $module->id,
                     'video_url'        => $courseVideoEmbedUrls[$key],
                     'file_url'         => $fileurlName,
+                    'duration'         => $formattedDuration,
                 ]);
             }
         }
@@ -284,6 +298,18 @@ class CourseController extends Controller
                 $courseVideoData        = $vimeo->request($courseVideoResponse, [], 'GET')['body'];
                 $courseVideoId          = trim($courseVideoData['uri'], '/videos/');
                 $courseVideoEmbedUrls[] = "https://player.vimeo.com/video/" . $courseVideoId. "?dnt=1&autoplay=1&show_title=1&show_byline=1&show_portrait=1&color=00adef&related=0&controls=0&logo=0";
+
+                $courseVideoDuration = 0;
+                $retryCount = 0;
+                while ($courseVideoDuration == 0 && $retryCount < 5) {
+                    sleep(5);
+                    $courseVideoData = $vimeo->request($courseVideoResponse, [], 'GET')['body'];
+                    $courseVideoDuration = $courseVideoData['duration'];
+                    $retryCount++;
+                }
+
+                // FORMAT DURATION AS HH:MM:SS
+                $formattedDuration = gmdate("H:i:s", $courseVideoDuration);
             }
         }
 
@@ -299,6 +325,7 @@ class CourseController extends Controller
                     'course_module_id' => $module->id,
                     'video_url'        => $courseVideoEmbedUrls[$key],
                     'file_url'         => $fileurlName,
+                    'duration'         => $formattedDuration[$key],
                 ]);
             }
         }

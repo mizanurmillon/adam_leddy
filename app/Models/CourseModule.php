@@ -41,6 +41,6 @@ class CourseModule extends Model
 
     public function videos()
     {
-        return $this->hasMany(CourseVideo::class, 'course_module_id');
+        return $this->hasOne(CourseVideo::class, 'course_module_id');
     }
 }
