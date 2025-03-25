@@ -55,6 +55,7 @@ Route::group(['middleware' => ['jwt.verify']], function () {
 
         Route::controller(CourseController::class)->prefix('instructor')->group(function () {
             Route::post('/create/course', 'create');
+            Route::post('/create/course/module/{id}', 'createModule');
             Route::get('/my/courses', 'getCourse');
             Route::get('/course/{id}', 'getCourseDetails');
             Route::post('/edit/course/{id}', 'update');
