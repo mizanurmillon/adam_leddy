@@ -8,7 +8,9 @@ use App\Models\CourseVideo;
 use App\Models\User;
 use App\Traits\ApiResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
+use Vimeo\Vimeo;
 
 class CourseController extends Controller
 {
@@ -25,12 +27,12 @@ class CourseController extends Controller
             'module_title'   => 'required|array',
             'module_title.*' => 'required|string|max:255',
             'video_url'      => 'required|array',
-            'video_url.*'    => 'required|url',
+            'video_url.*'    => 'required|mimes:mp4,mov,ogg,qt,ogx,mkv,wmv,webm,flv,avi,ogv,ogg|max:520000',
             'file_url'       => 'nullable|mimes:pdf,doc,docx|max:4096',
             'tags'           => 'nullable|array',
             'tags.*'         => 'nullable|string|max:255',
         ]);
-        // dd($request->all());
+       
         if ($validator->fails()) {
             return $this->error($validator->errors(), $validator->errors()->first(), 422);
         }
@@ -41,55 +43,98 @@ class CourseController extends Controller
             return $this->error([], 'You don’t have permission to upload courses', 404);
         }
 
-        $data = User::with('instructor')->where('id', $user->id)->first();
+        $data = User::with('instructor')->where('role', 'instructor')->where('id', $user->id)->first();
 
         if (! $user) {
             return $this->error([], 'User Not Found', 404);
         }
-
-        // Thumbnail Upload
+        DB::beginTransaction();
+       
         $thumbnailName = $request->hasFile('thumbnail')
         ? uploadImage($request->file('thumbnail'), 'course')
         : null;
 
-        // Course Create
+       
         $course = Course::create([
-            'instructor_id' => $user->instructor->id,
+            'instructor_id' => $data->instructor->id,
             'title'         => $request->title,
             'description'   => $request->description,
             'category_id'   => $request->category_id,
             'thumbnail'     => $thumbnailName,
         ]);
 
-        // File Upload (Optional)
+        
         $fileurlName = $request->hasFile('file_url')
         ? uploadImage($request->file('file_url'), 'course/file')
         : null;
 
-        // Modules and Videos
+       
+        $vimeo = new Vimeo(env('VIMEO_CLIENT'), env('VIMEO_SECRET'), env('VIMEO_ACCESS'));
+
+        $courseVideoEmbedUrls = [];
+
+        foreach ($request->file('video_url', []) as $videoFile) {
+            if ($videoFile->isValid()) {
+                $allowedMimeTypes = ['video/mp4', 'video/quicktime', 'video/x-ms-wmv', 'video/x-msvideo'];
+                if (!in_array($videoFile->getMimeType(), $allowedMimeTypes)) {
+                    return $this->error([], "Unsupported video format", 422);
+                }
+                $courseVideoPath     = $videoFile->getPathname();
+                $courseVideoResponse = $vimeo->upload($courseVideoPath, [
+                    'name'        => $request->title,
+                    'description' => $request->description,
+                    'privacy'     => [
+                        'view' => 'unlisted',
+                    ],
+                    'embed'       => [
+                        'title'   => [
+                            'name'     => 'hide',
+                            'owner'    => 'hide',
+                            'portrait' => 'hide',
+                        ],
+                        'buttons' => [
+                            'like'       => false,
+                            'watchlater' => false,
+                            'share'      => false,
+                            'embed'      => false,
+                        ],
+                        'logos'   => [
+                            'vimeo' => false,
+                        ],
+                    ],
+                ]);
+
+                $courseVideoData        = $vimeo->request($courseVideoResponse, [], 'GET')['body'];
+                $courseVideoId          = trim($courseVideoData['uri'], '/videos/');
+                $courseVideoEmbedUrls[] = "https://player.vimeo.com/video/" . $courseVideoId. "?dnt=1&autoplay=1&show_title=1&show_byline=1&show_portrait=1&color=00adef&related=0&controls=0&logo=0";
+            }
+        }
+
+        
         foreach ($request->module_title as $key => $moduleTitle) {
             $module = CourseModule::create([
                 'course_id'    => $course->id,
                 'module_title' => $moduleTitle,
             ]);
-        
-            // Ensure video URL exists for this index
-            if (!empty($request->video_url[$key])) {
+
+           
+            if (isset($courseVideoEmbedUrls[$key])) {
                 CourseVideo::create([
                     'course_module_id' => $module->id,
-                    'video_url'        => $request->video_url[$key] ?? null,
-                    'file_url'         => $fileurlName, // If different file names are needed, adjust accordingly
+                    'video_url'        => $courseVideoEmbedUrls[$key],
+                    'file_url'         => $fileurlName,
                 ]);
             }
         }
 
-        // Tags
+       
         foreach ($request->tags as $tag) {
             $course->tags()->attach($tag);
         }
-
+        DB::commit();
         $course->load('category', 'tags', 'modules.videos');
         return $this->success($course, 'Course created successfully', 200);
+        
     }
 
     public function getCourse(Request $request)
