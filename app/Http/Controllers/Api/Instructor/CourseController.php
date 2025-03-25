@@ -27,7 +27,7 @@ class CourseController extends Controller
             'module_title'   => 'required|array',
             'module_title.*' => 'required|string|max:255',
             'video_url'      => 'required|array',
-            'video_url.*'    => 'required|mimes:mp4,mov,ogg,qt,ogx,mkv,wmv,webm,flv,avi,ogv,ogg|max:520000',
+            'video_url.*'    => 'required|mimes:mp4,mov,ogg,qt,ogx,mkv,wmv,webm,flv,avi,ogv,ogg|max:1000000',
             'file_url'       => 'nullable|mimes:pdf,doc,docx|max:4096',
             'tags'           => 'nullable|array',
             'tags.*'         => 'nullable|string|max:255',
@@ -201,8 +201,8 @@ class CourseController extends Controller
             'thumbnail'      => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
             'module_title'   => 'required|array',
             'module_title.*' => 'required|string|max:255',
-            'video_url'      => 'required|array',
-            'video_url.*'    => 'required|url',
+            'video_url'      => 'nullable|array',
+            'video_url.*'    => 'nullable|mimes:mp4,mov,ogg,qt,ogx,mkv,wmv,webm,flv,avi,ogv,ogg|max:1000000',
             'file_url'       => 'nullable|mimes:pdf,doc,docx|max:4096',
         ]);
 
@@ -246,17 +246,58 @@ class CourseController extends Controller
             'thumbnail'   => $thumbnailName,
         ]);
 
+        $vimeo = new Vimeo(env('VIMEO_CLIENT'), env('VIMEO_SECRET'), env('VIMEO_ACCESS'));
+
+        $courseVideoEmbedUrls = [];
+
+        foreach ($request->file('video_url', []) as $videoFile) {
+            if ($videoFile->isValid()) {
+                $allowedMimeTypes = ['video/mp4', 'video/quicktime', 'video/x-ms-wmv', 'video/x-msvideo'];
+                if (!in_array($videoFile->getMimeType(), $allowedMimeTypes)) {
+                    return $this->error([], "Unsupported video format", 422);
+                }
+                $courseVideoPath     = $videoFile->getPathname();
+                $courseVideoResponse = $vimeo->upload($courseVideoPath, [
+                    'name'        => $request->title,
+                    'description' => $request->description,
+                    'privacy'     => [
+                        'view' => 'unlisted',
+                    ],
+                    'embed'       => [
+                        'title'   => [
+                            'name'     => 'hide',
+                            'owner'    => 'hide',
+                            'portrait' => 'hide',
+                        ],
+                        'buttons' => [
+                            'like'       => false,
+                            'watchlater' => false,
+                            'share'      => false,
+                            'embed'      => false,
+                        ],
+                        'logos'   => [
+                            'vimeo' => false,
+                        ],
+                    ],
+                ]);
+
+                $courseVideoData        = $vimeo->request($courseVideoResponse, [], 'GET')['body'];
+                $courseVideoId          = trim($courseVideoData['uri'], '/videos/');
+                $courseVideoEmbedUrls[] = "https://player.vimeo.com/video/" . $courseVideoId. "?dnt=1&autoplay=1&show_title=1&show_byline=1&show_portrait=1&color=00adef&related=0&controls=0&logo=0";
+            }
+        }
+
         // Modules & Videos
         foreach ($request->module_title as $key => $moduleTitle) {
-            $module = CourseModule::create([
+            $module = CourseModule::updateOrCreate([
                 'course_id'    => $course->id,
                 'module_title' => $moduleTitle,
             ]);
 
-            if (isset($request->video_url[$key])) {
-                CourseVideo::create([
+            if (isset($courseVideoEmbedUrls[$key])) {
+                CourseVideo::updateOrCreate([
                     'course_module_id' => $module->id,
-                    'video_url'        => $request->video_url[$key],
+                    'video_url'        => $courseVideoEmbedUrls[$key],
                     'file_url'         => $fileurlName,
                 ]);
             }
