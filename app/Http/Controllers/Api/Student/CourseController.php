@@ -48,7 +48,7 @@ class CourseController extends Controller
             $query->where('instructor_id', $request->instructor_id);
         }
 
-        $courses = $query->get();
+        $courses = $query->paginate($request->per_page ?? 10);
 
         $courses->map(function ($course) {
             $course->is_bookmarked = $course->bookmarks->isNotEmpty(); // If bookmarks exist, set flag to true

@@ -34,7 +34,7 @@ class BookmarkController extends Controller
         }
     }
 
-    public function getBookmarks()
+    public function getBookmarks(Request $request)
     {
         $user = auth()->user();
 
@@ -59,11 +59,11 @@ class BookmarkController extends Controller
                     ->join('course_modules', 'course_modules.course_id', '=', 'courses.id')
                     ->join('course_videos', 'course_videos.course_module_id', '=', 'course_modules.id')
             ])
-            ->get();
+            ->paginate($request->per_page ?? 10);
 
-        if ($bookmarkedCourses->isEmpty()) {
-            return $this->error([], 'No Bookmark Course found', 404);
-        }
+        $bookmarkedCourses->each(function ($bookmark) {
+            $bookmark->is_bookmarked = true;
+        });
 
         return $this->success($bookmarkedCourses, 'Bookmark Course retrieved successfully.');
     }
