@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 class Course extends Model
 {
     use HasFactory;
-    
+
     protected $guarded = [];
 
     /**
@@ -35,14 +35,16 @@ class Course extends Model
         ];
     }
 
-    public function instructor(){
+    public function instructor()
+    {
         return $this->belongsTo(Instructor::class);
     }
 
-    public function category(){
+    public function category()
+    {
         return $this->belongsTo(Category::class);
     }
-    
+
     public function modules()
     {
         return $this->hasMany(CourseModule::class, 'course_id');
@@ -51,5 +53,10 @@ class Course extends Model
     public function tags()
     {
         return $this->belongsToMany(Tag::class, 'course_tags');
+    }
+
+    public function bookmarks()
+    {
+        return $this->hasMany(Bookmark::class);
     }
 }
