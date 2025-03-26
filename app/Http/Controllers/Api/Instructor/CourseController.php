@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers\Api\Instructor;
 
 use App\Http\Controllers\Controller;
@@ -43,8 +44,8 @@ class CourseController extends Controller
             return $this->error([], 'User Not Found', 404);
         }
         $thumbnailName = $request->hasFile('thumbnail')
-        ? uploadImage($request->file('thumbnail'), 'course')
-        : null;
+            ? uploadImage($request->file('thumbnail'), 'course')
+            : null;
 
         $course = Course::create([
             'instructor_id' => $data->instructor->id,
@@ -79,8 +80,8 @@ class CourseController extends Controller
         }
 
         $fileName = $request->hasFile('file_url')
-        ? uploadImage($request->file('file_url'), 'course')
-        : null;
+            ? uploadImage($request->file('file_url'), 'course')
+            : null;
 
         $course = Course::findOrFail($id);
 
@@ -117,7 +118,7 @@ class CourseController extends Controller
                         'like' => false,
                         'watchlater' => false,
                         'share' => false,
-                        'embed'=> false
+                        'embed' => false
                     ],
                     'logos' => [
                         'vimeo' => false,
@@ -125,15 +126,15 @@ class CourseController extends Controller
                 ]
             ]);
 
-            
+
             $courseVideoData = $vimeo->request($courseVideoResponse, [], 'GET')['body'];
             $courseVideoId   = trim($courseVideoData['uri'], '/videos/');
             $videoEmbedUrl   = "https://player.vimeo.com/video/" . $courseVideoId . "?title=1&byline=1&portrait=1&badge=1&autopause=1&player_id=1";
-            
+
             // Get video duration with retries
             $courseVideoDuration = 0;
             $retryCount          = 0;
-            
+
             while ($courseVideoDuration == 0 && $retryCount < 5) {
                 sleep(5); // Wait for the video to process
                 $courseVideoData     = $vimeo->request($courseVideoResponse, [], 'GET')['body'];
@@ -146,7 +147,6 @@ class CourseController extends Controller
             } else {
                 return $this->error([], "Video duration retrieval failed", 422);
             }
-
         } catch (\Exception $e) {
             return $this->error([], "Video upload failed: " . $e->getMessage(), 500);
         }
@@ -263,13 +263,13 @@ class CourseController extends Controller
 
         // Thumbnail Upload
         $thumbnailName = $request->hasFile('thumbnail')
-        ? uploadImage($request->file('thumbnail'), 'course')
-        : $course->thumbnail;
+            ? uploadImage($request->file('thumbnail'), 'course')
+            : $course->thumbnail;
 
         // File Upload (Optional)
         $fileurlName = $request->hasFile('file_url')
-        ? uploadImage($request->file('file_url'), 'course/file')
-        : $course->file_url;
+            ? uploadImage($request->file('file_url'), 'course/file')
+            : $course->file_url;
 
         // Course Update
         $course->update([
@@ -327,7 +327,6 @@ class CourseController extends Controller
                 } else {
                     return $this->error([], "Video duration retrieval failed", 422);
                 }
-
             } catch (\Exception $e) {
                 return $this->error([], "Video upload failed: " . $e->getMessage(), 500);
             }
@@ -417,5 +416,4 @@ class CourseController extends Controller
 
         return $this->success($course, 'Course submitted for approval successfully', 200);
     }
-
 }
