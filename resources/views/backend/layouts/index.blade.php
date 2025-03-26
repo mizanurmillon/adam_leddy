@@ -10,7 +10,7 @@
         <div>
             <img class="menu-btn-mobile" src="{{ asset('backend/assets/images/menu.png') }}" alt="" />
         </div>
-        <a href="" class="button-lg">Register New Instructor</a>
+        <a href="{{ route('admin.instructors.create') }}" class="button-lg">Register New Instructor</a>
     </div>
     <div class="se--main-layout">
         <div class="page-title">Dashboard</div>
