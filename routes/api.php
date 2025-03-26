@@ -45,6 +45,7 @@ Route::group(['middleware' => ['jwt.verify']], function () {
     Route::controller(UserController::class)->prefix('users')->group(function () {
         Route::get('/data', 'getUserData');
         Route::post('/update', 'updateUserData');
+        Route::post('/update-image', 'updateUserImage');
         Route::post('/logout', 'userLogout');
         Route::post('/update-password', 'changePassword');
     });
@@ -59,7 +60,9 @@ Route::group(['middleware' => ['jwt.verify']], function () {
             Route::get('/my/courses', 'getCourse');
             Route::get('/course/{id}', 'getCourseDetails');
             Route::post('/edit/course/{id}', 'update');
+            Route::post('/edit/course/module/{id}', 'updateModule');
             Route::post('/delete/course/{id}', 'delete');
+            Route::post('/delete/course/module/{id}', 'deleteModule');
 
             Route::get('/submit/for/approval/{id}', 'submitForApproval');
         });

@@ -34,7 +34,7 @@
 
         <div class="group-nav-items">
             <h4 class="group-nav-title">Course Management</h4>
-            <a href="./courses.html" class="item">
+            <a href="{{ route('admin.courses.index') }}" class="item {{ Route::is('admin.courses.*') ? 'active' : '' }}">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 18"
                     fill="none">
                     <path
@@ -46,7 +46,7 @@
                 </svg>
                 <span class="title">Courses</span>
             </a>
-            <a href="./approval.html" class="item">
+            <a href="{{ route('admin.approval.index') }}" class="item {{ Route::is('admin.approval.*') ? 'active' : '' }}">
                 <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18"
                     fill="none">
                     <path
@@ -69,7 +69,7 @@
         <!-- instructor management -->
         <div class="group-nav-items">
             <h4 class="group-nav-title">Instructor Management</h4>
-            <a href="./view_instructors.html" class="item">
+            <a href="{{ route('admin.instructors.index') }}" class="item {{ request()->routeIs('admin.instructors.*') ? 'active' : '' }}">
                 <svg xmlns="http://www.w3.org/2000/svg" width="17" height="18" viewBox="0 0 17 18"
                     fill="none">
                     <path
@@ -87,7 +87,7 @@
                 </svg>
                 <span class="title">Instructors</span>
             </a>
-            <a href="./pay_instructor.html" class="item">
+            <a href="{{ route('admin.payments.index') }}" class="item {{ request()->routeIs('admin.payments.*') ? 'active' : '' }}">
                 <svg xmlns="http://www.w3.org/2000/svg" width="21" height="18" viewBox="0 0 21 18"
                     fill="none">
                     <path
@@ -101,7 +101,7 @@
         <!-- reports -->
         <div class="group-nav-items">
             <h4 class="group-nav-title">Reports</h4>
-            <a href="./watch_time.html" class="item">
+            <a href="{{ route('admin.watch_time.reports.index') }}" class="item {{ Route::is('admin.watch_time.reports.index') ? 'active' : '' }}">
                 <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18"
                     fill="none">
                     <path
@@ -110,7 +110,7 @@
                 </svg>
                 <span class="title">Watch Time</span>
             </a>
-            <a href="./revenue.html" class="item">
+            <a href="{{ route('admin.revenue.index') }}" class="item {{ Route::is('admin.revenue.*') ? 'active' : '' }}">
                 <svg xmlns="http://www.w3.org/2000/svg" width="18" height="22" viewBox="0 0 18 22"
                     fill="none">
                     <path

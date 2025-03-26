@@ -49,6 +49,41 @@ class UserController extends Controller
         return $this->success($user, 'User data updated successfully', 200);
     }
 
+    public function updateUserImage(Request $request) {
+
+        $validator = Validator::make($request->all(), [
+            'avatar' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+        ]);
+
+        if ($validator->fails()) {
+            return $this->error($validator->errors(), $validator->errors()->first(), 422);
+        }
+
+        $user = auth()->user();
+
+        if (!$user) {
+            return $this->error([], 'User Not Found', 404);
+        }
+
+        if ($request->hasFile('avatar')) {
+            if ($user->avatar) {
+                $previousImagePath = public_path($user->avatar);
+                if (file_exists($previousImagePath)) {
+                    unlink($previousImagePath);
+                }
+            }
+            $avatar     = $request->file('avatar');
+            $avatarName = uploadImage($avatar, 'users');
+        } else {
+            $avatarName = $user->avatar;
+        }
+
+        $user->avatar = $avatarName;
+        $user->save();
+
+        return $this->success($user, 'User image updated successfully', 200);
+    }
+
     public function userLogout(Request $request) {
         try {
             JWTAuth::invalidate(JWTAuth::getToken());
