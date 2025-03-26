@@ -13,7 +13,11 @@ class InstractorController extends Controller
     use ApiResponse;
     public function getInstructors(Request $request)
     {
-        $query = User::with(['instructor.courses'])
+        $query = User::with(['instructor' => function ($query) {
+            $query->withCount(['courses' => function ($query) {
+                $query->where('status', 'approved');
+            }]);
+        }])
             ->where('status', 'active')
             ->where('role', 'instructor');
 
@@ -24,15 +28,37 @@ class InstractorController extends Controller
             });
         }
 
-        // Eager load count of courses related to instructor
-        $query->withCount('instructor.courses');
+        if ($request->filled('category')) {
+            $query->whereHas('instructor', function ($q) use ($request) {
+                $q->where('category_id', $request->category);
+            });
+        }
 
-        $data = $query->get();
+        $data = $query->paginate($request->per_page ?? 30);
 
         if ($data->isEmpty()) {
             return $this->error([], 'Instructor Not Found', 404);
         }
 
         return $this->success($data, 'Instructors found successfully', 200);
+    }
+
+    public function getInstructorDetails($id)
+    {
+        $data = User::with(['instructor' => function ($query) {
+            $query->withCount(['courses' => function ($query) {
+                $query->where('status', 'approved');
+            }]);
+        }])
+            ->where('status', 'active')
+            ->where('role', 'instructor')
+            ->where('id', $id)
+            ->first();
+
+        if (!$data) {
+            return $this->error([], 'Instructor Not Found', 404);
+        }
+
+        return $this->success($data, 'Instructor found successfully', 200);
     }
 }

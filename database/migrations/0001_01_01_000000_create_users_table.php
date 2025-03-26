@@ -20,9 +20,9 @@ return new class extends Migration
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->string('password_reset_token')->nullable();
-            $table->enum('role', ['admin', 'instructor', 'student'])->default('student');
+            $table->enum('role', ['admin', 'instructor', 'student'])->default('student')->index();
             $table->string('avatar')->nullable();
-            $table->enum('status', ['active', 'inactive'])->default('active');
+            $table->enum('status', ['active', 'inactive'])->default('active')->index();
             $table->rememberToken();
             $table->timestamps();
         });
