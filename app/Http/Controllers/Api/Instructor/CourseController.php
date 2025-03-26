@@ -84,7 +84,7 @@ class CourseController extends Controller
 
         $course = Course::findOrFail($id);
 
-        $vimeo  = new Vimeo(env('VIMEO_CLIENT'), env('VIMEO_SECRET'), env('VIMEO_ACCESS'));
+        $vimeo = new Vimeo(env('VIMEO_CLIENT'), env('VIMEO_SECRET'), env('VIMEO_ACCESS'));
 
         // Ensure the file is valid
         $videoFile = $request->file('video_url');
@@ -102,38 +102,37 @@ class CourseController extends Controller
         // Upload video to Vimeo
         try {
             $courseVideoResponse = $vimeo->upload($videoFile->getPathname(), [
-                'name' => $course->title,
+                'name'        => $course->title,
                 'description' => $course->description,
-                'privacy' => [
-                    'view' => 'anybody'
+                'privacy'     => [
+                    'view' => 'anybody',
                 ],
-                'embed' => [
-                    'title' => [
-                        'name' => 'hide',
-                        'owner' => 'hide',
-                        'portrait' => 'hide'
+                'embed'       => [
+                    'title'   => [
+                        'name'     => 'hide',
+                        'owner'    => 'hide',
+                        'portrait' => 'hide',
                     ],
                     'buttons' => [
-                        'like' => false,
+                        'like'       => false,
                         'watchlater' => false,
-                        'share' => false,
-                        'embed'=> false
+                        'share'      => false,
+                        'embed'      => false,
                     ],
-                    'logos' => [
+                    'logos'   => [
                         'vimeo' => false,
                     ],
-                ]
+                ],
             ]);
 
-            
             $courseVideoData = $vimeo->request($courseVideoResponse, [], 'GET')['body'];
             $courseVideoId   = trim($courseVideoData['uri'], '/videos/');
             $videoEmbedUrl   = "https://player.vimeo.com/video/" . $courseVideoId . "?title=1&byline=1&portrait=1&badge=1&autopause=1&player_id=1";
-            
+
             // Get video duration with retries
             $courseVideoDuration = 0;
             $retryCount          = 0;
-            
+
             while ($courseVideoDuration == 0 && $retryCount < 5) {
                 sleep(5); // Wait for the video to process
                 $courseVideoData     = $vimeo->request($courseVideoResponse, [], 'GET')['body'];
@@ -228,15 +227,11 @@ class CourseController extends Controller
     public function update(Request $request, $id)
     {
         $validator = Validator::make($request->all(), [
-            'title'          => 'required|string|max:255',
-            'description'    => 'required|string|max:255',
-            'category_id'    => 'required|exists:categories,id',
-            'thumbnail'      => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-            'module_title'   => 'required|array',
-            'module_title.*' => 'required|string|max:255',
-            'video_url'      => 'nullable|array',
-            'video_url.*'    => 'nullable|mimes:mp4,mov,ogg,qt,ogx,mkv,wmv,webm,flv,avi,ogv,ogg|max:1000000',
-            'file_url'       => 'nullable|mimes:pdf,doc,docx|max:4096',
+            'title'       => 'required|string|max:255',
+            'description' => 'required|string|max:255',
+            'category_id' => 'required|exists:categories,id',
+            'thumbnail'   => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+
         ]);
 
         if ($validator->fails()) {
@@ -255,21 +250,25 @@ class CourseController extends Controller
             return $this->error([], 'User Not Found', 404);
         }
 
-        $course = Course::with('modules.videos')->where('instructor_id', $data->instructor->id)->where('id', $id)->first();
+        $course = Course::where('instructor_id', $data->instructor->id)->where('id', $id)->first();
 
         if (! $course) {
             return $this->error([], 'Course Not Found', 404);
         }
 
         // Thumbnail Upload
-        $thumbnailName = $request->hasFile('thumbnail')
-        ? uploadImage($request->file('thumbnail'), 'course')
-        : $course->thumbnail;
-
-        // File Upload (Optional)
-        $fileurlName = $request->hasFile('file_url')
-        ? uploadImage($request->file('file_url'), 'course/file')
-        : $course->file_url;
+        if ($request->hasFile('thumbnail')) {
+            if ($course->thumbnail) {
+                $previousImagePath = public_path($course->thumbnail);
+                if (file_exists($previousImagePath)) {
+                    unlink($previousImagePath);
+                }
+            }
+            $thumbnail     = $request->file('thumbnail');
+            $thumbnailName = uploadImage($thumbnail, 'course');
+        } else {
+            $thumbnailName = $course->thumbnail;
+        }
 
         // Course Update
         $course->update([
@@ -279,11 +278,51 @@ class CourseController extends Controller
             'thumbnail'   => $thumbnailName,
         ]);
 
-        $vimeo = new Vimeo(env('VIMEO_CLIENT'), env('VIMEO_SECRET'), env('VIMEO_ACCESS'));
+        $course->load('category');
+        return $this->success($course, 'Course updated successfully', 200);
+    }
 
-        $courseVideoEmbedUrls = [];
+    public function updateModule(Request $request, $id)
+    {
+        $validator = Validator::make($request->all(), [
+            'title'     => 'required|string|max:255',
+            'video_url' => 'nullable|mimes:mp4,mov,ogg,qt,ogx,mkv,wmv,webm,flv,avi,ogv|max:100000',
+            'file_url'  => 'nullable|mimes:pdf,doc,docx|max:4096',
+        ]);
 
-        foreach ($request->file('video_url', []) as $videoFile) {
+        if ($validator->fails()) {
+            return $this->error($validator->errors(), $validator->errors()->first(), 422);
+        }
+
+        $user = auth()->user();
+        if (! $user || $user->status != "active") {
+            return $this->error([], 'You don’t have permission to upload courses', 403);
+        }
+
+        $Course_module = CourseModule::with('videos')->find($id);
+        if (! $Course_module) {
+            return $this->error([], 'Module Not Found', 404);
+        }
+
+        // Handle File Upload
+        $fileName = $Course_module->videos->file_url ?? null;
+        if ($request->hasFile('file_url')) {
+            if ($fileName) {
+                $previousFilePath = public_path($fileName);
+                if (file_exists($previousFilePath)) {
+                    unlink($previousFilePath);
+                }
+            }
+            $file     = $request->file('file_url');
+            $fileName = uploadImage($file, 'course');
+        }
+
+        // Handle Video Upload to Vimeo
+        $videoEmbedUrl     = $Course_module->videos->video_url ?? null;
+        $formattedDuration = $Course_module->videos->duration ?? "00:00:00";
+
+        if ($request->hasFile('video_url')) {
+            $videoFile = $request->file('video_url');
             if (! $videoFile->isValid()) {
                 return $this->error([], "Invalid video file", 422);
             }
@@ -293,65 +332,64 @@ class CourseController extends Controller
                 return $this->error([], "Unsupported video format", 422);
             }
 
-            $courseVideoPath = $videoFile->getPathname();
             try {
-                // Upload video to Vimeo
-                $courseVideoResponse = $vimeo->upload($courseVideoPath, [
-                    'name'        => $request->title,
-                    'description' => $request->description,
-                    'privacy'     => ['view' => 'unlisted'],
-                    'embed'       => [
+                $vimeo = new Vimeo(env('VIMEO_CLIENT'), env('VIMEO_SECRET'), env('VIMEO_ACCESS'));
+
+                // Delete previous Vimeo video if exists
+                if ($Course_module->videos->video_url) {
+                    $previousVideoUrl = $Course_module->videos->video_url;
+                    preg_match('/\/video\/(\d+)/', $previousVideoUrl, $matches);
+                    if (! empty($matches[1])) {
+                        $previousVideoId = $matches[1];
+                        $vimeo->request("/videos/{$previousVideoId}", [], 'DELETE');
+                    }
+                }
+
+                // Upload new video
+                $videoResponse = $vimeo->upload($videoFile->getPathname(), [
+                    'name'    => $request->input('title'),
+                    'privacy' => ['view' => 'anybody'],
+                    'embed'   => [
                         'title'   => ['name' => 'hide', 'owner' => 'hide', 'portrait' => 'hide'],
                         'buttons' => ['like' => false, 'watchlater' => false, 'share' => false, 'embed' => false],
                         'logos'   => ['vimeo' => false],
                     ],
                 ]);
 
-                $courseVideoData        = $vimeo->request($courseVideoResponse, [], 'GET')['body'];
-                $courseVideoId          = trim($courseVideoData['uri'], '/videos/');
-                $courseVideoEmbedUrls[] = "https://player.vimeo.com/video/{$courseVideoId}?dnt=1&autoplay=1&show_title=1&show_byline=1&show_portrait=1&color=00adef&related=0&controls=0&logo=0";
+                $videoData     = $vimeo->request($videoResponse, [], 'GET')['body'];
+                $videoId       = trim($videoData['uri'], '/videos/');
+                $videoEmbedUrl = "https://player.vimeo.com/video/" . $videoId . "?title=1&byline=1&portrait=1&badge=1&autopause=1&player_id=1";
 
-                // Get video duration with retries
-                $courseVideoDuration = 0;
-                $retryCount          = 0;
-                while ($courseVideoDuration == 0 && $retryCount < 5) {
-                    sleep(5); // Wait for the video to process
-                    $courseVideoData     = $vimeo->request($courseVideoResponse, [], 'GET')['body'];
-                    $courseVideoDuration = $courseVideoData['duration'];
+                // Wait for video duration update
+                $retryCount = 0;
+                while ($videoData['duration'] == 0 && $retryCount < 5) {
+                    sleep(5);
+                    $videoData = $vimeo->request($videoResponse, [], 'GET')['body'];
                     $retryCount++;
                 }
 
-                // Format the duration to HH:MM:SS
-                if ($courseVideoDuration > 0) {
-                    $formattedDuration = gmdate("H:i:s", $courseVideoDuration);
-                } else {
-                    return $this->error([], "Video duration retrieval failed", 422);
-                }
-
+                $formattedDuration = ($videoData['duration'] > 0) ? gmdate("H:i:s", $videoData['duration']) : "00:00:00";
             } catch (\Exception $e) {
                 return $this->error([], "Video upload failed: " . $e->getMessage(), 500);
             }
         }
 
-        // Modules & Videos
-        foreach ($request->module_title as $key => $moduleTitle) {
-            $module = CourseModule::updateOrCreate([
-                'course_id'    => $course->id,
-                'module_title' => $moduleTitle,
-            ]);
+        // Update Course Module
+        $Course_module->update([
+            'module_title' => $request->title,
+        ]);
 
-            if (isset($courseVideoEmbedUrls[$key])) {
-                CourseVideo::updateOrCreate([
-                    'course_module_id' => $module->id,
-                    'video_url'        => $courseVideoEmbedUrls[$key],
-                    'file_url'         => $fileurlName,
-                    'duration'         => $formattedDuration,
-                ]);
-            }
-        }
+        // Update or Create Course Video
+        $Course_video = CourseVideo::updateOrCreate(
+            ['course_module_id' => $Course_module->id],
+            [
+                'video_url' => $videoEmbedUrl,
+                'file_url'  => $fileName,
+                'duration'  => $formattedDuration,
+            ]
+        );
 
-        $course->load('category', 'modules.videos');
-        return $this->success($course, 'Course updated successfully', 200);
+        return $this->success($Course_module->load('videos'), 'Module updated successfully', 200);
     }
 
     public function delete($id)
