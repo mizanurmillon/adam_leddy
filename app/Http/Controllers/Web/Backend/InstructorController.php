@@ -18,4 +18,8 @@ class InstructorController extends Controller
     public function content(){
         return view('backend.layouts.instructor.content');
     }
+
+    public function create(){
+        return view('backend.layouts.instructor.create');
+    }
 }

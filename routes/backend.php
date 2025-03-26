@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Web\Backend\UsreController;
+use App\Http\Controllers\Web\Backend\UserController;
 use App\Http\Controllers\Web\Backend\PaymentController;
 use App\Http\Controllers\Web\Backend\ApprovalController;
 use App\Http\Controllers\Web\Backend\CategoryController;
@@ -18,7 +18,7 @@ Route::controller(CategoryController::class)->group(function () {
     Route::post('/categories/store', 'store')->name('admin.categories.store');
 });
 
-Route::controller(UsreController::class)->prefix('users')->group(function () {
+Route::controller(UserController::class)->prefix('users')->group(function () {
     Route::get('/index', 'index')->name('admin.users.index');
 });
 
@@ -37,6 +37,10 @@ Route::controller(InstructorController::class)->group(function () {
     Route::get('/instructors/index', 'index')->name('admin.instructors.index');
     Route::get('/instructors/details', 'details')->name('admin.instructors.details');
     Route::get('/instructors/video/details', 'content')->name('admin.instructors.video.details');
+
+    // Instructor create 
+    Route::get('/instructors/create', 'create')->name('admin.instructors.create');
+    Route::post('/instructors/store', 'store')->name('admin.instructors.store');
 });
 
 Route::controller(PaymentController::class)->group(function () {
