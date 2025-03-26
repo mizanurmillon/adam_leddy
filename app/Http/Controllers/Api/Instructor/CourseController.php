@@ -396,42 +396,58 @@ class CourseController extends Controller
     {
         $user = auth()->user();
 
-        $data = User::with('instructor')->where('id', $user->id)->first();
-
-        if ($user->status != "active") {
-            return $this->error([], 'You don’t have permission to upload courses', 404);
-        }
-
         if (! $user) {
             return $this->error([], 'User Not Found', 404);
         }
 
+        if ($user->status != "active") {
+            return $this->error([], 'You don’t have permission to delete courses', 403);
+        }
+
+        $data = User::with('instructor')->where('id', $user->id)->first();
+
+        if (! $data || ! $data->instructor) {
+            return $this->error([], 'Instructor Not Found', 404);
+        }
+
         $course = Course::with('modules.videos')->where('instructor_id', $data->instructor->id)->where('id', $id)->first();
-
-        if ($course->thumbnail) {
-
-            $previousThumbnailPath = public_path($course->thumbnail);
-
-            if (file_exists($previousThumbnailPath)) {
-                unlink($previousThumbnailPath);
-            }
-        }
-
-        foreach ($course->modules as $module) {
-            foreach ($module->videos as $video) {
-                if ($video->file_url) {
-                    $videoPath = public_path($video->file_url);
-                    if (file_exists($videoPath)) {
-                        unlink($videoPath);
-                    }
-                }
-            }
-        }
 
         if (! $course) {
             return $this->error([], 'Course Not Found', 404);
         }
 
+        $vimeo = new Vimeo(env('VIMEO_CLIENT'), env('VIMEO_SECRET'), env('VIMEO_ACCESS'));
+
+        // Delete all videos from Vimeo
+        foreach ($course->modules as $module) {
+            foreach ($module->videos as $video) {
+                if (! empty($video->video_url)) {
+                    preg_match('/\/video\/(\d+)/', $video->video_url, $matches);
+                    if (! empty($matches[1])) {
+                        $previousVideoId = $matches[1];
+                        $vimeo->request("/videos/{$previousVideoId}", [], 'DELETE');
+                    }
+                }
+
+                // Delete local video file
+                if (! empty($video->file_url)) {
+                    $previousFilePath = public_path($video->file_url);
+                    if (file_exists($previousFilePath)) {
+                        unlink($previousFilePath);
+                    }
+                }
+            }
+        }
+
+        // Delete course thumbnail if exists
+        if (! empty($course->thumbnail)) {
+            $previousThumbnailPath = public_path($course->thumbnail);
+            if (file_exists($previousThumbnailPath)) {
+                unlink($previousThumbnailPath);
+            }
+        }
+
+        // Finally, delete the course
         $course->delete();
 
         return $this->success([], 'Course deleted successfully', 200);
@@ -454,6 +470,55 @@ class CourseController extends Controller
         }
 
         return $this->success($course, 'Course submitted for approval successfully', 200);
+    }
+
+    public function deleteModule($id)
+    {
+        $user = auth()->user();
+
+        if (! $user) {
+            return $this->error([], 'User Not Found', 404);
+        }
+
+        if ($user->status != "active") {
+            return $this->error([], 'You don’t have permission to delete modules', 403);
+        }
+
+        $data = User::with('instructor')->where('id', $user->id)->first();  
+
+        if (! $data || ! $data->instructor) {
+            return $this->error([], 'Instructor Not Found', 404);
+        }
+
+        $module = CourseModule::with('videos')->where('id', $id)->first();
+
+        if (! $module) {
+            return $this->error([], 'Module Not Found', 404);
+        }
+
+        $vimeo = new Vimeo(env('VIMEO_CLIENT'), env('VIMEO_SECRET'), env('VIMEO_ACCESS'));
+        // Delete all videos from Vimeo
+        foreach ($module->videos as $video) {
+            if (! empty($video->video_url)) {
+                preg_match('/\/video\/(\d+)/', $video->video_url, $matches);
+                if (! empty($matches[1])) {
+                    $previousVideoId = $matches[1];
+                    $vimeo->request("/videos/{$previousVideoId}", [], 'DELETE');
+                }
+            }
+
+            // Delete local video file
+            if (! empty($video->file_url)) {
+                $previousFilePath = public_path($video->file_url);
+                if (file_exists($previousFilePath)) {
+                    unlink($previousFilePath);
+                }
+            }
+        }
+
+        $module->delete();
+
+        return $this->success([], 'Module deleted successfully', 200);
     }
 
 }
