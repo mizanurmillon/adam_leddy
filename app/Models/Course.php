@@ -59,4 +59,14 @@ class Course extends Model
     {
         return $this->hasMany(Bookmark::class);
     }
+
+    public function courseWatches()
+    {
+        return $this->hasMany(CourseWatch::class);
+    }
+
+    public function progress()
+    {
+        return $this->hasMany(CourseProgress::class);
+    }
 }
