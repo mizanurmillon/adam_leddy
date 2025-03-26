@@ -75,11 +75,12 @@ class CourseController extends Controller
             'modules.videos'
         ])->find($id);
 
-        $course->is_bookmarked = $course->bookmarks()->where('user_id', auth()->id())->exists();
-
         if (!$course) {
             return $this->error([], 'Course Not Found', 404);
         }
+
+        $course->is_bookmarked = $course->bookmarks()->where('user_id', auth()->id())->exists();
+
 
         return $this->success($course, 'Course found successfully', 200);
     }
