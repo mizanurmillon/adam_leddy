@@ -3,6 +3,7 @@
 use App\Http\Controllers\Api\Student\BookmarkController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\Student\CourseController;
+use App\Http\Controllers\Api\Student\CourseWatchTimeAndProgressController;
 use App\Http\Controllers\Api\Student\InstractorController;
 
 //User Profile
@@ -22,6 +23,10 @@ Route::group(['middleware' => ['jwt.verify']], function () {
         Route::controller(BookmarkController::class)->prefix('course')->group(function () {
             Route::post('/bookmark/toggle/{id}', 'toggleBookmark');
             Route::get('/bookmarks', 'getBookmarks');
+        });
+
+        Route::controller(CourseWatchTimeAndProgressController::class)->prefix('course')->group(function () {
+            Route::post('/watch', 'watch');
         });
     });
 

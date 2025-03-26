@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers\Api\Instructor;
 
 use App\Http\Controllers\Controller;
@@ -43,8 +44,8 @@ class CourseController extends Controller
             return $this->error([], 'User Not Found', 404);
         }
         $thumbnailName = $request->hasFile('thumbnail')
-        ? uploadImage($request->file('thumbnail'), 'course')
-        : null;
+            ? uploadImage($request->file('thumbnail'), 'course')
+            : null;
 
         $course = Course::create([
             'instructor_id' => $data->instructor->id,
@@ -79,8 +80,8 @@ class CourseController extends Controller
         }
 
         $fileName = $request->hasFile('file_url')
-        ? uploadImage($request->file('file_url'), 'course')
-        : null;
+            ? uploadImage($request->file('file_url'), 'course')
+            : null;
 
         $course = Course::findOrFail($id);
 
@@ -145,7 +146,6 @@ class CourseController extends Controller
             } else {
                 return $this->error([], "Video duration retrieval failed", 422);
             }
-
         } catch (\Exception $e) {
             return $this->error([], "Video upload failed: " . $e->getMessage(), 500);
         }
@@ -484,7 +484,7 @@ class CourseController extends Controller
             return $this->error([], 'You don’t have permission to delete modules', 403);
         }
 
-        $data = User::with('instructor')->where('id', $user->id)->first();  
+        $data = User::with('instructor')->where('id', $user->id)->first();
 
         if (! $data || ! $data->instructor) {
             return $this->error([], 'Instructor Not Found', 404);

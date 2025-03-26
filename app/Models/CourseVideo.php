@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 class CourseVideo extends Model
 {
     use HasFactory;
-    
+
     protected $guarded = [];
 
     /**
@@ -30,11 +30,22 @@ class CourseVideo extends Model
     {
         return [
             'id' => 'integer',
-            'courese_module_id' => 'integer',
+            'course_module_id' => 'integer',
         ];
     }
 
-    public function courseModule(){
+    public function courseModule()
+    {
         return $this->belongsTo(CourseModule::class);
+    }
+
+    public function courseWatches()
+    {
+        return $this->hasMany(CourseWatch::class);
+    }
+
+    public function progress()
+    {
+        return $this->hasMany(CourseProgress::class);
     }
 }
