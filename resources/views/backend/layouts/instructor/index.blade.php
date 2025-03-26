@@ -71,7 +71,7 @@
 
         <div class="se--table--layout">
             <div class="se--table--row1">
-                <p class="se--subtext">Pending Approvals</p>
+                <p class="se--subtext">Instructors List</p>
 
             </div>
             <div class="se-table-container">
@@ -86,103 +86,40 @@
                         </tr>
                     </thead>
                     <tbody class="se-tbody">
-                        <tr class="se-tr">
-                            <td class="se-td">Tadhg Kavanagh</td>
-                            <td class="se-td">22 H</td>
-                            <td class="se-td"><button class="btn btn-danger">Block</button></td>
-                            <td class="se-td">
-                                <div class="form-check form-switch ">
-                                    <input class="form-check-input py-lg-3 py-2 px-3 px-lg-4" type="checkbox" role="switch"
-                                        id="flexSwitchCheckDefault">
-                                </div>
-                            </td>
-                            <td class="se-td">
-                                <a href="{{ route('admin.instructors.details') }}" class="text-decoration-underline fw-bold text-white">View
-                                    Details</a>
-                            </td>
-                        </tr>
-
-                        <tr class="se-tr">
-                            <td class="se-td">Tadhg Kavanagh</td>
-                            <td class="se-td">22 H</td>
-                            <td class="se-td"><button class="btn btn-primary">Unblock</button></td>
-                            <td class="se-td">
-                                <div class="form-check form-switch ">
-                                    <input class="form-check-input py-lg-3 py-2 px-3 px-lg-4" type="checkbox" role="switch"
-                                        id="flexSwitchCheckDefault">
-                                </div>
-                            </td>
-                            <td class="se-td">
-                                <a href="{{ route('admin.instructors.details') }}" class="text-decoration-underline fw-bold text-white">View
-                                    Details</a>
-                            </td>
-                        </tr> text-white
-                        <tr class="se-tr">
-                            <td class="se-td">Tadhg Kavanagh</td>
-                            <td class="se-td">22 H</td>
-                            <td class="se-td"><button class="btn btn-danger">Block</button></td>
-                            <td class="se-td">
-                                <div class="form-check form-switch ">
-                                    <input class="form-check-input py-lg-3 py-2 px-3 px-lg-4" type="checkbox" role="switch"
-                                        id="flexSwitchCheckDefault">
-                                </div>
-                            </td>
-                            <td class="se-td">
-                                <a href="{{ route('admin.instructors.details') }}"
-                                    class="text-decoration-underline fw-bold text-white">View Details</a>
-                            </td>
-                        </tr>
-
-                        <tr class="se-tr">
-                            <td class="se-td">Tadhg Kavanagh</td>
-                            <td class="se-td">22 H</td>
-                            <td class="se-td"><button class="btn btn-primary">Unblock</button></td>
-                            <td class="se-td">
-                                <div class="form-check form-switch ">
-                                    <input class="form-check-input py-lg-3 py-2 px-3 px-lg-4" type="checkbox"
-                                        role="switch" id="flexSwitchCheckDefault">
-                                </div>
-                            </td>
-                            <td class="se-td">
-                                <a href="{{ route('admin.instructors.details') }}"
-                                    class="text-decoration-underline fw-bold text-white">View Details</a>
-                            </td>
-                        </tr>
-
-
-                        <tr class="se-tr">
-                            <td class="se-td">Tadhg Kavanagh</td>
-                            <td class="se-td">22 H</td>
-                            <td class="se-td"><button class="btn btn-danger">Block</button></td>
-                            <td class="se-td">
-                                <div class="form-check form-switch ">
-                                    <input class="form-check-input py-lg-3 py-2 px-3 px-lg-4" type="checkbox"
-                                        role="switch" id="flexSwitchCheckDefault">
-                                </div>
-                            </td>
-                            <td class="se-td">
-                                <a href="{{ route('admin.instructors.details') }}"
-                                    class="text-decoration-underline fw-bold text-white">View Details</a>
-                            </td>
-                        </tr>
-
-                        <tr class="se-tr">
-                            <td class="se-td">Tadhg Kavanagh</td>
-                            <td class="se-td">22 H</td>
-                            <td class="se-td"><button class="btn btn-primary">Unblock</button></td>
-                            <td class="se-td">
-                                <div class="form-check form-switch ">
-                                    <input class="form-check-input py-lg-3 py-2 px-3 px-lg-4" type="checkbox"
-                                        role="switch" id="flexSwitchCheckDefault">
-                                </div>
-                            </td>
-                            <td class="se-td">
-                                <a href="{{ route('admin.instructors.details') }}"
-                                    class="text-decoration-underline fw-bold text-white">View Details</a>
-                            </td>
-                        </tr>
-
-
+                        @foreach ($instructors as $instructor)
+                            <tr class="se-tr">
+                                <td class="se-td">{{ $instructor->first_name }} {{ $instructor->last_name }}</td>
+                                <td class="se-td">
+                                    @php
+                                        $totalMinutes = $instructor->instructor->courses->flatMap->courseWatches->sum(
+                                            'watch_time',
+                                        );
+                                        $hours = floor($totalMinutes / 60);
+                                        $minutes = $totalMinutes % 60;
+                                    @endphp
+                                    {{ $hours }}h {{ $minutes }}m
+                                </td>
+                                <td class="se-td">
+                                    @if ($instructor->status == 'active')
+                                        <button class="btn btn-success">Active</button>
+                                    @else
+                                        <button class="btn btn-danger">Blocked</button>
+                                    @endif
+                                </td>
+                                <td class="se-td">
+                                    <div class="form-check form-switch ">
+                                        <input class="form-check-input py-lg-3 py-2 px-3 px-lg-4" type="checkbox"
+                                            @if ($instructor->status == 'active') checked @endif role="switch"
+                                            id="flexSwitchCheckDefault">
+                                    </div>
+                                </td>
+                                <td class="se-td">
+                                    <a href="{{ route('admin.instructors.details') }}"
+                                        class="text-decoration-underline fw-bold text-white">View
+                                        Details</a>
+                                </td>
+                            </tr>
+                        @endforeach
 
                     </tbody>
                 </table>
@@ -191,36 +128,18 @@
             </div>
         </div>
 
-
         <div class="d-flex justify-content-end">
             <div class="se--category-section">
-                <button class="bg-danger se-category-btn">
-                    1
-                </button>
-                <button class=" se-category-btn">
-                    2
-                </button>
-                <button class=" se-category-btn">
-                    3
-                </button>
-
-                <button class=" se-category-btn">
-                    .
-                </button>
-                <button class=" se-category-btn">
-                    .
-                </button>
-                <button class="bg-danger se-category-btn">
-                    7
-                </button>
-                <button class=" se-category-btn">
-                    8
-                </button>
-                <button class=" se-category-btn">
-                    9
-                </button>
+                @foreach ($instructors->getUrlRange(1, $instructors->lastPage()) as $page => $url)
+                    <a href="{{ $url }}">
+                        <button class="{{ $page == $instructors->currentPage() ? 'bg-danger' : '' }} se-category-btn">
+                            {{ $page }}
+                        </button>
+                    </a>
+                @endforeach
             </div>
         </div>
+
     </div>
 @endsection
 
