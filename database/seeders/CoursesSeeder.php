@@ -60,9 +60,9 @@ class CoursesSeeder extends Seeder
 
         if (Schema::hasTable('course_videos')) {
             DB::table('course_videos')->insert([
-                ['course_module_id' => 1, 'video_url' => 'https://youtu.be/UsLXGkAD2mo?si=kra4yQ_a7wb5Jv6K', 'file_url' => null, 'duration' => 1200, 'created_at' => now(), 'updated_at' => now()],
-                ['course_module_id' => 2, 'video_url' => 'https://youtu.be/7NOOgEiKTq8?si=fDjAIfa5i_0I9nke', 'file_url' => null, 'duration' => 1800, 'created_at' => now(), 'updated_at' => now()],
-                ['course_module_id' => 3, 'video_url' => 'https://youtu.be/01l0s1iR_ZI?si=CCaWaAjYZsIeAUZX', 'file_url' => null, 'duration' => 1500, 'created_at' => now(), 'updated_at' => now()],
+                ['course_module_id' => 1, 'video_url' => 'https://vimeo.com/manage/videos/1069882664', 'file_url' => null, 'duration' => 1200, 'created_at' => now(), 'updated_at' => now()],
+                ['course_module_id' => 2, 'video_url' => 'https://vimeo.com/manage/videos/1069903040', 'file_url' => null, 'duration' => 1800, 'created_at' => now(), 'updated_at' => now()],
+                ['course_module_id' => 3, 'video_url' => 'https://vimeo.com/manage/videos/1069882664', 'file_url' => null, 'duration' => 1500, 'created_at' => now(), 'updated_at' => now()],
             ]);
         }
 
