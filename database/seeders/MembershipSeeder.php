@@ -2,21 +2,16 @@
 
 namespace Database\Seeders;
 
-use App\Models\Subscription;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
-class SubscriptionSeeder extends Seeder
+class MembershipSeeder extends Seeder
 {
     /**
      * Run the database seeds.
      */
     public function run(): void
     {
-        Subscription::create([
-            'name' => 'Monthly Subscription',
-            'price' => 8,
-            'type' => 'monthly',
-        ]);
+        //
     }
 }

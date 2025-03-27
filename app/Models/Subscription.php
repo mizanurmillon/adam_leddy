@@ -9,4 +9,14 @@ class Subscription extends Model
     protected $fillable = ['name', 'price'];
 
     protected $hidden = ['created_at', 'updated_at'];
+
+    public function memberships()
+    {
+        return $this->hasMany(Membership::class);
+    }
+
+    public function membershipHistories()
+    {
+        return $this->hasMany(MembershipHistory::class);
+    }
 }

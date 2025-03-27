@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\Student\CourseController;
 use App\Http\Controllers\Api\Student\CourseWatchTimeAndProgressController;
 use App\Http\Controllers\Api\Student\InstractorController;
+use App\Http\Controllers\Api\Student\PaymentController;
 use App\Http\Controllers\Api\Student\SubscriptionController;
 use App\Http\Controllers\Api\Student\WatchListController;
 
@@ -38,7 +39,18 @@ Route::group(['middleware' => ['jwt.verify']], function () {
         Route::controller(SubscriptionController::class)->group(function () {
             Route::get('/subscription-plans', 'subscriptionPlans');
         });
+
+        Route::controller(PaymentController::class)->prefix('student')->group(function () {
+            Route::post('/checkout', 'checkout');
+            Route::post('/checkout-success', 'checkoutSuccess')->name('checkout.success');
+            Route::post('/checkout-cancel', 'checkoutCancel')->name('checkout.cancel');
+        });
     });
 
     Route::group(['middleware' => ['instructor']], function () {});
+});
+
+Route::controller(PaymentController::class)->group(function () {
+    Route::get('/checkout-success', 'checkoutSuccess')->name('checkout.success');
+    Route::get('/checkout-cancel', 'checkoutCancel')->name('checkout.cancel');
 });

@@ -87,4 +87,14 @@ class User extends Authenticatable implements JWTSubject
     {
         return $this->hasMany(CourseProgress::class);
     }
+
+    public function memberships()
+    {
+        return $this->hasMany(Membership::class);
+    }
+
+    public function membershipHistories()
+    {
+        return $this->hasMany(MembershipHistory::class);
+    }
 }

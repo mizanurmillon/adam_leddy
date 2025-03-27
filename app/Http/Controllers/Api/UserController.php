@@ -19,37 +19,40 @@ class UserController extends Controller
      * @return \Illuminate\Http\JsonResponse  JSON response with success or error.
      */
 
-    public function getUserData() {
+    public function getUserData()
+    {
 
         $user = auth()->user();
 
         if (!$user) {
-            return $this->error([], 'User Not Found', 404);
+            return $this->error([], 'User Not Found', 200);
         }
 
-        if($user->role == 'instructor') {
+        if ($user->role == 'instructor') {
             $user->load('instructor');
         }
         return $this->success($user, 'User data fetched successfully', 200);
     }
 
-    public function updateUserData(Request $request) {
+    public function updateUserData(Request $request)
+    {
 
         $user = auth()->user();
 
         if (!$user) {
-            return $this->error([], 'User Not Found', 404);
+            return $this->error([], 'User Not Found', 200);
         }
 
         $user->first_name = $request->first_name;
         $user->last_name = $request->last_name;
         $user->email = $request->email;
-        $user->save();  
+        $user->save();
 
         return $this->success($user, 'User data updated successfully', 200);
     }
 
-    public function updateUserImage(Request $request) {
+    public function updateUserImage(Request $request)
+    {
 
         $validator = Validator::make($request->all(), [
             'avatar' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
@@ -62,7 +65,7 @@ class UserController extends Controller
         $user = auth()->user();
 
         if (!$user) {
-            return $this->error([], 'User Not Found', 404);
+            return $this->error([], 'User Not Found', 200);
         }
 
         if ($request->hasFile('avatar')) {
@@ -84,7 +87,8 @@ class UserController extends Controller
         return $this->success($user, 'User image updated successfully', 200);
     }
 
-    public function userLogout(Request $request) {
+    public function userLogout(Request $request)
+    {
         try {
             JWTAuth::invalidate(JWTAuth::getToken());
 
@@ -94,7 +98,8 @@ class UserController extends Controller
         }
     }
 
-    public function changePassword(Request $request) {
+    public function changePassword(Request $request)
+    {
         $validator = Validator::make($request->all(), [
             'current_password' => 'required|string',
             'password' => [
@@ -114,7 +119,7 @@ class UserController extends Controller
         $user = auth()->user();
 
         if (!$user) {
-            return $this->error([], 'User Not Found', 404);
+            return $this->error([], 'User Not Found', 200);
         }
 
         // Check if the current password matches

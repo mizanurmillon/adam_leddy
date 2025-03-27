@@ -15,7 +15,7 @@ class SubscriptionController extends Controller
         $data = Subscription::all();
 
         if ($data->isEmpty()) {
-            return $this->error([], 'Subscription Plans Not Found', 404);
+            return $this->error([], 'Subscription Plans Not Found', 200);
         }
 
         return $this->success($data, 'Subscription Plans found successfully', 200);

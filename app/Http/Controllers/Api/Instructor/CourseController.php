@@ -35,13 +35,13 @@ class CourseController extends Controller
         $user = auth()->user();
 
         if ($user->status != "active") {
-            return $this->error([], 'You don’t have permission to upload courses', 404);
+            return $this->error([], 'You don’t have permission to upload courses', 200);
         }
 
         $data = User::with('instructor')->where('role', 'instructor')->where('id', $user->id)->first();
 
         if (! $user) {
-            return $this->error([], 'User Not Found', 404);
+            return $this->error([], 'User Not Found', 200);
         }
         $thumbnailName = $request->hasFile('thumbnail')
             ? uploadImage($request->file('thumbnail'), 'course')
@@ -176,7 +176,7 @@ class CourseController extends Controller
         $data = User::with('instructor')->where('id', $user->id)->first();
 
         if (! $user) {
-            return $this->error([], 'User Not Found', 404);
+            return $this->error([], 'User Not Found', 200);
         }
 
         $course = Course::with('instructor.user:id,first_name,last_name,role', 'category', 'tags', 'modules.videos')->where('instructor_id', $data->instructor->id);
@@ -199,7 +199,7 @@ class CourseController extends Controller
         $course = $course->get();
 
         if ($course->isEmpty()) {
-            return $this->error([], 'Course Not Found', 404);
+            return $this->error([], 'Course Not Found', 200);
         }
 
         return $this->success($course, 'Course found successfully', 200);
@@ -212,13 +212,13 @@ class CourseController extends Controller
         $data = User::with('instructor')->where('id', $user->id)->first();
 
         if (! $user) {
-            return $this->error([], 'User Not Found', 404);
+            return $this->error([], 'User Not Found', 200);
         }
 
         $course = Course::with('instructor.user:id,first_name,last_name,role', 'category', 'tags', 'modules.videos')->where('instructor_id', $data->instructor->id)->where('id', $id)->first();
 
         if (! $course) {
-            return $this->error([], 'Course Not Found', 404);
+            return $this->error([], 'Course Not Found', 200);
         }
 
         return $this->success($course, 'Course found successfully', 200);
@@ -241,19 +241,19 @@ class CourseController extends Controller
         $user = auth()->user();
 
         if ($user->status != "active") {
-            return $this->error([], 'You don’t have permission to upload courses', 404);
+            return $this->error([], 'You don’t have permission to upload courses', 200);
         }
 
         $data = User::with('instructor')->where('id', $user->id)->first();
 
         if (! $user) {
-            return $this->error([], 'User Not Found', 404);
+            return $this->error([], 'User Not Found', 200);
         }
 
         $course = Course::where('instructor_id', $data->instructor->id)->where('id', $id)->first();
 
         if (! $course) {
-            return $this->error([], 'Course Not Found', 404);
+            return $this->error([], 'Course Not Found', 200);
         }
 
         // Thumbnail Upload
@@ -301,7 +301,7 @@ class CourseController extends Controller
 
         $Course_module = CourseModule::with('videos')->find($id);
         if (! $Course_module) {
-            return $this->error([], 'Module Not Found', 404);
+            return $this->error([], 'Module Not Found', 200);
         }
 
         // Handle File Upload
@@ -397,7 +397,7 @@ class CourseController extends Controller
         $user = auth()->user();
 
         if (! $user) {
-            return $this->error([], 'User Not Found', 404);
+            return $this->error([], 'User Not Found', 200);
         }
 
         if ($user->status != "active") {
@@ -407,13 +407,13 @@ class CourseController extends Controller
         $data = User::with('instructor')->where('id', $user->id)->first();
 
         if (! $data || ! $data->instructor) {
-            return $this->error([], 'Instructor Not Found', 404);
+            return $this->error([], 'Instructor Not Found', 200);
         }
 
         $course = Course::with('modules.videos')->where('instructor_id', $data->instructor->id)->where('id', $id)->first();
 
         if (! $course) {
-            return $this->error([], 'Course Not Found', 404);
+            return $this->error([], 'Course Not Found', 200);
         }
 
         $vimeo = new Vimeo(env('VIMEO_CLIENT'), env('VIMEO_SECRET'), env('VIMEO_ACCESS'));
@@ -458,7 +458,7 @@ class CourseController extends Controller
         $user = auth()->user();
 
         if ($user->status != "active") {
-            return $this->error([], 'You don’t have permission to upload courses', 404);
+            return $this->error([], 'You don’t have permission to upload courses', 200);
         }
 
         $course = Course::where('id', $id)->update([
@@ -466,7 +466,7 @@ class CourseController extends Controller
         ]);
 
         if (! $course) {
-            return $this->error([], 'Course Not Found', 404);
+            return $this->error([], 'Course Not Found', 200);
         }
 
         return $this->success($course, 'Course submitted for approval successfully', 200);
@@ -477,7 +477,7 @@ class CourseController extends Controller
         $user = auth()->user();
 
         if (! $user) {
-            return $this->error([], 'User Not Found', 404);
+            return $this->error([], 'User Not Found', 200);
         }
 
         if ($user->status != "active") {
@@ -487,13 +487,13 @@ class CourseController extends Controller
         $data = User::with('instructor')->where('id', $user->id)->first();
 
         if (! $data || ! $data->instructor) {
-            return $this->error([], 'Instructor Not Found', 404);
+            return $this->error([], 'Instructor Not Found', 200);
         }
 
         $module = CourseModule::with('videos')->where('id', $id)->first();
 
         if (! $module) {
-            return $this->error([], 'Module Not Found', 404);
+            return $this->error([], 'Module Not Found', 200);
         }
 
         $vimeo = new Vimeo(env('VIMEO_CLIENT'), env('VIMEO_SECRET'), env('VIMEO_ACCESS'));
@@ -520,5 +520,4 @@ class CourseController extends Controller
 
         return $this->success([], 'Module deleted successfully', 200);
     }
-
 }

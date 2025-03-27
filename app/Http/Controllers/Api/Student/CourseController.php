@@ -57,7 +57,7 @@ class CourseController extends Controller
         });
 
         if ($courses->isEmpty()) {
-            return $this->error([], 'Course Not Found', 404);
+            return $this->error([], 'Course Not Found', 200);
         }
 
         return $this->success($courses, 'Course fetch successfully', 200);
@@ -76,7 +76,7 @@ class CourseController extends Controller
         ])->where('status', 'approved')->find($id);
 
         if (!$course) {
-            return $this->error([], 'Course Not Found', 404);
+            return $this->error([], 'Course Not Found', 200);
         }
 
         $course->is_bookmarked = $course->bookmarks()->where('user_id', auth()->id())->exists();
