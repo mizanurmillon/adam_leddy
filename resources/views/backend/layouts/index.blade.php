@@ -114,21 +114,25 @@
                 </div>
             </div>
         </div>
-        <div class="se--pending--approval-layout">
+         <div class="se--pending--approval-layout">
             <div class="se--pending-1">
-                <p Month class="se--card-pera">Pending Approvals</p>
+                <p Month class="se--card-pera">Total Course</p>
                 <p class="se--card--number">24</p>
 
             </div>
             <div class="se--pending-2">
-                <p Month class="se--card-pera1">Pending Approvals</p>
+                <p Month class="se--card-pera1">Total Category</p>
                 <p style="color: black;" class="se--card--number">24</p>
 
             </div>
+            <div class="se--pending-2">
+                <p Month class="se--card-pera1">Total Tags</p>
+                <p style="color: black;" class="se--card--number">24</p>
 
+            </div>
         </div>
 
-        <div class="se--table--layout">
+       {{-- <div class="se--table--layout">
             <div class="se--table--row1">
                 <p class="se--subtext">Pending Approvals</p>
                 <a style="text-decoration: underline !important;" href="#" class="se--subtext1">View All Approvals</a>
@@ -182,6 +186,6 @@
 
 
             </div>
-        </div>
+        </div> --}}
     </div>
 @endsection

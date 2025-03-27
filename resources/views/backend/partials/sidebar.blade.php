@@ -46,7 +46,7 @@
                 </svg>
                 <span class="title">Courses</span>
             </a>
-            <a href="{{ route('admin.approval.index') }}" class="item {{ Route::is('admin.approval.*') ? 'active' : '' }}">
+            {{-- <a href="{{ route('admin.approval.index') }}" class="item {{ Route::is('admin.approval.*') ? 'active' : '' }}">
                 <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18"
                     fill="none">
                     <path
@@ -54,7 +54,7 @@
                         fill="" />
                 </svg>
                 <span class="title">Approvals</span>
-            </a>
+            </a> --}}
             <a href="{{ Route('admin.categories.index') }}" class="item {{ request()->routeIs('admin.categories.index') ? 'active' : '' }}">
                 <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18"
                     fill="none">

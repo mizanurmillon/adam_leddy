@@ -3,7 +3,7 @@
  <script src="{{ asset('backend/assets/js/plugins.js') }}"></script>
  <script src="{{ asset('backend/assets/js/main.js') }}"></script>
  <script src="{{ asset('backend/assets/js/toastr.min.js') }}"></script>
-
+ <script src="{{ asset('backend/assets/js/sweetalert2@11.js') }}"></script>
  <script>
      $(document).ready(function() {
          $(".nice-select").niceSelect();
