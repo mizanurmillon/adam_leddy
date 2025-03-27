@@ -72,18 +72,17 @@
                     <p class="fw-semibold">Courses</p>
                     <p class="fw-semibold">Watch Time</p>
                 </div>
-                <div class="  d-flex justify-content-between px-4 py-3 bg-dark">
-                    <p>Free Artificial Intelligence Course</p>
-                    <p>439 H</p>
-                </div>
-                <div class="  d-flex justify-content-between px-4 py-3 bg-dark">
-                    <p>Beginning C++ Programming</p>
-                    <p>439 H</p>
-                </div>
-                <div class="  d-flex justify-content-between px-4 py-3 bg-dark">
-                    <p>AI Fundamentals</p>
-                    <p>439 H</p>
-                </div>
+                @foreach ($courses as $course)
+                    @php
+                        $totalSeconds = $course->courseWatches->sum('watch_time');
+                        $hours = floor($totalSeconds / 3600);
+                        $minutes = floor(($totalSeconds % 3600) / 60);
+                    @endphp
+                    <div class="d-flex justify-content-between px-4 py-3 bg-dark">
+                        <p>{{ $course->title }}</p>
+                        <p>{{ $hours }}H {{ $minutes }}M</p>
+                    </div>
+                @endforeach
             </div>
 
             <div class=" rounded item">
@@ -93,25 +92,24 @@
                     <p class="fw-semibold">Instructor</p>
                     <p class="fw-semibold">Watch Time</p>
                 </div>
-                <div class="  d-flex justify-content-between px-4 py-3 bg-dark">
-                    <p>Tadhg Kavanagh</p>
-                    <p>439 H</p>
-                </div>
-                <div class="  d-flex justify-content-between px-4 py-3 bg-dark">
-                    <p>Tadhg Kavanagh</p>
-                    <p>439 H</p>
-                </div>
-                <div class="  d-flex justify-content-between px-4 py-3 bg-dark">
-                    <p>Tadhg Kavanagh</p>
-                    <p>439 H</p>
-                </div>
+                @foreach ($courses as $course)
+                    @php
+                        $totalSeconds = $course->courseWatches->sum('watch_time');
+                        $hours = floor($totalSeconds / 3600);
+                        $minutes = floor(($totalSeconds % 3600) / 60);
+                    @endphp
+                    <div class="d-flex justify-content-between px-4 py-3 bg-dark">
+                        <p>{{ $course->instructor->user->first_name }} {{ $course->instructor->user->last_name }}</p>
+                        <p>{{ $hours }}H {{ $minutes }}M</p>
+                    </div>
+                @endforeach
             </div>
         </div>
 
         <!-- graph  -->
         <div class="ak-graph-flex align-items-center ">
             <div class="w-75">
-                <p class="se--subtext ak-my-3">Watch Time Of Instructors</p>
+                <p class="se--subtext ak-my-3">Watch Time Of Courses</p>
                 <div id="chart" class=""></div>
             </div>
             <div class="d-lg-flex flex-column gap-3">
@@ -135,6 +133,8 @@
 
 @push('script')
     <script>
+        var courseData = @json($courseData); 
+
         var options = {
             chart: {
                 type: 'bar',
@@ -142,7 +142,7 @@
                 background: '#191919',
                 toolbar: {
                     show: false
-                } // Remove the toolbar
+                }
             },
             plotOptions: {
                 bar: {
@@ -150,41 +150,17 @@
                     barHeight: '30%',
                 }
             },
-            colors: ['#00FF00', '#FFC107', '#FF0000'], // Green, Yellow, Red
+            colors: ['#00FF00', '#FFC107', '#FF0000'], 
             series: [{
                 name: 'Watch Time (Hours)',
-                data: [{
-                        x: 'Programming',
-                        y: 10.5,
-                        fillColor: '#FFC107'
-                    },
-                    {
-                        x: 'Design',
-                        y: 14.4,
-                        fillColor: '#00FF00'
-                    },
-                    {
-                        x: 'Data Analysis',
-                        y: 8.8,
-                        fillColor: '#FFC107'
-                    },
-                    {
-                        x: 'Database',
-                        y: 18.2,
-                        fillColor: '#00FF00'
-                    },
-                    {
-                        x: 'AI',
-                        y: 8.2,
-                        fillColor: '#FFC107'
-                    },
-                    {
-                        x: 'Cloud Computing',
-                        y: 12.4,
-                        fillColor: '#00FF00'
-                    }
-                ]
-
+                data: courseData.map(function(course) {
+                    return {
+                        x: course.name, 
+                        y: course.watch_time, 
+                        fillColor: getFillColor(course
+                            .watch_time) 
+                    };
+                })
             }],
             xaxis: {
                 title: {
@@ -205,24 +181,13 @@
             },
             legend: {
                 show: true,
-                position: 'top', // Position the legend at the top
+                position: 'top',
                 labels: {
-                    colors: ['#fff'], // Legend text color
-                    useSeriesColors: false // Disable automatic color assignment
+                    colors: ['#fff'],
+                    useSeriesColors: false
                 },
                 markers: {
-                    fillColors: ['#00FF00', '#FFC107', '#FF0000'] // Custom colors for legend markers
-                },
-                formatter: function(seriesName, opts) {
-                    // Custom legend labels
-                    if (seriesName === 'Watch Time (Hours)') {
-                        return [
-                            '<span style="color: #00FF00;">High Watch Time</span>',
-                            '<span style="color: #FFC107;">Medium Watch Time</span>',
-                            '<span style="color: #FF0000;">Low Watch Time</span>'
-                        ].join(' | ');
-                    }
-                    return seriesName;
+                    fillColors: ['#00FF00', '#FFC107', '#FF0000']
                 }
             },
             grid: {
@@ -232,5 +197,16 @@
 
         var chart = new ApexCharts(document.querySelector("#chart"), options);
         chart.render();
+
+        // Function to dynamically get color based on watch time
+        function getFillColor(watchTime) {
+            if (watchTime > 14) {
+                return '#00FF00'; // High Watch Time (Green)
+            } else if (watchTime >= 8 && watchTime <= 14) {
+                return '#FFC107'; // Medium Watch Time (Yellow)
+            } else {
+                return '#FF0000'; // Low Watch Time (Red)
+            }
+        }
     </script>
 @endpush

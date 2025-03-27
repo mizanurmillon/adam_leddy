@@ -93,7 +93,7 @@
             </div>
 
             <p>To get started, please click the button below to log in to your account:</p>
-            <a href="/" class="cta-button"
+            <a href="https://bjjsource.netlify.app" class="cta-button"
                 style="text-decoration: none; color:#ffffff">Log In Now</a>
 
             <p>If you have any questions or need assistance, feel free to contact our support team.</p>
