@@ -1,5 +1,5 @@
 @extends('backend.app')
-@section('title', 'Users')
+@section('title', 'Instructors') 
 @push('style')
     <!-- custom css -->
     <link rel="stylesheet" href="{{ asset('backend/assets/css/ashiq.css') }}" />
@@ -23,7 +23,7 @@
         <div class="se--overview--layout">
             <div class="se--overview-cards-layout">
                 <div class="se--overview--card--layout">
-                    <p class="se--card-head">Instructor Signups</p>
+                    <p class="se--card-head">Instructor Sign Up</p>
                     <div class="se--overview-card">
                         <div class="se--over--card-row">
                             <div class="se--month-row">
@@ -128,17 +128,56 @@
             </div>
         </div>
 
-        <div class="d-flex justify-content-end">
-            <div class="se--category-section">
-                @foreach ($instructors->getUrlRange(1, $instructors->lastPage()) as $page => $url)
-                    <a href="{{ $url }}">
-                        <button class="{{ $page == $instructors->currentPage() ? 'bg-danger' : '' }} se-category-btn">
-                            {{ $page }}
-                        </button>
-                    </a>
-                @endforeach
-            </div>
+        <div class="robi-pagination">
+            {{-- Previous Button --}}
+            @if ($instructors->onFirstPage())
+                <span class="robi-page disabled">&laquo;</span>
+            @else
+                <a href="{{ $instructors->previousPageUrl() }}" class="robi-page">&laquo;</a>
+            @endif
+        
+            @php
+                $start = max(1, $instructors->currentPage() - 2);
+                $end = min($instructors->lastPage(), $instructors->currentPage() + 2);
+            @endphp
+        
+            {{-- First Page --}}
+            @if ($start > 1)
+                <a href="{{ $instructors->url(1) }}" class="robi-page">1</a>
+            @endif
+        
+            {{-- Dots before current range --}}
+            @if ($start > 2)
+                <span class="robi-dots">...</span>
+            @endif
+        
+            {{-- Page Numbers --}}
+            @for ($page = $start; $page <= $end; $page++)
+                @if ($page == $instructors->currentPage())
+                    <span class="robi-page active">{{ $page }}</span>
+                @else
+                    <a href="{{ $instructors->url($page) }}" class="robi-page">{{ $page }}</a>
+                @endif
+            @endfor
+        
+            {{-- Dots after current range --}}
+            @if ($end < $instructors->lastPage() - 1)
+                <span class="robi-dots">...</span>
+            @endif
+        
+            {{-- Last Page --}}
+            @if ($end < $instructors->lastPage())
+                <a href="{{ $instructors->url($instructors->lastPage()) }}" class="robi-page">{{ $instructors->lastPage() }}</a>
+            @endif
+        
+            {{-- Next Button --}}
+            @if ($instructors->hasMorePages())
+                <a href="{{ $instructors->nextPageUrl() }}" class="robi-page">&raquo;</a>
+            @else
+                <span class="robi-page disabled">&raquo;</span>
+            @endif
         </div>
+        
 
     </div>
 @endsection

@@ -32,7 +32,7 @@ class CoursesSeeder extends Seeder
                     'title' => 'Vue.js for Beginners',
                     'description' => 'Get started with Vue.js and build interactive web applications.',
                     'thumbnail' => 'backend/assets/images/thumbnail/2.jpg',
-                    'status' => 'pending',
+                    'status' => 'approved',
                     'created_at' => now(),
                     'updated_at' => now(),
                 ],

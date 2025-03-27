@@ -7,6 +7,7 @@
 
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css" />
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    
 @endpush
 @section('content')
     <div class="page-header">
@@ -20,26 +21,56 @@
     </div>
     <div class="page-title">User</div>
     <div class="robi-user-signup">
-        <p>User Signups</p>
+        <p>User Sign up</p>
         <div class="robi-user-signup-total">
             <div class="robi-user-signup-total-this-month">
                 <p class="">This Month</p>
-                <img src="{{ 'backend/assets/images/arrowUP.png' }}" alt="">
+                <img src="{{ asset('backend/assets/images/arrowUP.png') }}" alt="">
 
             </div>
-            <h1>578</h1>
+            <h1>{{ $monthlyUsersCount }}</h1>
             <p>All Time</p>
-            <h1>9382</h1>
+            <h1>{{ $users->total() }}</h1>
         </div>
         <div class="robi-pagination">
-            <button class="robi-page active">1</button>
-            <button class="robi-page">2</button>
-            <button class="robi-page">3</button>
-            <span class="robi-dots">...</span>
-            <button class="robi-page">78</button>
-            <button class="robi-page">79</button>
-            <button class="robi-page">79</button>
-            <button class="robi-page">80</button>
+            @if ($users->onFirstPage())
+                <a href="{{ $users->previousPageUrl() }}" class="robi-page">&laquo;</a>
+            @else
+                <a href="{{ $users->previousPageUrl() }}" class="robi-page">&laquo;</a>
+            @endif
+
+            @php
+                $start = max(1, $users->currentPage() - 2);
+                $end = min($users->lastPage(), $users->currentPage() + 2);
+            @endphp
+
+            @if ($start > 1)
+                <button class="robi-page">1</button>
+            @endif
+
+            @if ($start > 2)
+                <span class="robi-dots">...</span>
+            @endif
+
+            @for ($page = $start; $page <= $end; $page++)
+                @if ($page == $users->currentPage())
+                    <button class="robi-page active">{{ $page }}</button>
+                @else
+                    <a href="{{ $users->url($page) }}" class="robi-page">{{ $page }}</a>
+                @endif
+            @endfor
+
+            @if ($end < $users->lastPage() - 1)
+                <span class="robi-dots">...</span>
+            @endif
+
+            @if ($end < $users->lastPage())
+                <button class="robi-page">{{ $users->lastPage() }}</button>
+            @endif
+
+            @if ($users->hasMorePages())
+                <a href="{{ $users->nextPageUrl() }}" class="robi-page">&raquo;</a>
+            @endif
         </div>
     </div>
     <!-- Table start -->
@@ -54,53 +85,18 @@
                 </tr>
             </thead>
             <tbody>
-                <tr>
-                    <td>1</td>
-                    <td>John</td>
-                    <td>Doe</td>
-                    <td>john.doe@example.com</td>
-                </tr>
-                <tr>
-                    <td>2</td>
-                    <td>Jane</td>
-                    <td>Smith</td>
-                    <td>jane.smith@example.com</td>
-                </tr>
-                <tr>
-                    <td>3</td>
-                    <td>Michael</td>
-                    <td>Johnson</td>
-                    <td>michael.johnson@example.com</td>
-                </tr>
-                <tr>
-                    <td>4</td>
-                    <td>Emily</td>
-                    <td>Brown</td>
-                    <td>emily.brown@example.com</td>
-                </tr>
-                <tr>
-                    <td>7</td>
-                    <td>Christopher</td>
-                    <td>Miller</td>
-                    <td>christopher.miller@example.com</td>
-                </tr>
-                <tr>
-                    <td>8</td>
-                    <td>Amanda</td>
-                    <td>Wilson</td>
-                    <td>amanda.wilson@example.com</td>
-                </tr>
-                <tr>
-                    <td>9</td>
-                    <td>Ryan</td>
-                    <td>Moore</td>
-                    <td>ryan.moore@example.com</td>
-                </tr>
+                @foreach ($users as $index => $user)
+                    <tr>
+                        <td>{{ $index + 1 }}</td>
+                        <td>{{ $user->first_name }}</td>
+                        <td>{{ $user->last_name }}</td>
+                        <td>{{ $user->email }}</td>
+                    </tr>
+                @endforeach
             </tbody>
         </table>
     </div>
 @endsection
 
 @push('script')
-    
 @endpush
