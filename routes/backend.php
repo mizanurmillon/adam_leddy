@@ -35,8 +35,8 @@ Route::controller(ApprovalController::class)->group(function () {
 
 Route::controller(InstructorController::class)->group(function () {
     Route::get('/instructors/index', 'index')->name('admin.instructors.index');
-    Route::get('/instructors/details', 'details')->name('admin.instructors.details');
-    Route::get('/instructors/video/details', 'content')->name('admin.instructors.video.details');
+    Route::get('/instructors/details/{id}', 'details')->name('admin.instructors.details');
+    Route::get('/instructors/video/details/{id}', 'content')->name('admin.instructors.video.details');
 
     // Instructor create 
     Route::get('/instructors/create', 'create')->name('admin.instructors.create');

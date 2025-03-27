@@ -88,10 +88,10 @@
                     <tbody class="se-tbody">
                         @foreach ($instructors as $instructor)
                             <tr class="se-tr">
-                                <td class="se-td">{{ $instructor->first_name }} {{ $instructor->last_name }}</td>
+                                <td class="se-td">{{ $instructor->user->first_name }} {{ $instructor->last_name }}</td>
                                 <td class="se-td">
                                     @php
-                                        $totalMinutes = $instructor->instructor->courses->flatMap->courseWatches->sum(
+                                        $totalMinutes = $instructor->courses->flatMap->courseWatches->sum(
                                             'watch_time',
                                         );
                                         $hours = floor($totalMinutes / 60);
@@ -100,7 +100,7 @@
                                     {{ $hours }}h {{ $minutes }}m
                                 </td>
                                 <td class="se-td">
-                                    @if ($instructor->status == 'active')
+                                    @if ($instructor->user->status == 'active')
                                         <button class="btn btn-success">Active</button>
                                     @else
                                         <button class="btn btn-danger">Blocked</button>
@@ -109,12 +109,12 @@
                                 <td class="se-td">
                                     <div class="form-check form-switch ">
                                         <input class="form-check-input py-lg-3 py-2 px-3 px-lg-4" type="checkbox"
-                                            @if ($instructor->status == 'active') checked @endif role="switch"
+                                            @if ($instructor->user->status == 'active') checked @endif role="switch"
                                             id="flexSwitchCheckDefault">
                                     </div>
                                 </td>
                                 <td class="se-td">
-                                    <a href="{{ route('admin.instructors.details') }}"
+                                    <a href="{{ route('admin.instructors.details', $instructor->id) }}"
                                         class="text-decoration-underline fw-bold text-white">View
                                         Details</a>
                                 </td>
