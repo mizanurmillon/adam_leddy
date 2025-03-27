@@ -16,6 +16,7 @@ class SubscriptionSeeder extends Seeder
         Subscription::create([
             'name' => 'Monthly Subscription',
             'price' => 8,
+            'type' => 'monthly',
         ]);
     }
 }

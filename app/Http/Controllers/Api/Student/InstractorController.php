@@ -37,7 +37,7 @@ class InstractorController extends Controller
         $data = $query->paginate($request->per_page ?? 30);
 
         if ($data->isEmpty()) {
-            return $this->error([], 'Instructor Not Found', 404);
+            return $this->error([], 'Instructor Not Found', 200);
         }
 
         return $this->success($data, 'Instructors found successfully', 200);
@@ -56,7 +56,7 @@ class InstractorController extends Controller
             ->first();
 
         if (!$data) {
-            return $this->error([], 'Instructor Not Found', 404);
+            return $this->error([], 'Instructor Not Found', 200);
         }
 
         return $this->success($data, 'Instructor found successfully', 200);

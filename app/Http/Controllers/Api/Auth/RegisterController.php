@@ -27,7 +27,8 @@ class RegisterController extends Controller
      * @return void
      */
 
-    private function sendOtp($user) {
+    private function sendOtp($user)
+    {
         $code = rand(1000, 9999);
 
         // Store verification code in the database
@@ -49,7 +50,8 @@ class RegisterController extends Controller
      * @return \Illuminate\Http\JsonResponse  JSON response with success or error.
      */
 
-    public function register(Request $request) {
+    public function register(Request $request)
+    {
 
         $validator = Validator::make($request->all(), [
             'first_name'           => 'required|string|max:255',
@@ -88,11 +90,11 @@ class RegisterController extends Controller
 
             // $this->sendOtp($user);
 
-           // Generate a JWT token for the user
-           $token = JWTAuth::fromUser($user);
+            // Generate a JWT token for the user
+            $token = JWTAuth::fromUser($user);
 
-           // Add the token to the user object
-           $user->setAttribute('token', $token);
+            // Add the token to the user object
+            $user->setAttribute('token', $token);
 
             return $this->success($user, 'User registered successfully', 201);
         } catch (\Exception $e) {
@@ -106,7 +108,8 @@ class RegisterController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\JsonResponse
      */
-    public function otpVerify(Request $request) {
+    public function otpVerify(Request $request)
+    {
 
         // Validate the request
         $validator = Validator::make($request->all(), [
@@ -123,9 +126,9 @@ class RegisterController extends Controller
             $user = User::where('email', $request->input('email'))->first();
 
             $verification = EmailOtp::where('user_id', $user->id)
-            ->where('verification_code', $request->input('otp'))
-            ->where('expires_at', '>', Carbon::now())
-            ->first();
+                ->where('verification_code', $request->input('otp'))
+                ->where('expires_at', '>', Carbon::now())
+                ->first();
 
 
             if ($verification) {
@@ -156,7 +159,8 @@ class RegisterController extends Controller
      * @return \Illuminate\Http\JsonResponse
      */
 
-    public function otpResend(Request $request) {
+    public function otpResend(Request $request)
+    {
 
         $validator = Validator::make($request->all(), [
             'email' => 'required|email|exists:users,email',

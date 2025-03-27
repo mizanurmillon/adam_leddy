@@ -91,12 +91,11 @@ class LoginController extends Controller
 
         if ($userData && Hash::check($request->password, $userData->password)) {
 
-            if($userData->email_verified_at == null) {
+            if ($userData->email_verified_at == null) {
 
                 $this->verifyOTP($userData);
 
                 $userData->setAttribute('token', null);
-
             } else {
 
                 if (!$token = JWTAuth::attempt($credentials)) {
@@ -250,7 +249,7 @@ class LoginController extends Controller
             $user = User::where('email', $request->input('email'))->first();
 
             if (! $user) {
-                return $this->error([], 'User not found', 404);
+                return $this->error([], 'User not found', 200);
             }
 
             if (!$user->password_reset_token || $user->password_reset_token !== $request->input('key')) {

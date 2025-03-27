@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->bigInteger('price');
+            $table->enum('type', ['monthly', 'yearly'])->default('monthly');
             $table->timestamps();
         });
     }

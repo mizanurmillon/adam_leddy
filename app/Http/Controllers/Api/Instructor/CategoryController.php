@@ -11,18 +11,17 @@ class CategoryController extends Controller
 {
     use ApiResponse;
 
-    
+
     public function AllCategories()
     {
-        
+
         $data = Category::all();
 
-        if($data->isEmpty()) {
-           
-            return $this->error([], 'No Category Found', 404);
+        if ($data->isEmpty()) {
+
+            return $this->error([], 'No Category Found', 200);
         }
 
         return $this->success($data, 'Category found successfully', 200);
-
     }
 }
