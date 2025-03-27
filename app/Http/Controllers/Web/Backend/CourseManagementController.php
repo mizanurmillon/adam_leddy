@@ -52,8 +52,14 @@ class CourseManagementController extends Controller
     
         return view('backend.layouts.courses.index', compact('courses', 'categories', 'instructorNames'));
     }
-    public function content()
+    public function content(Request $request)
     {
-        return view('backend.layouts.courses.content');
+            // Get the course_id from the query string
+        $courseId = $request->query('course_id');
+
+        // Retrieve the course from the database using the course_id
+        $course = Course::find($courseId);
+
+        return view('backend.layouts.courses.content',compact('courseId','course'));
     }
 }
