@@ -1,15 +1,16 @@
 <?php
 namespace App\Http\Controllers\Web\Backend;
 
-use App\Http\Controllers\Controller;
-use App\Mail\InstructorMail;
-use App\Models\Category;
-use App\Models\Course;
-use App\Models\CourseWatch;
-use App\Models\Instructor;
+use Carbon\Carbon;
 use App\Models\User;
+use App\Models\Course;
+use App\Models\Category;
+use App\Models\Instructor;
+use App\Models\CourseWatch;
+use App\Mail\InstructorMail;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 
@@ -18,7 +19,10 @@ class InstructorController extends Controller
     public function index()
     {
         $instructors = Instructor::with('user', 'courses.courseWatches')->paginate(10);
-        return view('backend.layouts.instructor.index', compact('instructors'));
+        $monthlyUsersCount = User::where('role', 'instructor')->whereMonth('created_at', Carbon::now()->month)
+            ->whereYear('created_at', Carbon::now()->year)
+            ->count();
+        return view('backend.layouts.instructor.index', compact('instructors', 'monthlyUsersCount'));
     }
 
     public function details($id)
@@ -143,6 +147,35 @@ class InstructorController extends Controller
         } catch (\Exception $e) {
             DB::rollBack();
             return redirect()->route('admin.instructors.index')->with('t-error', $e->getMessage());
+        }
+    }
+
+    public function status($id)
+    {
+        $data = Instructor::with('user')->find($id);
+
+        if ($data->user->status == 'active') {
+            
+            $data->user->status = 'inactive';
+            $data->user->save();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Instructor blocked successfully.',
+                'status'  => 'inactive', 
+                'data'    => $data,
+            ]);
+        } else {
+            
+            $data->user->status = 'active';
+            $data->user->save();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Instructor published successfully.',
+                'status'  => 'active', 
+                'data'    => $data,
+            ]);
         }
     }
 }

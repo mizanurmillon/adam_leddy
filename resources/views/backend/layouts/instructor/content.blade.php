@@ -71,17 +71,19 @@
                         <div id="flush-collapse{{ $index }}" class="accordion-collapse collapse"
                             data-bs-parent="#accordionFlushExample">
                             <div class="accordion-body">
-                                @if ($module->videos->video_url)
-                                <div class="robi-lesson-content">
-                                    <p class="robi-lesson">Lesson 01: <span><svg xmlns="http://www.w3.org/2000/svg"
+                                @if ($module->videos && $module->videos->video_url != null)
+                                    <div class="robi-lesson-content">
+                                        <a href="{{ $module->videos->video_url }}">
+                                            <p class="robi-lesson">Lesson 01: <span><svg xmlns="http://www.w3.org/2000/svg"
                                                 width="18" height="19" viewBox="0 0 18 19" fill="none">
                                                 <path
                                                     d="M9 0.5C4.02944 0.5 0 4.52944 0 9.5C0 14.4706 4.02944 18.5 9 18.5C13.9706 18.5 18 14.4706 18 9.5C17.9947 4.53166 13.9684 0.505311 9 0.5ZM12.7903 9.78676C12.728 9.91176 12.6266 10.0131 12.5016 10.0754V10.0786L7.35879 12.65C7.04118 12.8087 6.65509 12.6799 6.49636 12.3623C6.45123 12.272 6.428 12.1724 6.42856 12.0714V6.92859C6.4284 6.57354 6.71607 6.28561 7.07113 6.28542C7.17098 6.28538 7.26947 6.30859 7.35879 6.35322L12.5016 8.92467C12.8194 9.08302 12.9486 9.469 12.7903 9.78676Z"
                                                     fill="white" />
-                                            </svg> {{ $module->videos->video_url }} </span> </p>
-                                </div>
+                                            </svg> {{ $module->module_title }}  </span> </p>
+                                        </a>
+                                    </div>
                                 @endif
-                                @if ($module->videos->file_url)
+                                @if ($module->videos && $module->videos->file_url)
                                     <div class="robi-lesson-content">
                                         <p class="robi-lesson">Lesson 02: <span><svg xmlns="http://www.w3.org/2000/svg"
                                                     width="14" height="18" viewBox="0 0 14 18" fill="none">
@@ -119,7 +121,7 @@
         </div>
         <div class="robi-course-comprason-bottom">
             <h5 class="robi-course-comprason-pera">Course Comparison</h5>
-            <h1 class="robi-course-title">Beginning C++ Programming</h1>
+            <h1 class="robi-course-title">{{  $course->title }}</h1>
             <div class="robi-chart-comprason">
 
                 <div class="item" id="chart3"></div>
@@ -134,13 +136,15 @@
     <script src="{{ asset('backend/assets/js/ashiq.js') }}"></script>
     <script>
         var watchTimes = @json($watchTimes);
-        
+
         var options = {
             chart: {
                 type: 'line',
                 height: 300,
                 background: '#000',
-                toolbar: { show: false }
+                toolbar: {
+                    show: false
+                }
             },
             series: [{
                 name: 'Hours',
@@ -148,27 +152,50 @@
             }],
             xaxis: {
                 categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
-                labels: { style: { colors: '#fff' } }
-            },
-            yaxis: {
-                labels: { 
-                    style: { colors: '#fff' }, 
-                    formatter: (value) => value + ' H' 
+                labels: {
+                    style: {
+                        colors: '#fff'
+                    }
                 }
             },
-            stroke: { curve: 'smooth', width: 2, colors: ['#ff0000'] },
-            markers: { size: 4, colors: ['#fff'], strokeColors: '#ff0000', strokeWidth: 2 },
-            title: { text: 'Monthly Watch Time', align: 'center', style: { color: '#fff', fontSize: '16px' } },
-            grid: { borderColor: '#444' }
+            yaxis: {
+                labels: {
+                    style: {
+                        colors: '#fff'
+                    },
+                    formatter: (value) => value + ' H'
+                }
+            },
+            stroke: {
+                curve: 'smooth',
+                width: 2,
+                colors: ['#ff0000']
+            },
+            markers: {
+                size: 4,
+                colors: ['#fff'],
+                strokeColors: '#ff0000',
+                strokeWidth: 2
+            },
+            title: {
+                text: 'Monthly Watch Time',
+                align: 'center',
+                style: {
+                    color: '#fff',
+                    fontSize: '16px'
+                }
+            },
+            grid: {
+                borderColor: '#444'
+            }
         };
-    
-        var chart = new ApexCharts(document.querySelector("#chart"), options);
+
+        var chart = new ApexCharts(document.querySelector("#chart3"), options);
         chart.render();
     </script>
-    
-    
-    
-    
+
+
+
     <!-- middle chart start  -->
 
     {{-- <script>
@@ -356,43 +383,45 @@
 
     <!-- bottom chart start -->
     <script>
+        var watchTimes = @json($watchTimes);
+
         var options = {
             chart: {
                 type: 'line',
                 height: 300,
-                background: '#000', // Set background color to black
+                background: '#000',
                 toolbar: {
                     show: false
-                } // Remove the toolbar
+                }
             },
             series: [{
                 name: 'Hours',
-                data: [3, 8, 10, 11, 12, 13, 14, 15, 16, 14, 18, 23] // Sample data
+                data: watchTimes
             }],
             xaxis: {
                 categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
                 labels: {
                     style: {
                         colors: '#fff'
-                    } // White text for x-axis
+                    }
                 }
             },
             yaxis: {
                 labels: {
                     style: {
                         colors: '#fff'
-                    }, // White text for y-axis
-                    formatter: (value) => value + ' H' // Format with 'H'
+                    },
+                    formatter: (value) => value + ' H'
                 }
             },
             stroke: {
                 curve: 'smooth',
                 width: 2,
-                colors: ['#ff0000'] // Red line color
+                colors: ['#ff0000']
             },
             markers: {
                 size: 4,
-                colors: ['#fff'], // White markers
+                colors: ['#fff'],
                 strokeColors: '#ff0000',
                 strokeWidth: 2
             },
@@ -405,11 +434,11 @@
                 }
             },
             grid: {
-                borderColor: '#444' // Dark grid lines
+                borderColor: '#444'
             }
         };
 
-        var chart = new ApexCharts(document.querySelector("#chart3"), options);
+        var chart = new ApexCharts(document.querySelector("#chart"), options);
         chart.render();
     </script>
     <script>

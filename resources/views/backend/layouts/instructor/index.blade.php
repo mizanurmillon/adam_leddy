@@ -1,5 +1,5 @@
 @extends('backend.app')
-@section('title', 'Instructors') 
+@section('title', 'Instructors')
 @push('style')
     <!-- custom css -->
     <link rel="stylesheet" href="{{ asset('backend/assets/css/ashiq.css') }}" />
@@ -43,13 +43,13 @@
                                     </defs>
                                 </svg>
                             </div>
-                            <p class="se--card--number">24</p>
+                            <p class="se--card--number">{{ $monthlyUsersCount }}</p>
                         </div>
                         <div class="se--over--card-row">
                             <div class="se--month-row">
                                 <p Month class="se--card-pera">All Time</p>
                             </div>
-                            <p class="se--card--number">478</p>
+                            <p class="se--card--number">{{ $instructors->total() }}</p>
                         </div>
                     </div>
                 </div>
@@ -58,15 +58,9 @@
             </div>
         </div>
         <div class="se--category-section">
-            <button class="bg-danger se-category-btn">
-                All
-            </button>
-            <button class=" se-category-btn">
-                Active
-            </button>
-            <button class=" se-category-btn">
-                Blocked
-            </button>
+            <button class="bg-danger se-category-btn" onclick="filterTable('all')">All</button>
+            <button class="se-category-btn" onclick="filterTable('active')">Active</button>
+            <button class="se-category-btn" onclick="filterTable('blocked')">Blocked</button>
         </div>
 
         <div class="se--table--layout">
@@ -91,26 +85,26 @@
                                 <td class="se-td">{{ $instructor->user->first_name }} {{ $instructor->last_name }}</td>
                                 <td class="se-td">
                                     @php
-                                        $totalMinutes = $instructor->courses->flatMap->courseWatches->sum(
-                                            'watch_time',
-                                        );
+                                        $totalMinutes = $instructor->courses->flatMap->courseWatches->sum('watch_time');
                                         $hours = floor($totalMinutes / 60);
                                         $minutes = $totalMinutes % 60;
                                     @endphp
                                     {{ $hours }}h {{ $minutes }}m
                                 </td>
                                 <td class="se-td">
-                                    @if ($instructor->user->status == 'active')
-                                        <button class="btn btn-success">Active</button>
-                                    @else
-                                        <button class="btn btn-danger">Blocked</button>
-                                    @endif
+                                    <button
+                                        class="btn {{ $instructor->user->status == 'active' ? 'btn-success' : 'btn-danger' }}"
+                                        id="statusBtn{{ $instructor->id }}">
+                                        {{ $instructor->user->status == 'active' ? 'Active' : 'Blocked' }}
+                                    </button>
                                 </td>
+
                                 <td class="se-td">
-                                    <div class="form-check form-switch ">
+                                    <div class="form-check form-switch">
                                         <input class="form-check-input py-lg-3 py-2 px-3 px-lg-4" type="checkbox"
-                                            @if ($instructor->user->status == 'active') checked @endif role="switch"
-                                            id="flexSwitchCheckDefault">
+                                            onclick="showStatusChangeAlert({{ $instructor->id }})"
+                                            @if ($instructor->user->status == 'active') checked @endif
+                                            id="customSwitch{{ $instructor->id }}">
                                     </div>
                                 </td>
                                 <td class="se-td">
@@ -135,22 +129,22 @@
             @else
                 <a href="{{ $instructors->previousPageUrl() }}" class="robi-page">&laquo;</a>
             @endif
-        
+
             @php
                 $start = max(1, $instructors->currentPage() - 2);
                 $end = min($instructors->lastPage(), $instructors->currentPage() + 2);
             @endphp
-        
+
             {{-- First Page --}}
             @if ($start > 1)
                 <a href="{{ $instructors->url(1) }}" class="robi-page">1</a>
             @endif
-        
+
             {{-- Dots before current range --}}
             @if ($start > 2)
                 <span class="robi-dots">...</span>
             @endif
-        
+
             {{-- Page Numbers --}}
             @for ($page = $start; $page <= $end; $page++)
                 @if ($page == $instructors->currentPage())
@@ -159,17 +153,18 @@
                     <a href="{{ $instructors->url($page) }}" class="robi-page">{{ $page }}</a>
                 @endif
             @endfor
-        
+
             {{-- Dots after current range --}}
             @if ($end < $instructors->lastPage() - 1)
                 <span class="robi-dots">...</span>
             @endif
-        
+
             {{-- Last Page --}}
             @if ($end < $instructors->lastPage())
-                <a href="{{ $instructors->url($instructors->lastPage()) }}" class="robi-page">{{ $instructors->lastPage() }}</a>
+                <a href="{{ $instructors->url($instructors->lastPage()) }}"
+                    class="robi-page">{{ $instructors->lastPage() }}</a>
             @endif
-        
+
             {{-- Next Button --}}
             @if ($instructors->hasMorePages())
                 <a href="{{ $instructors->nextPageUrl() }}" class="robi-page">&raquo;</a>
@@ -177,11 +172,88 @@
                 <span class="robi-page disabled">&raquo;</span>
             @endif
         </div>
-        
+
 
     </div>
 @endsection
 
 @push('script')
     <script src="{{ asset('backend/assets/js/setu.js') }}"></script>
+    <script>
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        })
+        // Status Change Confirm Alert
+        function showStatusChangeAlert(id) {
+            event.preventDefault();
+
+            Swal.fire({
+                title: 'Are you sure?',
+                text: 'Block this Instructor?',
+                icon: 'info',
+                showCancelButton: true,
+                confirmButtonText: 'Yes',
+                cancelButtonText: 'No',
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    statusChange(id);
+                } else {
+                    const checkbox = document.getElementById('customSwitch' + id);
+                    checkbox.checked = !checkbox.checked;
+                }
+            });
+        }
+
+        // Status Change
+        function statusChange(id) {
+            let url = "{{ route('admin.instructors.status', ':id') }}".replace(':id', id);
+
+            $.ajax({
+                type: "POST",
+                url: url,
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') // CSRF Token
+                },
+                success: function(resp) {
+                    if (resp.success) {
+                        const checkbox = document.getElementById('customSwitch' + id);
+                        const statusBtn = document.getElementById('statusBtn' + id);
+
+                        if (checkbox) {
+                            checkbox.checked = (resp.status === 'active');
+                        }
+                        if (statusBtn) {
+                            statusBtn.innerText = resp.status === 'active' ? 'Active' : 'Blocked';
+                            statusBtn.className = resp.status === 'active' ? 'btn btn-success' :
+                                'btn btn-danger';
+                        }
+
+                        toastr.success(resp.message);
+                    } else {
+                        toastr.error(resp.errors ? resp.errors[0] : resp.message);
+                    }
+                },
+                error: function() {
+                    toastr.error('Something went wrong!');
+                }
+            });
+        }
+
+        function filterTable(status) {
+            let rows = document.querySelectorAll(".se-tbody .se-tr");
+
+            rows.forEach(row => {
+                let statusBtn = row.querySelector("td:nth-child(3) button");
+                let statusText = statusBtn.textContent.trim().toLowerCase();
+
+                if (status === 'all' || statusText === status) {
+                    row.style.display = "";
+                } else {
+                    row.style.display = "none";
+                }
+            });
+        }
+    </script>
 @endpush

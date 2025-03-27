@@ -38,6 +38,8 @@ Route::controller(InstructorController::class)->group(function () {
     Route::get('/instructors/details/{id}', 'details')->name('admin.instructors.details');
     Route::get('/instructors/video/details/{id}', 'content')->name('admin.instructors.video.details');
 
+    Route::post('/instructors/status/{id}', 'status')->name('admin.instructors.status');
+
     // Instructor create 
     Route::get('/instructors/create', 'create')->name('admin.instructors.create');
     Route::post('/instructors/store', 'store')->name('admin.instructors.store');
