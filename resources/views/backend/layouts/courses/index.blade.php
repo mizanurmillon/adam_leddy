@@ -20,44 +20,39 @@
     </div>
 
     <div class="se--main-layout">
-        <div class="page-title">Courses</div>
+        <div class="page-title">Courses </div>
         <div class="se--category-section">
-            <button class=" se-category-btn">
-                All
-            </button>
-            <button class=" se-category-btn">
-                Programming
-            </button>
-            <button class=" se-category-btn">
-                Design
-            </button>
-            <button class=" se-category-btn">
-                Data Analysis
-            </button>
-            <button class=" se-category-btn">
-                Database
-            </button>
-            <button class=" se-category-btn">
-                AI
-            </button>
-            <button class=" se-category-btn">
-                Cloud Computing
-            </button>
+            <!-- 'All' button to show courses from all categories -->
+            <a href="javascript:void(0);" class="efg">
+                <button  class="se-category-btn{{ empty(request('category')) || request('category') == 'undefined' ? ' se-active' : '' }}"
+                    data-id="">
+                    All
+                </button>
+            </a>
 
+            @foreach ($categories as $category)
+                <a class="efg" href="javascript:void(0);">
+                    <button class="se-category-btn{{ request('category') == $category->id ? ' se-active' : '' }}"
+                        data-id="{{ $category->id }}">
+                        {{ $category->name }}
+                    </button>
+                </a>
+            @endforeach
         </div>
-
         <div class=" se--course-table-layout">
             <!-- select menu -->
             <div class="se--course-table-layout">
                 <!-- Select Menu -->
                 <div class="se-select-layout">
-                    <select class="se--select-menu">
-                        <option value="default">Sort By Default</option>
-                        <option value="recent">Recently Edited</option>
-                        <option value="watch-high">Watch Time (High To Low)</option>
-                        <option value="watch-low">Watch Time (Low To High)</option>
+                    <select class="se--select-menu" id="sortCourses">
+                        <option value="default" {{ request('sort') == 'default' ? 'selected' : '' }}>Sort By Default
+                        </option>
+                        <option value="recent" {{ request('sort') == 'recent' ? 'selected' : '' }}>Recently Added</option>
+                        <option value="watch-high" {{ request('sort') == 'watch-high' ? 'selected' : '' }}>Watch Time (High
+                            To Low)</option>
+                        <option value="watch-low" {{ request('sort') == 'watch-low' ? 'selected' : '' }}>Watch Time (Low To
+                            High)</option>
                     </select>
-
                 </div>
                 <div class="se-table-container">
                     <table class="se-table">
@@ -71,93 +66,107 @@
                             </tr>
                         </thead>
                         <tbody class="se-tbody">
-                            <tr class="se-tr">
-                                <td class="se-td">Free Artificial Intelligence Course</td>
-                                <td class="se-td">Tadhg Kavanagh</td>
-                                <td class="se-td">22 H</td>
-                                <td class="se-td">Programming</td>
 
-                                <td class="se-td"><a href="{{ route('admin.courses.content') }}" class="se--view-btn">View Details</a>
-                                </td>
-                            </tr>
-                            <tr class="se-tr">
-                                <td class="se-td">Free Artificial Intelligence Course</td>
-                                <td class="se-td">Tadhg Kavanagh</td>
-                                <td class="se-td">22 H</td>
-                                <td class="se-td">Programming</td>
-
-                                <td class="se-td"><a href="{{ route('admin.courses.content') }}" class="se--view-btn">View Details</a>
-                                </td>
-                            </tr>
-                            <tr class="se-tr">
-                                <td class="se-td">Free Artificial Intelligence Course</td>
-                                <td class="se-td">Tadhg Kavanagh</td>
-                                <td class="se-td">22 H</td>
-                                <td class="se-td">Programming</td>
-
-                                <td class="se-td"><a href="{{ route('admin.courses.content') }}" class="se--view-btn">View Details</a>
-                                </td>
-                            </tr>
-                            <tr class="se-tr">
-                                <td class="se-td">Free Artificial Intelligence Course</td>
-                                <td class="se-td">Tadhg Kavanagh</td>
-                                <td class="se-td">22 H</td>
-                                <td class="se-td">Programming</td>
-
-                                <td class="se-td"><a href="{{ route('admin.courses.content') }}" class="se--view-btn">View Details</a>
-                                </td>
-                            </tr>
-                            <tr class="se-tr">
-                                <td class="se-td">Free Artificial Intelligence Course</td>
-                                <td class="se-td">Tadhg Kavanagh</td>
-                                <td class="se-td">22 H</td>
-                                <td class="se-td">Programming</td>
-
-                                <td class="se-td"><a href="{{ route('admin.courses.content') }}" class="se--view-btn">View Details</a>
-                                </td>
-                            </tr>
-                            <tr class="se-tr">
-                                <td class="se-td">Free Artificial Intelligence Course</td>
-                                <td class="se-td">Tadhg Kavanagh</td>
-                                <td class="se-td">22 H</td>
-                                <td class="se-td">Programming</td>
-
-                                <td class="se-td"><a href="{{ route('admin.courses.content') }}" class="se--view-btn">View Details</a>
-                                </td>
-                            </tr>
-                            <tr class="se-tr">
-                                <td class="se-td">Free Artificial Intelligence Course</td>
-                                <td class="se-td">Tadhg Kavanagh</td>
-                                <td class="se-td">22 H</td>
-                                <td class="se-td">Programming</td>
-
-                                <td class="se-td"><a href="{{ route('admin.courses.content') }}" class="se--view-btn">View Details</a>
-                                </td>
-                            </tr>
-
+                            @foreach ($courses as $course)
+                                <tr class="se-tr">
+                                    <td class="se-td">{{ $course->title }}</td>
+                                    <td class="se-td">{{ $instructorNames[$course->id] ?? 'N/A' }}</td>
+                                    <td class="se-td">{{ gmdate('H:i', $course->total_watch_time) }} H</td>
+                                    <td class="se-td">{{ $course->category->name ?? 'N/A' }}</td>
+                                    <td class="se-td">
+                                        <a href="{{ route('admin.courses.content', [ 'course_id' => $course->id]) }}"
+                                            class="se--view-btn">View Details</a>
+                                    </td>
+                                </tr>
+                            @endforeach
                         </tbody>
                     </table>
-
-
                 </div>
                 <div class="robi-pagination">
-                    <button class="robi-page active">1</button>
-                    <button class="robi-page">2</button>
-                    <button class="robi-page">3</button>
-                    <span class="robi-dots">...</span>
-                    <button class="robi-page">78</button>
-                    <button class="robi-page">79</button>
-                    <button class="robi-page">79</button>
-                    <button class="robi-page">80</button>
+                    {{-- Previous Button --}}
+                    @if ($courses->onFirstPage())
+                        <span class="robi-page disabled">&laquo;</span>
+                    @else
+                        <a href="{{ $courses->appends(request()->query())->previousPageUrl() }}" class="robi-page">&laquo;</a>
+                    @endif
+                
+                    @php
+                        $start = max(1, $courses->currentPage() - 2);
+                        $end = min($courses->lastPage(), $courses->currentPage() + 2);
+                    @endphp
+                
+                    {{-- First Page --}}
+                    @if ($start > 1)
+                        <a href="{{ $courses->appends(request()->query())->url(1) }}" class="robi-page">1</a>
+                    @endif
+                
+                    {{-- Dots before current range --}}
+                    @if ($start > 2)
+                        <span class="robi-dots">...</span>
+                    @endif
+                
+                    {{-- Page Numbers --}}
+                    @for ($page = $start; $page <= $end; $page++)
+                        @if ($page == $courses->currentPage())
+                            <span class="robi-page active">{{ $page }}</span>
+                        @else
+                            <a href="{{ $courses->appends(request()->query())->url($page) }}" class="robi-page">{{ $page }}</a>
+                        @endif
+                    @endfor
+                
+                    {{-- Dots after current range --}}
+                    @if ($end < $courses->lastPage() - 1)
+                        <span class="robi-dots">...</span>
+                    @endif
+                
+                    {{-- Last Page --}}
+                    @if ($end < $courses->lastPage())
+                        <a href="{{ $courses->appends(request()->query())->url($courses->lastPage()) }}" class="robi-page">{{ $courses->lastPage() }}</a>
+                    @endif
+                
+                    {{-- Next Button --}}
+                    @if ($courses->hasMorePages())
+                        <a href="{{ $courses->appends(request()->query())->nextPageUrl() }}" class="robi-page">&raquo;</a>
+                    @else
+                        <span class="robi-page disabled">&raquo;</span>
+                    @endif
                 </div>
+                
             </div>
-
-
         </div>
-
     </div>
 @endsection
-
 @push('script')
-    <script src="{{ asset('backend/assets/js/setu.js') }}"></script>
+    <script>
+        document.getElementById('sortCourses').addEventListener('change', function() {
+            window.location.href = '?sort=' + this.value;
+        });
+    </script>
+    <script>
+        $('#sortCourses').on('change', function() {
+            let search_category = {{ request('category') ?? 'undefined' }};
+            let page = {{ request('page') ?? 1 }};
+            let sort_by = $('#sortCourses').val();
+            let url = "{{ route('admin.courses.index') }}?" + "category=" + search_category + "&sort=" + sort_by + "&page=" + page;
+            window.location.href = url;
+            // alert(search_category);
+        });
+    </script>
+    <script>
+        let list = document.querySelectorAll(".efg");
+        let list_arr = Array.from(list);
+        list_arr.map(item => {
+            item.addEventListener('click', function(e) {
+                if (e.target.className == 'se-category-btn') {
+                    let search_category = e.target.dataset.id;
+                    let sort_by = $('#sortCourses').val();
+                    let page = {{ request('page') ?? 1 }};
+                    let url = "{{ route('admin.courses.index') }}?" + "category=" + search_category + "&sort=" +
+                        sort_by  + "&page=" + page;
+                    window.location.href = url;
+                    // alert(search_category);
+                }
+            })
+        });
+    </script>
 @endpush
