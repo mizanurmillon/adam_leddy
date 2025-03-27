@@ -7,43 +7,50 @@ use Illuminate\Http\Request;
 use App\Models\Course;
 use App\Models\Instructor;
 use App\Models\User;
+use App\Models\Category;
+use Illuminate\Support\Facades\DB;
 
 class CourseManagementController extends Controller
 {
     public function index(Request $request)
     {
-        $sort = $request->query('sort', 'default');
-        $courses = Course::with(['category'])
-            ->where('status', 'approved')
-            ->withCount([
-                'courseWatches as total_watch_time' => function ($query) {
-                    $query->selectRaw('COALESCE(SUM(watch_time), 0)');
-                }
-            ])
-            ->when($sort === 'recent', function ($query) {
-                $query->orderByDesc('created_at');
-            })
-            ->when($sort === 'watch-high', function ($query) {
-                $query->orderByDesc('total_watch_time');
-            })
-            ->when($sort === 'watch-low', function ($query) {
-                $query->orderBy('total_watch_time');
-            })
-            ->paginate(10);
-
-
-        $instructorNames = [];
-        foreach ($courses as $course) {
-            $instructor = Instructor::where('id', $course->instructor_id)->first();
-            if ($instructor) {
-                $user = User::where('id', $instructor->user_id)->first();
-                if ($user) {
-                    $instructorNames[$course->id] = $user->first_name . ' ' . $user->last_name;
-                }
+        $data = $request->all();
+        $categories = Category::all();
+    
+        // Start with a query to filter by category if selected
+        $query = Course::with('courseWatches', 'category');
+    
+        if (!empty($data['category']) && $data['category'] != 'undefined') {
+            $query->where('category_id', $data['category']);
+        }
+    
+        // Apply sorting at the database level
+        if (!empty($data['sort']) && $data['sort'] !== "default") {
+            if ($data['sort'] == 'watch-low') {
+                $query->withSum('courseWatches', 'watch_time')->orderBy('course_watches_sum_watch_time', 'asc');
+            }
+            if ($data['sort'] == 'watch-high') {
+                $query->withSum('courseWatches', 'watch_time')->orderBy('course_watches_sum_watch_time', 'desc');
+            }
+            if ($data['sort'] == 'recent') {
+                $query->orderBy('created_at', 'desc');
             }
         }
-        
-        return view('backend.layouts.courses.index', compact('courses', 'sort', 'instructorNames'));
+    
+        // Paginate results
+        $courses = $query->paginate(10)->withQueryString(); // Preserve query params in pagination
+    
+        // Fetch instructor names
+        $instructorNames = $courses->mapWithKeys(function ($course) {
+            $instructor = Instructor::find($course->instructor_id);
+            if ($instructor) {
+                $user = User::find($instructor->user_id);
+                return [$course->id => $user ? $user->first_name . ' ' . $user->last_name : ''];
+            }
+            return [$course->id => ''];
+        });
+    
+        return view('backend.layouts.courses.index', compact('courses', 'categories', 'instructorNames'));
     }
     public function content()
     {
