@@ -37,7 +37,12 @@ class Course extends Model
 
     public function instructor()
     {
-        return $this->belongsTo(Instructor::class);
+        return $this->belongsTo(User::class, 'instructor_id')->where('role', 'instructor');
+    }    
+
+    public function getTotalWatchTimeAttribute()
+    {
+        return $this->courseWatches()->sum('watch_time');
     }
 
     public function category()

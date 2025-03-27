@@ -70,8 +70,8 @@ class User extends Authenticatable implements JWTSubject
 
     public function instructor()
     {
-        return $this->hasOne(Instructor::class);
-    }
+        return $this->hasOne(Instructor::class, 'user_id');
+    }    
 
     public function bookmarks()
     {
