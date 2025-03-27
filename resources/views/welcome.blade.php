@@ -134,7 +134,7 @@
     <div>
         @if (Route::has('login'))
             @auth
-                <a href="{{ route('dashboard') }}" class="dashboard-btn">
+                <a href="{{ route('admin.dashboard') }}" class="dashboard-btn">
                     Dashboard
                 </a>
             @else
