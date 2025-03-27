@@ -3,10 +3,15 @@
 namespace App\Http\Controllers\Api\Student;
 
 use App\Http\Controllers\Controller;
+use App\Models\Membership;
+use App\Models\MembershipHistory;
 use App\Models\Subscription;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Stripe\Stripe;
 use App\Traits\ApiResponse;
+use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 
 class PaymentController extends Controller
@@ -82,13 +87,54 @@ class PaymentController extends Controller
             return $this->error([], 'Session ID not found.', 200);
         }
 
+        DB::beginTransaction();
         try {
             $sessionId = $request->query('session_id');
             $checkoutSession = \Stripe\Checkout\Session::retrieve($sessionId);
             $metadata = $checkoutSession->metadata;
 
-            return $this->success($metadata, 'Checkout success.', 200);
+            $success_redirect_url = $metadata->success_redirect_url ?? null;
+            $user_id = $metadata->user_id ?? null;
+            $plan_id = $metadata->plan_id ?? null;
+            $plan_name = $metadata->plan_name ?? null;
+            $plan_price = $metadata->plan_price ?? null;
+            $plan_type = $metadata->plan_type ?? null;
+
+            $user = User::find($user_id);
+
+            if (!$user) {
+                return $this->error([], 'User not found.', 200);
+            }
+
+            $membershipHistory = MembershipHistory::create([
+                'user_id' => $user_id,
+                'subscription_id' => $plan_id,
+                'price' => $plan_price,
+                'type' => $plan_type,
+                'start_date' => Carbon::now(),
+                'end_date' => $plan_type == 'monthly' ? Carbon::now()->addMonth() : Carbon::now()->addYear(),
+            ]);
+
+            $membership = Membership::updateOrCreate([
+                'user_id' => $user_id,
+                'subscription_id' => $plan_id,
+            ], [
+                'price' => $plan_price,
+                'type' => $plan_type,
+                'start_date' => Carbon::now(),
+                'end_date' => $plan_type == 'monthly' ? Carbon::now()->addMonth() : Carbon::now()->addYear(),
+            ]);
+
+            $response = [
+                'membership' => $membership,
+                'membership_history' => $membershipHistory,
+                'redirect_url' => $success_redirect_url,
+            ];
+
+            DB::commit();
+            return $this->success($response, 'Membership created successfully.', 201);
         } catch (\Exception $e) {
+            DB::rollBack();
             return $this->error([], $e->getMessage(), 500);
         }
     }
