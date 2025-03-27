@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\Student\CourseController;
 use App\Http\Controllers\Api\Student\CourseWatchTimeAndProgressController;
 use App\Http\Controllers\Api\Student\InstractorController;
+use App\Http\Controllers\Api\Student\WatchListController;
 
 //User Profile
 Route::group(['middleware' => ['jwt.verify']], function () {
@@ -27,6 +28,10 @@ Route::group(['middleware' => ['jwt.verify']], function () {
 
         Route::controller(CourseWatchTimeAndProgressController::class)->prefix('course')->group(function () {
             Route::post('/watch', 'watch');
+        });
+
+        Route::controller(WatchListController::class)->group(function () {
+            Route::get('/my/watch-list', 'watchList');
         });
     });
 

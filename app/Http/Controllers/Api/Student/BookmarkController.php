@@ -65,6 +65,10 @@ class BookmarkController extends Controller
             $bookmark->is_bookmarked = true;
         });
 
+        if ($bookmarkedCourses->isEmpty()) {
+            return $this->error([], 'Bookmark Not Found', 404);
+        }
+
         return $this->success($bookmarkedCourses, 'Bookmark Course retrieved successfully.');
     }
 }

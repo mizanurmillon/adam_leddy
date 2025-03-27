@@ -20,7 +20,6 @@ class CourseWatchSeeder extends Seeder
             $courses = [
                 ['id' => 1, 'modules' => [1, 2]],
                 ['id' => 2, 'modules' => [3]],
-                ['id' => 3, 'modules' => [4]],
             ];
             $videos = [
                 1 => ['duration' => 1200],
