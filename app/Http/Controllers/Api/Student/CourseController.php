@@ -48,7 +48,7 @@ class CourseController extends Controller
             $query->where('instructor_id', $request->instructor_id);
         }
 
-        $courses = $query->paginate($request->per_page ?? 10);
+        $courses = $query->where('status', 'approved')->paginate($request->per_page ?? 10);
 
         $courses->map(function ($course) {
             $course->is_bookmarked = $course->bookmarks->isNotEmpty(); // If bookmarks exist, set flag to true
@@ -73,7 +73,7 @@ class CourseController extends Controller
                 $query->withCount(['videos']);
             },
             'modules.videos'
-        ])->find($id);
+        ])->where('status', 'approved')->find($id);
 
         if (!$course) {
             return $this->error([], 'Course Not Found', 404);
