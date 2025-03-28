@@ -25,9 +25,9 @@
     </div>
     <div class="se--main-layout">
         <div class="page-title">Payments</div>
-        <p class="se--subtext">Payment Method</p>
+        {{-- <p class="se--subtext">Payment Method</p> --}}
 
-        <div class="se--category-section">
+        {{-- <div class="se--category-section">
             <button class=" se-category-btn">
                 <img src="{{ asset('backend/assets/images/visa.png') }}" alt="">
                 1122
@@ -35,7 +35,7 @@
             <button class=" se-category-btn">
                 <span>Exp:</span>09/32
             </button>
-        </div>
+        </div> --}}
 
         <a href="{{ route('admin.payments.method.change') }}">
             <button type="button" class="btn btn-light fixed-width"><i class="fa-solid fa-pen"></i>Change

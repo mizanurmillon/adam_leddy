@@ -22,22 +22,13 @@
             <!-- tags section -->
             <div class="se-tags-layout">
                 <p class="se--subtext">Tags</p>
+
                 <div class="se--allTags">
-                    <button class="se-trending-btn" style="background-color: #FFA640;">
-
-
-                        <p>Trending</p>
-                    </button>
-                    <button class="se-trending-btn" style="background-color: #29FF65; ">
-
-                        <p>Newly Added</p>
-                    </button>
-
-                    <button class="se-trending-btn" style="background-color: #FF4040; color: white;">
-
-                        <p>Staff Pick</p>
-                    </button>
-
+                    @foreach ($tags as $tag)
+                        <button class="se-trending-btn" style="background-color: #FFA640;">
+                            <p>{{ $tag->name }}</p>
+                        </button>
+                    @endforeach
                     <button class="se--add-tags">
                         <svg xmlns="http://www.w3.org/2000/svg" width="17" height="16" viewBox="0 0 17 16"
                             fill="none">
@@ -47,17 +38,27 @@
                     </button>
 
                 </div>
+
+
                 <!-- input tags -->
-                <div class="se--input-tags-layout" id="tag-input-add">
-                    <div class="se--input--tags">
-                        <input type="text" placeholder="Tag Name" class="se--tag" />
+                <form action="{{ route('admin.tags.store') }}" method="post">
+                    @csrf
+                    <div class="se--input-tags-layout" id="tag-input-add">
+                        <div class="se--input--tags">
+                            <input type="text" placeholder="Tag Name" name="name" class="category__input @error('name') is-invalid @enderror" />
+
+                        </div>
+                        @error('name')
+                            <span class="invalid-feedback" role="alert">
+                                <strong>{{ $message }}</strong>
+                            </span>
+                        @enderror
+                        <button type="submit" class="se-add-tag">
+                            Add
+                        </button>
 
                     </div>
-                    <button class="se-add-tag">
-                        Add
-                    </button>
-
-                </div>
+                </form>
 
             </div>
 
@@ -65,24 +66,11 @@
             <div class="se-tags-layout">
                 <p class="se--subtext">Category</p>
                 <div class="se--Category">
-                    <button class="se--category-button">
-                        Programming
-                    </button>
-                    <button class="se--category-button">
-                        Design
-                    </button>
-                    <button class="se--category-button">
-                        Data Analysis
-                    </button>
-                    <button class="se--category-button">
-                        Database
-                    </button>
-                    <button class="se--category-button">
-                        AI
-                    </button>
-                    <button class="se--category-button">
-                        Cloud Computing
-                    </button>
+                    @foreach ($categories as $category)
+                        <button class="se--category-button">
+                            {{ $category->name }}
+                        </button>
+                    @endforeach
 
                     <button class="se--add-category">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16"
@@ -94,15 +82,19 @@
 
 
                 </div>
-                <form method="post" id="create-form">
+                <form method="post" action="{{ route('admin.categories.store') }}" >
                     @csrf
                     <div class="se--input-tags-layout" id="category-input-add">
-
                         <div class="se--input--tags">
-                            <input type="text" placeholder="Category Name" class="se--tag" />
-
+                            <input type="text" name="name" placeholder="Category Name"
+                                class="category__input @error('name') is-invalid @enderror" value="{{ old('name') }}" />
                         </div>
-                        <button class="se-add-tag">
+                        @error('name')
+                            <span class="invalid-feedback" role="alert">
+                                <strong>{{ $message }}</strong>
+                            </span>
+                        @enderror
+                        <button type="submit" class="se-add-tag">
                             Add
                         </button>
                     </div>
@@ -117,34 +109,4 @@
 
 @push('script')
     <script src="{{ asset('backend/assets/js/setu.js') }}"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            $('#create-form').on('submit', function (e) {
-                e.preventDefault();
-                let formData = $(this).serialize();
-                let url = "{{ route('admin.categories.store') }}";
-                $.ajax({
-                    url,
-                    method: 'POST',
-                    data: formData,
-                    success: function (resp) {
-                        // Reload DataTable
-                        $('#basic_tables').DataTable().ajax.reload();
-                        if (resp.success === true) {
-                            // show toast message
-                            flasher.success(resp.message);
-                            clearModal('create-category')
-                        } else if (resp.errors) {
-                            flasher.error(resp.errors[0]);
-                        } else {
-                            flasher.error(resp.message);
-                        }
-                    },
-                    error: function (xhr) {
-                        handleXhrErrors(xhr,'create-category')
-                    }
-                });
-            });
-        });
-    </script>
 @endpush

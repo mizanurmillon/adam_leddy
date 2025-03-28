@@ -63,7 +63,7 @@
                                         </span>
                                     @enderror
                                 </div>
-                                <div class="row">
+                                {{-- <div class="row">
                                     <div class="col-md-6">
                                         <div class="mb-3">
                                             <label for="expertise" class="form-label"
@@ -98,7 +98,7 @@
                                             @enderror
                                         </div>
                                     </div>
-                                </div>
+                                </div> --}}
                                 <div class="mb-3">
                                     <label for="exampleInputPassword1" class="form-label"
                                         style="font-weight: bold">Password<span class="text-danger">*</span></label>

@@ -16,6 +16,7 @@ Route::get('/dashboard', [DashboardController::class, 'index'])->name('admin.das
 Route::controller(CategoryController::class)->group(function () {
     Route::get('/categories/index', 'index')->name('admin.categories.index');
     Route::post('/categories/store', 'store')->name('admin.categories.store');
+    Route::post('/tags/store', 'tagStore')->name('admin.tags.store');
 });
 
 Route::controller(UserController::class)->prefix('users')->group(function () {
@@ -24,7 +25,7 @@ Route::controller(UserController::class)->prefix('users')->group(function () {
 
 Route::controller(CourseManagementController::class)->group(function () {
     Route::get('/courses/index', 'index')->name('admin.courses.index');
-    Route::get('/courses/content', 'content')->name('admin.courses.content');
+    Route::get('/courses/content/{id}', 'content')->name('admin.courses.content');
 });
 
 Route::controller(ApprovalController::class)->group(function () {
@@ -48,6 +49,7 @@ Route::controller(InstructorController::class)->group(function () {
 Route::controller(PaymentController::class)->group(function () {
     Route::get('/payment/index', 'index')->name('admin.payments.index');
     Route::get('/payment/method/change', 'change')->name('admin.payments.method.change');
+    Route::post('/payment/method/update', 'update')->name('admin.payments.method.update');
 });
 
 Route::controller(WatchTimeController::class)->group(function () {
