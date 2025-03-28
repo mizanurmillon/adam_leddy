@@ -71,7 +71,7 @@ class User extends Authenticatable implements JWTSubject
     public function instructor()
     {
         return $this->hasOne(Instructor::class, 'user_id');
-    }    
+    }
 
     public function bookmarks()
     {
@@ -88,13 +88,23 @@ class User extends Authenticatable implements JWTSubject
         return $this->hasMany(CourseProgress::class);
     }
 
-    public function memberships()
+    public function membership()
     {
-        return $this->hasMany(Membership::class);
+        return $this->hasOne(Membership::class);
     }
 
     public function membershipHistories()
     {
         return $this->hasMany(MembershipHistory::class);
+    }
+
+    public function isMember(): bool
+    {
+        return (bool) $this->membership()->exists();
+    }
+
+    public function isExpired(): bool
+    {
+        return $this->membership && $this->membership->end_date < now();
     }
 }

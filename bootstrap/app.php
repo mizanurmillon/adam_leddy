@@ -6,6 +6,7 @@ use App\Http\Middleware\JWTMiddleware;
 use Illuminate\Foundation\Application;
 use App\Http\Middleware\StudentMiddleware;
 use App\Http\Middleware\InstructorMiddleware;
+use App\Http\Middleware\MembershipMiddleware;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 
@@ -37,7 +38,8 @@ return Application::configure(basePath: dirname(__DIR__))
             'jwt.verify' => JWTMiddleware::class,
             'admin' => Admin::class,
             'student' => StudentMiddleware::class,
-            'instructor' => InstructorMiddleware::class
+            'instructor' => InstructorMiddleware::class,
+            'is_membership_taken' => MembershipMiddleware::class
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
