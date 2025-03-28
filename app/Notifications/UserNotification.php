@@ -41,7 +41,7 @@ class UserNotification extends Notification
      * Create a new notification instance.
      */
     public function __construct(
-        $from = 'mr7517218@gmail.com',
+        $from = 'Bjjsourceinfo@gmail.com',
         $owner = 'Adam Leddy',
         $subject = 'New Notification',
         $message = null,

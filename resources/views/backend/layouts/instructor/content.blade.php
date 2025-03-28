@@ -178,7 +178,7 @@
                 strokeWidth: 2
             },
             title: {
-                text: 'Monthly Watch Time',
+                text: @json($course->title) + ' - Monthly Watch Time',
                 align: 'center',
                 style: {
                     color: '#fff',
@@ -426,7 +426,7 @@
                 strokeWidth: 2
             },
             title: {
-                text: 'Instructor A',
+                text: @json($course->title),
                 align: 'center',
                 style: {
                     color: '#fff',
