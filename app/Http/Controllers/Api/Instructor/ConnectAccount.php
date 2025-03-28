@@ -25,7 +25,9 @@ class ConnectAccount extends Controller
         $userStripeAccountId = $instructor ? $instructor->stripe_account_id : null;
 
         if (!$userStripeAccountId) {
-            $account = $stripe->accounts->create();
+            $account = $stripe->accounts->create([
+                'type' => 'express'
+            ]);
 
             $instructor->update(['stripe_account_id' => $account->id]);
         } else {
@@ -34,8 +36,8 @@ class ConnectAccount extends Controller
 
         $accountLink = $stripe->accountLinks->create([
             'account' => $account->id,
-            'refresh_url' => route('connect.cancel'),
-            'return_url' => route('connect.success'),
+            'refresh_url' => $request->cancel_redirect_url,
+            'return_url' => $request->success_redirect_url,
             'type' => 'account_onboarding',
         ]);
 
