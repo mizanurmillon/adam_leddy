@@ -14,6 +14,8 @@ class Instructor extends Model
      * @var list<string>
      */
     protected $hidden = [
+        'category_id',
+        'expertise',
         'created_at',
         'updated_at',
     ];

@@ -9,10 +9,12 @@ use App\Models\Instructor;
 use App\Models\CourseWatch;
 use App\Mail\InstructorMail;
 use Illuminate\Http\Request;
+use App\Enum\NotificationType;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
+use App\Notifications\UserNotification;
 
 class InstructorController extends Controller
 {
@@ -165,6 +167,11 @@ class InstructorController extends Controller
                 'status'  => 'inactive', 
                 'data'    => $data,
             ]);
+            // $user->notify(new UserNotification(
+            //     message: 'Your account has been blocked.',
+            //     channels: ['database'],
+            //     type: NotificationType::SUCCESS,
+            // ));
         } else {
             
             $data->user->status = 'active';

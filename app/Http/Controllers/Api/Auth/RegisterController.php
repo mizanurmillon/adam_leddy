@@ -57,6 +57,7 @@ class RegisterController extends Controller
             'first_name'           => 'required|string|max:255',
             'last_name'            => 'nullable|string|max:255',
             'email'          => 'required|email|unique:users,email',
+            'bio'                  => 'nullable|string|max:2000',
             'password'       => [
                 'required',
                 'string',
@@ -78,15 +79,22 @@ class RegisterController extends Controller
             $user->last_name      = $request->input('last_name');
             $user->email          = $request->input('email');
             $user->password       = Hash::make($request->input('password'));
+            $user->role           = $request->input('role');
             $user->email_verified_at = now();
 
             $user->save();
 
-            $user->notify(new UserNotification(
-                message: 'Your account has been created successfully.',
-                channels: ['database'],
-                type: NotificationType::SUCCESS,
-            ));
+            $user->instructor()->create([
+                'category_id' => $request->category_id,
+                'expertise'   => $request->expertise,
+                'bio'         => $request->bio,
+            ]);
+
+            // $user->notify(new UserNotification(
+            //     message: 'Your account has been created successfully.',
+            //     channels: ['database'],
+            //     type: NotificationType::SUCCESS,
+            // ));
 
             // $this->sendOtp($user);
 
@@ -95,7 +103,9 @@ class RegisterController extends Controller
 
             // Add the token to the user object
             $user->setAttribute('token', $token);
-
+            if($user->role == 'instructor') {
+                $user->load('instructor');
+            }
             return $this->success($user, 'User registered successfully', 201);
         } catch (\Exception $e) {
             return $this->error([], $e->getMessage(), 500);
