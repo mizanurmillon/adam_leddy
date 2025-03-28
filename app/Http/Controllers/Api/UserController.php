@@ -28,6 +28,9 @@ class UserController extends Controller
             return $this->error([], 'User Not Found', 200);
         }
 
+        $user->setAttribute('is_premium', $user->isMember() && !$user->isExpired() ? 1 : 0);
+        unset($user->membership);
+
         if ($user->role == 'instructor') {
             $user->load('instructor');
         }

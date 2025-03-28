@@ -13,27 +13,30 @@ use App\Http\Controllers\Api\Student\WatchListController;
 Route::group(['middleware' => ['jwt.verify']], function () {
 
     Route::group(['middleware' => ['student']], function () {
-        Route::controller(CourseController::class)->prefix('student')->group(function () {
-            Route::get('/courses', 'getCourse');
-            Route::get('/course/{id}', 'getCourseDetails');
-        });
 
-        Route::controller(InstractorController::class)->group(function () {
-            Route::get('/instructors', 'getInstructors');
-            Route::get('/instructor/{id}', 'getInstructorDetails');
-        });
+        Route::group(['middleware' => ['is_membership_taken']], function () {
+            Route::controller(CourseController::class)->prefix('student')->group(function () {
+                Route::get('/courses', 'getCourse');
+                Route::get('/course/{id}', 'getCourseDetails');
+            });
 
-        Route::controller(BookmarkController::class)->prefix('course')->group(function () {
-            Route::post('/bookmark/toggle/{id}', 'toggleBookmark');
-            Route::get('/bookmarks', 'getBookmarks');
-        });
+            Route::controller(InstractorController::class)->group(function () {
+                Route::get('/instructors', 'getInstructors');
+                Route::get('/instructor/{id}', 'getInstructorDetails');
+            });
 
-        Route::controller(CourseWatchTimeAndProgressController::class)->prefix('course')->group(function () {
-            Route::post('/watch', 'watch');
-        });
+            Route::controller(BookmarkController::class)->prefix('course')->group(function () {
+                Route::post('/bookmark/toggle/{id}', 'toggleBookmark');
+                Route::get('/bookmarks', 'getBookmarks');
+            });
 
-        Route::controller(WatchListController::class)->group(function () {
-            Route::get('/my/watch-list', 'watchList');
+            Route::controller(CourseWatchTimeAndProgressController::class)->prefix('course')->group(function () {
+                Route::post('/watch', 'watch');
+            });
+
+            Route::controller(WatchListController::class)->group(function () {
+                Route::get('/my/watch-list', 'watchList');
+            });
         });
 
         Route::controller(SubscriptionController::class)->group(function () {

@@ -101,9 +101,11 @@ class RegisterController extends Controller
             // Generate a JWT token for the user
             $token = JWTAuth::fromUser($user);
 
+            $user->setAttribute('is_premium', $user->isMember() && !$user->isExpired() ? 1 : 0);
+
             // Add the token to the user object
             $user->setAttribute('token', $token);
-            if($user->role == 'instructor') {
+            if ($user->role == 'instructor') {
                 $user->load('instructor');
             }
             return $this->success($user, 'User registered successfully', 201);
