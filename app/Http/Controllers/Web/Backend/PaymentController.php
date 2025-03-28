@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Web\Backend;
 use App\Models\User;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Models\Instructor;
+use App\Models\InstructorPayment;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Artisan;
 
@@ -11,7 +13,8 @@ class PaymentController extends Controller
 {
     public function index()
     {
-        return view('backend.layouts.payment.index');
+        $payment_history = InstructorPayment::with('instructor.user')->get();
+        return view('backend.layouts.payment.index', compact('payment_history'));
     }
 
     public function change()

@@ -16,7 +16,11 @@ class RevenueController extends Controller
             'category:id,name',
             'tags:id,name',
             'courseWatches',
-        ])->limit(3)->get();
+        ])
+        ->withCount('courseWatches as total_watch_time')
+        ->orderByDesc('total_watch_time')
+        ->limit(3)
+        ->get();
 
         // Prepare the data for the chart
         $courseData = $courses->map(function ($course) {

@@ -83,6 +83,34 @@ class CourseManagementController extends Controller
             $watchTimes[] = isset($monthlyWatchTime[$i]) ? round($monthlyWatchTime[$i] / 3600, 2) : 0;
         }
 
-        return view('backend.layouts.courses.content', compact('course', 'watchTimes', 'tags'));
+        $topInstructor = Course::with([
+            'instructor:id,user_id',
+            'instructor.user:id,first_name,last_name,role',
+            'category:id,name',
+            'tags:id,name',
+            'courseWatches',
+        ])
+        ->withCount('courseWatches as total_watch_time')
+        ->orderByDesc('total_watch_time')
+        ->first();
+
+        $moduleIds = $topInstructor->modules ? $topInstructor->modules->pluck('id')->toArray() : [];
+
+        $topMonthlyWatchTime = [];
+        if (! empty($moduleIds)) {
+            $topMonthlyWatchTime = CourseWatch::whereIn('course_module_id', $moduleIds)
+                ->selectRaw('MONTH(last_watched_at) as month, SUM(watch_time) as total_watch_time')
+                ->groupBy('month')
+                ->orderBy('month')
+                ->pluck('total_watch_time', 'month')
+                ->toArray();
+        }
+
+        $topWatchTimes = [];
+        for ($i = 1; $i <= 12; $i++) {
+            $topWatchTimes[] = isset($topMonthlyWatchTime[$i]) ? round($topMonthlyWatchTime[$i] / 3600, 2) : 0;
+        }
+
+        return view('backend.layouts.courses.content', compact('course', 'watchTimes', 'tags', 'topInstructor', 'topWatchTimes'));
     }
 }

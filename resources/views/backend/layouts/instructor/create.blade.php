@@ -31,7 +31,7 @@
                                     <label for="f_name" class="form-label" style="font-weight: bold">First Name<span class="text-danger">*</span></label>
                                     <input type="text" class="form-control @error('first_name') is-invalid @enderror"
                                         id="f_name" name="first_name" aria-describedby="emailHelp"
-                                        placeholder="First Name">
+                                        placeholder="First Name" value="{{ old('first_name') }}">
                                     @error('first_name')
                                         <span class="invalid-feedback" role="alert">
                                             <strong>{{ $message }}</strong>
@@ -42,7 +42,7 @@
                                     <label for="l_name" class="form-label" style="font-weight: bold">Last Name</label>
                                     <input type="text" class="form-control @error('last_name') is-invalid @enderror"
                                         id="l_name" name="last_name" aria-describedby="emailHelp"
-                                        placeholder="Last Name">
+                                        placeholder="Last Name" value="{{ old('last_name') }}">
                                     @error('last_name')
                                         <span class="invalid-feedback" role="alert">
                                             <strong>{{ $message }}</strong>
@@ -54,7 +54,7 @@
                                         Address<span class="text-danger">*</span></label>
                                     <input type="email" class="form-control @error('email') is-invalid @enderror"
                                         id="exampleInputEmail1" name="email" aria-describedby="emailHelp"
-                                        placeholder="Enter email">
+                                        placeholder="Enter email" value="{{ old('email') }}">
                                     <div id="emailHelp" class="form-text">We'll never share your email with anyone else.
                                     </div>
                                     @error('email')
@@ -113,7 +113,7 @@
 
                                 <div class="mb-3">
                                     <label for="bio" class="form-label" style="font-weight: bold">Bio</label>
-                                    <textarea class="form-control @error('bio') is-invalid @enderror" id="bio" name="bio" rows="3" placeholder="Enter Bio"></textarea>
+                                    <textarea class="form-control @error('bio') is-invalid @enderror" id="bio" name="bio" rows="3" placeholder="Enter Bio">{{ old('bio') }}</textarea>
                                 </div>
 
                                 <button type="submit" class="btn btn-primary">Submit</button>
