@@ -46,16 +46,12 @@ Route::group(['middleware' => ['jwt.verify']], function () {
 
         Route::controller(PaymentController::class)->prefix('student')->group(function () {
             Route::post('/checkout', 'checkout');
-            Route::post('/checkout-success', 'checkoutSuccess')->name('checkout.success');
-            Route::post('/checkout-cancel', 'checkoutCancel')->name('checkout.cancel');
         });
     });
 
     Route::group(['middleware' => ['instructor']], function () {
         Route::controller(ConnectAccount::class)->prefix('instructor')->group(function () {
             Route::post('/connect', 'connectAccount');
-            Route::get('/connect/success', 'success')->name('connect.success');
-            Route::get('/connect/cancel', 'cancel')->name('connect.cancel');
         });
     });
 });
@@ -63,4 +59,9 @@ Route::group(['middleware' => ['jwt.verify']], function () {
 Route::controller(PaymentController::class)->group(function () {
     Route::get('/checkout-success', 'checkoutSuccess')->name('checkout.success');
     Route::get('/checkout-cancel', 'checkoutCancel')->name('checkout.cancel');
+});
+
+Route::controller(ConnectAccount::class)->prefix('instructor')->group(function () {
+    Route::get('/connect/success', 'success')->name('connect.success');
+    Route::get('/connect/cancel', 'cancel')->name('connect.cancel');
 });
