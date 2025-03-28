@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\Instructor\ConnectAccount;
 use App\Http\Controllers\Api\Student\BookmarkController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\Student\CourseController;
@@ -50,7 +51,13 @@ Route::group(['middleware' => ['jwt.verify']], function () {
         });
     });
 
-    Route::group(['middleware' => ['instructor']], function () {});
+    Route::group(['middleware' => ['instructor']], function () {
+        Route::controller(ConnectAccount::class)->prefix('instructor')->group(function () {
+            Route::post('/connect', 'connectAccount');
+            Route::get('/connect/success', 'success')->name('connect.success');
+            Route::get('/connect/cancel', 'cancel')->name('connect.cancel');
+        });
+    });
 });
 
 Route::controller(PaymentController::class)->group(function () {

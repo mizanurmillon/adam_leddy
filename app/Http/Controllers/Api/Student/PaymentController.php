@@ -20,7 +20,7 @@ class PaymentController extends Controller
 
     public function __construct()
     {
-        Stripe::setApiKey(env('STRIPE_SECRET'));
+        Stripe::setApiKey(config('services.stripe.secret'));
     }
 
     public function checkout(Request $request)
