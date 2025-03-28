@@ -125,14 +125,10 @@ class PaymentController extends Controller
                 'end_date' => $plan_type == 'monthly' ? Carbon::now()->addMonth() : Carbon::now()->addYear(),
             ]);
 
-            $response = [
-                'membership' => $membership,
-                'membership_history' => $membershipHistory,
-                'redirect_url' => $success_redirect_url,
-            ];
+
 
             DB::commit();
-            return $this->success($response, 'Membership created successfully.', 201);
+            return redirect($success_redirect_url);
         } catch (\Exception $e) {
             DB::rollBack();
             return $this->error([], $e->getMessage(), 500);
