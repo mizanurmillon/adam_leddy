@@ -21,7 +21,7 @@ class Instructor extends Model
     public function user()
     {
         return $this->belongsTo(User::class, 'user_id');
-    }    
+    }
 
     public function category()
     {
@@ -31,5 +31,10 @@ class Instructor extends Model
     public function courses()
     {
         return $this->hasMany(Course::class);
+    }
+
+    public function payments()
+    {
+        return $this->hasMany(InstructorPayment::class);
     }
 }
