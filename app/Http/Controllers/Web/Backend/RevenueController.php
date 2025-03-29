@@ -17,8 +17,8 @@ class RevenueController extends Controller
             'tags:id,name',
             'courseWatches',
         ])
-        ->withCount('courseWatches as total_watch_time','watch_time')
-        ->orderByDesc('total_watch_time')
+        ->withSum('courseWatches', 'watch_time') 
+        ->orderByDesc('course_watches_sum_watch_time') 
         ->limit(3)
         ->get();
 
