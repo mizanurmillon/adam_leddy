@@ -97,7 +97,7 @@
                         <a href="{{ route('admin.instructors.video.details', $course->id) }}" class="se--card">
                             <img class="se--image--card"
                                 src="{{ asset($course->thumbnail ?? 'backend/assets/images/card1.png') }}"
-                                alt="course" />
+                                alt="course" style="height: 168px;" />
                             <div class="se--card-font-layout">
                                 <h2>
                                     {{ $course->title }}
