@@ -61,11 +61,11 @@ class RegisterController extends Controller
             'password'       => [
                 'required',
                 'string',
-                'min:8',
+                'min:6',
                 'confirmed',
             ],
         ], [
-            'password.min' => 'The password must be at least 8 characters long.',
+            'password.min' => 'The password must be at least 6 characters long.',
         ]);
 
         if ($validator->fails()) {
