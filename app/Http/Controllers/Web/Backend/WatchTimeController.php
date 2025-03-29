@@ -15,7 +15,11 @@ class WatchTimeController extends Controller
             'category:id,name',
             'tags:id,name',
             'courseWatches',
-        ])->limit(3)->get();
+        ])
+        ->withCount('courseWatches as total_watch_time')
+        ->orderByDesc('total_watch_time')
+        ->limit(3)
+        ->get();
 
         $instructors = Instructor::with('user')->whereHas('courses.courseWatches')
         ->with(['courses.courseWatches'])

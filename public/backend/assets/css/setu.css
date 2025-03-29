@@ -541,6 +541,14 @@
   color: white;
 }
 
+.category__input {
+  background: transparent;
+  width: 100%;
+  border: none;
+  outline: none;
+  color: white;
+}
+
 .se-add-tag {
   display: flex;
   padding: 12px;

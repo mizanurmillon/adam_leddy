@@ -1,16 +1,18 @@
 <?php
 namespace App\Http\Controllers\Web\Backend;
 
-use Carbon\Carbon;
-use App\Models\User;
-use App\Models\Course;
-use App\Models\Category;
-use App\Models\Instructor;
-use App\Models\CourseWatch;
+use App\Enum\NotificationType;
+use App\Http\Controllers\Controller;
 use App\Mail\InstructorMail;
+use App\Models\Category;
+use App\Models\Course;
+use App\Models\CourseWatch;
+use App\Models\Instructor;
+use App\Models\User;
+use App\Notifications\UserNotification;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 
@@ -18,7 +20,7 @@ class InstructorController extends Controller
 {
     public function index()
     {
-        $instructors = Instructor::with('user', 'courses.courseWatches')->paginate(10);
+        $instructors       = Instructor::with('user', 'courses.courseWatches')->paginate(10);
         $monthlyUsersCount = User::where('role', 'instructor')->whereMonth('created_at', Carbon::now()->month)
             ->whereYear('created_at', Carbon::now()->year)
             ->count();
@@ -90,7 +92,36 @@ class InstructorController extends Controller
             $watchTimes[] = isset($monthlyWatchTime[$i]) ? round($monthlyWatchTime[$i] / 3600, 2) : 0;
         }
 
-        return view('backend.layouts.instructor.content', compact('course', 'watchTimes'));
+        $topInstructor = Course::with([
+            'instructor:id,user_id',
+            'instructor.user:id,first_name,last_name,role',
+            'category:id,name',
+            'tags:id,name',
+            'courseWatches',
+        ])
+        ->withCount('courseWatches as total_watch_time')
+        ->orderByDesc('total_watch_time')
+        ->first();
+
+
+        $moduleIds = $topInstructor->modules ? $topInstructor->modules->pluck('id')->toArray() : [];
+
+        $topMonthlyWatchTime = [];
+        if (! empty($moduleIds)) {
+            $topMonthlyWatchTime = CourseWatch::whereIn('course_module_id', $moduleIds)
+                ->selectRaw('MONTH(last_watched_at) as month, SUM(watch_time) as total_watch_time')
+                ->groupBy('month')
+                ->orderBy('month')
+                ->pluck('total_watch_time', 'month')
+                ->toArray();
+        }
+
+        $topWatchTimes = [];
+        for ($i = 1; $i <= 12; $i++) {
+            $topWatchTimes[] = isset($topMonthlyWatchTime[$i]) ? round($topMonthlyWatchTime[$i] / 3600, 2) : 0;
+        }
+
+        return view('backend.layouts.instructor.content', compact('course', 'watchTimes', 'topInstructor', 'topWatchTimes'));
     }
 
     public function create()
@@ -103,13 +134,11 @@ class InstructorController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'first_name'  => 'required|string|max:255',
-            'last_name'   => 'nullable|string|max:255',
-            'email'       => 'required|string|email|max:255|unique:users',
-            'password'    => 'required|string|min:8',
-            'category_id' => 'required|exists:categories,id',
-            'expertise'   => 'required|string|max:255',
-            'bio'         => 'nullable|string|max:2000',
+            'first_name' => 'required|string|max:255',
+            'last_name'  => 'nullable|string|max:255',
+            'email'      => 'required|string|email|max:255|unique:users',
+            'password'   => 'required|string|min:8',
+            'bio'        => 'nullable|string|max:2000',
         ]);
 
         try {
@@ -127,9 +156,7 @@ class InstructorController extends Controller
             ]);
 
             $user->instructor()->create([
-                'category_id' => $request->category_id,
-                'expertise'   => $request->expertise,
-                'bio'         => $request->bio,
+                'bio' => $request->bio,
             ]);
 
             $data = [
@@ -155,25 +182,40 @@ class InstructorController extends Controller
         $data = Instructor::with('user')->find($id);
 
         if ($data->user->status == 'active') {
-            
+
             $data->user->status = 'inactive';
             $data->user->save();
+
+            // Notify the user
+            $data->user->notify(new UserNotification(
+                message: 'Your account has been blocked.',
+                channels: ['database'],
+                type: NotificationType::ERROR,
+            ));
 
             return response()->json([
                 'success' => true,
                 'message' => 'Instructor blocked successfully.',
-                'status'  => 'inactive', 
+                'status'  => 'inactive',
                 'data'    => $data,
             ]);
+
         } else {
-            
+
             $data->user->status = 'active';
             $data->user->save();
+
+            // Notify the user
+            $data->user->notify(new UserNotification(
+                message: 'Your account has been activated.',
+                channels: ['database'],
+                type: NotificationType::SUCCESS,
+            ));
 
             return response()->json([
                 'success' => true,
                 'message' => 'Instructor published successfully.',
-                'status'  => 'active', 
+                'status'  => 'active',
                 'data'    => $data,
             ]);
         }

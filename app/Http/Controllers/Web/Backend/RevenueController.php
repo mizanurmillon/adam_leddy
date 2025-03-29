@@ -1,8 +1,10 @@
 <?php
 namespace App\Http\Controllers\Web\Backend;
 
-use App\Http\Controllers\Controller;
+use Carbon\Carbon;
 use App\Models\Course;
+use App\Models\MembershipHistory;
+use App\Http\Controllers\Controller;
 
 class RevenueController extends Controller
 {
@@ -14,7 +16,11 @@ class RevenueController extends Controller
             'category:id,name',
             'tags:id,name',
             'courseWatches',
-        ])->limit(3)->get();
+        ])
+        ->withCount('courseWatches as total_watch_time')
+        ->orderByDesc('total_watch_time')
+        ->limit(3)
+        ->get();
 
         // Prepare the data for the chart
         $courseData = $courses->map(function ($course) {
@@ -27,6 +33,22 @@ class RevenueController extends Controller
             ];
         });
 
-        return view('backend.layouts.revenue.index', compact('courses', 'courseData'));
+        $total_revenue = MembershipHistory::sum('price');
+
+        $monthlyRevenue = MembershipHistory::whereMonth('created_at', Carbon::now()->month)
+            ->whereYear('created_at', Carbon::now()->year)
+            ->sum('price');
+        
+        $previousMonthlyRevenue = MembershipHistory::whereMonth('created_at', Carbon::now()->subMonth()->month)
+            ->whereYear('created_at', Carbon::now()->subMonth()->year)
+            ->sum('price');
+
+        $pastYearRevenue = MembershipHistory::whereYear('created_at', '<', Carbon::now()->year)
+            ->sum('price');
+
+        $pastSixMonthsRevenue = MembershipHistory::whereMonth('created_at', '>=', Carbon::now()->subMonths(6)->month)
+            ->sum('price');
+
+        return view('backend.layouts.revenue.index', compact('courses', 'courseData', 'total_revenue', 'monthlyRevenue','previousMonthlyRevenue','pastYearRevenue','pastSixMonthsRevenue'));
     }
 }

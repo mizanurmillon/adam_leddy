@@ -34,7 +34,7 @@
         <div class="se--pending--approval-layout">
             <div class="se--pending-1">
                 <p Month class="se--card-pera">All Time</p>
-                <p class="se--card--number">€92,21,829</p>
+                <p class="se--card--number">€{{ $total_revenue }}</p>
 
             </div>
 
@@ -43,22 +43,22 @@
         <div class="se--pending--approval-layout">
             <div class="se--pending-1 bg-dark">
                 <p Month class="se--card-pera">This Month</p>
-                <p class="se--card--number">€9,829</p>
+                <p class="se--card--number">€{{ $monthlyRevenue }}</p>
             </div>
 
             <div class="se--pending-1 bg-dark">
                 <p Month class="se--card-pera">Previous Month</p>
-                <p class="se--card--number">€91,89</p>
+                <p class="se--card--number">€{{ $previousMonthlyRevenue }}</p>
             </div>
 
             <div class="se--pending-1 bg-dark">
                 <p Month class="se--card-pera">Past 6 Months</p>
-                <p class="se--card--number">€3,98,829</p>
+                <p class="se--card--number">€{{ $pastSixMonthsRevenue }}</p>
             </div>
 
             <div class="se--pending-1 bg-dark">
                 <p Month class="se--card-pera">Past Year</p>
-                <p class="se--card--number">€7,22,829</p>
+                <p class="se--card--number">€{{ $pastYearRevenue }}</p>
             </div>
 
         </div>

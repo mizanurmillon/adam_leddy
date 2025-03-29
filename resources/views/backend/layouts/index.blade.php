@@ -38,19 +38,19 @@
                                     </defs>
                                 </svg>
                             </div>
-                            <p class="se--card--number">24</p>
+                            <p class="se--card--number">{{ $monthlyInstructorCount }}</p>
                         </div>
                         <div class="se--over--card-row">
                             <div class="se--month-row">
                                 <p Month class="se--card-pera">All Time</p>
                             </div>
-                            <p class="se--card--number">478</p>
+                            <p class="se--card--number">{{ $totalInstructor }}</p>
                         </div>
                     </div>
                 </div>
 
                 <div class="se--overview--card--layout">
-                    <p class="se--card-head">User Signups</p>
+                    <p class="se--card-head">Student Signups</p>
                     <div class="se--overview-card">
                         <div class="se--over--card-row">
                             <div class="se--month-row">
@@ -70,19 +70,19 @@
                                     </defs>
                                 </svg>
                             </div>
-                            <p class="se--card--number">578</p>
+                            <p class="se--card--number">{{ $monthlyUsersCount }}</p>
                         </div>
                         <div class="se--over--card-row">
                             <div class="se--month-row">
                                 <p Month class="se--card-pera">All Time</p>
                             </div>
-                            <p class="se--card--number">9382</p>
+                            <p class="se--card--number">{{ $totalUsers }}</p>
                         </div>
                     </div>
                 </div>
 
                 <div class="se--overview--card--layout">
-                    <p class="se--card-head">User Signups</p>
+                    <p class="se--card-head">Total Revenue</p>
                     <div class="se--overview-card">
                         <div class="se--over--card-row">
                             <div class="se--month-row">
@@ -102,13 +102,13 @@
                                     </defs>
                                 </svg>
                             </div>
-                            <p class="se--card--number">€2,345</p>
+                            <p class="se--card--number">€{{ $monthlyRevenue }}</p>
                         </div>
                         <div class="se--over--card-row">
                             <div class="se--month-row">
                                 <p Month class="se--card-pera">All Time</p>
                             </div>
-                            <p class="se--card--number">€7,22,829</p>
+                            <p class="se--card--number">€{{ $total_revenue }}</p>
                         </div>
                     </div>
                 </div>
@@ -117,17 +117,17 @@
          <div class="se--pending--approval-layout">
             <div class="se--pending-1">
                 <p Month class="se--card-pera">Total Course</p>
-                <p class="se--card--number">24</p>
+                <p class="se--card--number">{{ $total_course }}</p>
 
             </div>
             <div class="se--pending-2">
                 <p Month class="se--card-pera1">Total Category</p>
-                <p style="color: black;" class="se--card--number">24</p>
+                <p style="color: black;" class="se--card--number">{{ $total_category }}</p>
 
             </div>
             <div class="se--pending-2">
                 <p Month class="se--card-pera1">Total Tags</p>
-                <p style="color: black;" class="se--card--number">24</p>
+                <p style="color: black;" class="se--card--number">{{ $total_tag }}</p>
 
             </div>
         </div>

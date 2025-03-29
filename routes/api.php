@@ -4,9 +4,12 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\Auth\LoginController;
 use App\Http\Controllers\Api\Auth\RegisterController;
+use App\Http\Controllers\Api\Instructor\TagsController;
 use App\Http\Controllers\Api\Instructor\CourseController;
 use App\Http\Controllers\Api\Instructor\CategoryController;
-use App\Http\Controllers\Api\Instructor\TagsController;
+use App\Http\Controllers\Api\Instructor\EarningsController;
+use App\Http\Controllers\Api\Instructor\DashboardController;
+use App\Http\Controllers\Api\Instructor\NotificationController;
 
 Route::controller(RegisterController::class)->prefix('users')->group(function () {
 
@@ -65,6 +68,18 @@ Route::group(['middleware' => ['jwt.verify']], function () {
             Route::post('/delete/course/module/{id}', 'deleteModule');
 
             Route::get('/submit/for/approval/{id}', 'submitForApproval');
+        });
+
+        Route::controller(DashboardController::class)->prefix('instructor')->group(function () {
+            Route::get('/dashboard', 'index');
+        });
+
+        Route::controller(EarningsController::class)->prefix('instructor')->group(function () {
+            Route::get('/payments-history', 'index');
+        });
+
+        Route::controller(NotificationController::class)->prefix('instructor')->group(function () {
+            Route::get('/notifications', 'index');
         });
     });
 

@@ -10,8 +10,8 @@
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
-    integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg=="
-    crossorigin="anonymous" referrerpolicy="no-referrer" />
+        integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
 @endpush
 @section('content')
     <div class="page-header">
@@ -25,9 +25,9 @@
     </div>
     <div class="se--main-layout">
         <div class="page-title">Payments</div>
-        <p class="se--subtext">Payment Method</p>
+        {{-- <p class="se--subtext">Payment Method</p> --}}
 
-        <div class="se--category-section">
+        {{-- <div class="se--category-section">
             <button class=" se-category-btn">
                 <img src="{{ asset('backend/assets/images/visa.png') }}" alt="">
                 1122
@@ -35,7 +35,7 @@
             <button class=" se-category-btn">
                 <span>Exp:</span>09/32
             </button>
-        </div>
+        </div> --}}
 
         <a href="{{ route('admin.payments.method.change') }}">
             <button type="button" class="btn btn-light fixed-width"><i class="fa-solid fa-pen"></i>Change
@@ -129,21 +129,22 @@
                 <table class="se-table">
                     <thead class="se-thead">
                         <tr class="se-tr">
-                            <th class="se-th">Instructor</th>
+                            <th class="se-th">Instructor Name</th>
                             <th class="se-th">Amount Paid</th>
                             <th class="se-th">Payment Date</th>
-                            <th class="se-th">Payment Method</th>
+                            <th class="se-th"></th>
                         </tr>
                     </thead>
                     <tbody class="se-tbody">
-                        <tr class="se-tr">
-                            <td class="se-td">Tadhg Kavanagh</td>
-                            <td class="se-td">€ 7376</td>
-                            <td class="se-td">27/09/2024</td>
-                            <td class="se-td"><img src="{{ asset('backend/assets/images/visa.png') }}" class="ak-mr-4" alt="">  1122
-                            </td>
-                            <td class="se-td"></td>
-                        </tr>
+                        @foreach ($payment_history as $history)
+                            <tr class="se-tr">
+                                <td class="se-td">{{ $history->instructor->user->first_name }} {{ $history->instructor->user->last_name }}</td>
+                                <td class="se-td">€ {{ $history->price}}</td>
+                                <td class="se-td">{{ \Carbon\Carbon::parse($history->created_at)->format('d/m/Y h:i A') }}</td>
+                                <td class="se-td"></td>
+                            </tr>
+                        @endforeach
+
                         <!-- Add more rows as needed -->
                     </tbody>
                 </table>
@@ -199,22 +200,21 @@
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.min.js"></script>
     <script>
-        $(document).ready(function () {
-          // Ensure previous modal is closed before opening success modal
-          $(".confirm_btn").on("click", function () {
-            $("#exampleModalCenter").modal("hide"); // Close the payment modal
-          });
-    
-          // Wait until the payment modal is fully hidden before showing the success modal
-          $("#exampleModalCenter").on("hidden.bs.modal", function () {
-            $("#successModal").modal("show");
-          });
-    
-          // Ensure close button properly hides the success modal
-          $("#successModal .close, #successModal .btn-danger").on("click", function () {
-            $("#successModal").modal("hide");
-          });
+        $(document).ready(function() {
+            // Ensure previous modal is closed before opening success modal
+            $(".confirm_btn").on("click", function() {
+                $("#exampleModalCenter").modal("hide"); // Close the payment modal
+            });
+
+            // Wait until the payment modal is fully hidden before showing the success modal
+            $("#exampleModalCenter").on("hidden.bs.modal", function() {
+                $("#successModal").modal("show");
+            });
+
+            // Ensure close button properly hides the success modal
+            $("#successModal .close, #successModal .btn-danger").on("click", function() {
+                $("#successModal").modal("hide");
+            });
         });
-    
-      </script>
+    </script>
 @endpush

@@ -28,7 +28,7 @@
     <div class="se--main-layout">
         <div class="page-title">Change Payment Method</div>
 
-        <div class="se--category-section">
+        {{-- <div class="se--category-section">
             <button class=" se-category-btn">
                 <img src="{{ asset('backend/assets/images/visa.png') }}" alt="">
                 1122
@@ -36,37 +36,36 @@
             <button class=" se-category-btn">
                 <span>Exp:</span>09/32
             </button>
-        </div>
+        </div> --}}
 
-        <form action="">
-            <label for="">Card no.</label>
+        <form action="{{ route('admin.payments.method.update') }}" method="post">
+            @csrf
+            <label for="">STRIPE_PUBLIC_KEY</label>
             <div class="bg-black py-2 border rounded gap-3 px-3 ak-w-34 d-flex justify-content-between border-dark">
-                <input type="text" placeholder="1111 2222 3333 4444" class="bg-black text-white border-0">
-                <div class="d-flex  justify-content-between">
-                    <img src="{{ asset('backend/assets/images/visa.png') }}" alt="">
-                    <img src="{{ asset('backend/assets/images/visa2.png') }}" alt="">
-                </div>
+                <input type="text" name="STRIPE_SECRET" placeholder="Enter Stripe Public Key" value="{{ old('STRIPE_SECRET', env('STRIPE_PUBLIC')) }}"  class="bg-black text-white border-0 @error('STRIPE_SECRET') is-invalid @enderror">
+                @error('STRIPE_SECRET')
+                    <span class="invalid-feedback" role="alert">
+                        <strong>{{ $message }}</strong>
+                    </span>
+                @enderror
             </div>
+            <br>
+            <label for="">STRIPE_SECRET_KEY</label>
+            <div class="bg-black py-2 border rounded gap-3 px-3 ak-w-34 d-flex justify-content-between border-dark">
+                <input type="text" name="STRIPE_SECRET" placeholder="Enter Stripe Secret Key" value="{{ old('STRIPE_SECRET', env('STRIPE_SECRET')) }}" class="bg-black text-white border-0 @error('STRIPE_SECRET') is-invalid @enderror">
 
-            <div class="form-flex mt-3 gap-5">
-                <div class="">
-                    <label for="">Exp. Date</label>
-                    <div class="bg-black py-2 border rounded gap-3 px-3 w-20  border-dark">
-                        <input type="text" placeholder="MM/YY" class="bg-black text-white  border-0">
-                    </div>
-                </div>
-                <div class="">
-                    <label for="">CVC</label>
-                    <div class="bg-black py-2 border rounded gap-3 px-3 w-20 d-flex justify-content-between border-dark">
-                        <input type="text" placeholder="MM/YY" class="bg-black text-white  border-0">
-                    </div>
-                </div>
+                @error('STRIPE_SECRET')
+                <span class="invalid-feedback" role="alert">
+                    <strong>{{ $message }}</strong>
+                </span>
+            @enderror
             </div>
-        </form>
+            
+            <br/>
 
-        <button type="button" class="btn btn-light fixed-width" data-toggle="modal"
-            data-target="#exampleModalCenter">Change Payment
+        <button type="submit" class="btn btn-light fixed-width" >Change Payment
             Method</button>
+        </form>
 
 
         <!-- Payment Confirmation Modal -->
