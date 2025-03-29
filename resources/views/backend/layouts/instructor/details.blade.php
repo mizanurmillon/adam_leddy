@@ -102,7 +102,7 @@
                                 <h2>
                                     {{ $course->title }}
                                 </h2>
-                                <p>{{ $course->instructor->user->first_name }}</p>
+                                <p>{{ $course->instructor->user->first_name }} {{ $course->instructor->user->last_name }}</p>
                                 <p>{{ $course->modules_count }} Chapters | {{ $course->videos_count }} Lessons</p>
 
                             </div>
