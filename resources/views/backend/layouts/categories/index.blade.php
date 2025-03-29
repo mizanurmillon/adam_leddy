@@ -1,6 +1,35 @@
 @extends('backend.app')
 @section('title', 'Categories & Tags')
 @push('style')
+    <style>
+        .se-tag-item,
+        .se-category-item {
+            position: relative;
+            display: inline-block;
+            margin-right: 8px;
+        }
+
+        .delete-tag,
+        .delete-category {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background-color: red;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            font-size: 14px;
+            cursor: pointer;
+            display: none;
+        }
+
+        .se-tag-item:hover .delete-tag,
+        .se-category-item:hover .delete-category {
+            display: block;
+        }
+    </style>
 @endpush
 @section('content')
     <div class="page-header">
@@ -19,15 +48,24 @@
 
 
         <div class="se--tag--category--layout">
-            <!-- tags section -->
+            <!-- Tags Section -->
             <div class="se-tags-layout">
                 <p class="se--subtext">Tags</p>
 
                 <div class="se--allTags">
                     @foreach ($tags as $tag)
-                        <button class="se-trending-btn" style="background-color: #FFA640;">
-                            <p>{{ $tag->name }}</p>
-                        </button>
+                        <div class="se-tag-item">
+                            <button class="se-trending-btn" style="background-color: #FFA640;">
+                                <p>{{ $tag->name }}</p>
+                            </button>
+                            <form action="{{ route('admin.tags.destroy', $tag->id) }}" method="POST" class="delete-form">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="delete-tag">
+                                    &times;
+                                </button>
+                            </form>
+                        </div>
                     @endforeach
                     <button class="se--add-tags">
                         <svg xmlns="http://www.w3.org/2000/svg" width="17" height="16" viewBox="0 0 17 16"
@@ -36,17 +74,15 @@
                                 stroke-linecap="round" stroke-linejoin="round" />
                         </svg>
                     </button>
-
                 </div>
 
-
-                <!-- input tags -->
+                <!-- Input tags -->
                 <form action="{{ route('admin.tags.store') }}" method="post">
                     @csrf
                     <div class="se--input-tags-layout" id="tag-input-add">
                         <div class="se--input--tags">
-                            <input type="text" placeholder="Tag Name" name="name" class="category__input @error('name') is-invalid @enderror" />
-
+                            <input type="text" placeholder="Tag Name" name="name"
+                                class="category__input @error('name') is-invalid @enderror" />
                         </div>
                         @error('name')
                             <span class="invalid-feedback" role="alert">
@@ -56,22 +92,29 @@
                         <button type="submit" class="se-add-tag">
                             Add
                         </button>
-
                     </div>
                 </form>
-
             </div>
 
-            <!-- category sections -->
+            <!-- Categories Section -->
             <div class="se-tags-layout">
                 <p class="se--subtext">Category</p>
                 <div class="se--Category">
                     @foreach ($categories as $category)
-                        <button class="se--category-button">
-                            {{ $category->name }}
-                        </button>
+                        <div class="se-category-item">
+                            <button class="se--category-button">
+                                {{ $category->name }}
+                            </button>
+                            <form action="{{ route('admin.categories.destroy', $category->id) }}" method="POST"
+                                class="delete-form">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="delete-category">
+                                    &times;
+                                </button>
+                            </form>
+                        </div>
                     @endforeach
-
                     <button class="se--add-category">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16"
                             fill="none">
@@ -79,10 +122,10 @@
                                 stroke-linejoin="round" />
                         </svg>
                     </button>
-
-
                 </div>
-                <form method="post" action="{{ route('admin.categories.store') }}" >
+
+                <!-- Input categories -->
+                <form method="post" action="{{ route('admin.categories.store') }}">
                     @csrf
                     <div class="se--input-tags-layout" id="category-input-add">
                         <div class="se--input--tags">
@@ -99,10 +142,9 @@
                         </button>
                     </div>
                 </form>
-
             </div>
-
         </div>
+
 
     </div>
 @endsection

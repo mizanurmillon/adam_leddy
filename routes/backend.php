@@ -17,6 +17,8 @@ Route::controller(CategoryController::class)->group(function () {
     Route::get('/categories/index', 'index')->name('admin.categories.index');
     Route::post('/categories/store', 'store')->name('admin.categories.store');
     Route::post('/tags/store', 'tagStore')->name('admin.tags.store');
+    Route::delete('/tags/destroy/{id}', 'tagDestory')->name('admin.tags.destroy');
+    Route::delete('/categories/destroy/{id}', 'categoryDestroy')->name('admin.categories.destroy');
 });
 
 Route::controller(UserController::class)->prefix('users')->group(function () {

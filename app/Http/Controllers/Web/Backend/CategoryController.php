@@ -47,4 +47,24 @@ class CategoryController extends Controller
             return redirect(route('admin.categories.index'))->with('t-error', $exception->getMessage());
         }
     }
+    
+    public function tagDestory($id)
+    {
+        try {
+            Tag::find($id)->delete();
+            return redirect(route('admin.categories.index'))->with('t-success', 'Tag deleted successfully');
+        } catch (\Exception $exception) {
+            return redirect(route('admin.categories.index'))->with('t-error', $exception->getMessage());
+        }
+    }
+
+    public function categoryDestroy($id)
+    {
+        try {
+            Category::find($id)->delete();
+            return redirect(route('admin.categories.index'))->with('t-success', 'Category deleted successfully');
+        } catch (\Exception $exception) {
+            return redirect(route('admin.categories.index'))->with('t-error', $exception->getMessage());
+        }
+    }
 }
