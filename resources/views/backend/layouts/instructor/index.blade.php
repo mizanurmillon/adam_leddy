@@ -82,7 +82,7 @@
                     <tbody class="se-tbody">
                         @foreach ($instructors as $instructor)
                             <tr class="se-tr">
-                                <td class="se-td">{{ $instructor->user->first_name }} {{ $instructor->last_name }}</td>
+                                <td class="se-td">{{ $instructor->user->first_name }} {{ $instructor->user->last_name }}</td>
                                 <td class="se-td">
                                     @php
                                         $totalMinutes = $instructor->courses->flatMap->courseWatches->sum('watch_time');
