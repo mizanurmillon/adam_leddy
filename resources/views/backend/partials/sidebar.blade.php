@@ -101,7 +101,7 @@
         <!-- reports -->
         <div class="group-nav-items">
             <h4 class="group-nav-title">Reports</h4>
-            <a href="{{ route('admin.watch_time.reports.index') }}" class="item {{ Route::is('admin.watch_time.reports.index') ? 'active' : '' }}">
+            {{-- <a href="{{ route('admin.watch_time.reports.index') }}" class="item {{ Route::is('admin.watch_time.reports.index') ? 'active' : '' }}">
                 <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18"
                     fill="none">
                     <path
@@ -109,7 +109,7 @@
                         fill="" />
                 </svg>
                 <span class="title">Watch Time</span>
-            </a>
+            </a> --}}
             <a href="{{ route('admin.revenue.index') }}" class="item {{ Route::is('admin.revenue.*') ? 'active' : '' }}">
                 <svg xmlns="http://www.w3.org/2000/svg" width="18" height="22" viewBox="0 0 18 22"
                     fill="none">

@@ -120,7 +120,7 @@
                 <p class="se--card--number">{{ $total_course }}</p>
 
             </div>
-            <div class="se--pending-2">
+            {{-- <div class="se--pending-2">
                 <p Month class="se--card-pera1">Total Category</p>
                 <p style="color: black;" class="se--card--number">{{ $total_category }}</p>
 
@@ -129,7 +129,7 @@
                 <p Month class="se--card-pera1">Total Tags</p>
                 <p style="color: black;" class="se--card--number">{{ $total_tag }}</p>
 
-            </div>
+            </div> --}}
         </div>
 
        {{-- <div class="se--table--layout">

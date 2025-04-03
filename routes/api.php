@@ -5,6 +5,7 @@ use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\Auth\LoginController;
 use App\Http\Controllers\Api\Auth\RegisterController;
 use App\Http\Controllers\Api\Instructor\TagsController;
+use App\Http\Controllers\Api\Instructor\VideoController;
 use App\Http\Controllers\Api\Instructor\CourseController;
 use App\Http\Controllers\Api\Instructor\CategoryController;
 use App\Http\Controllers\Api\Instructor\EarningsController;
@@ -68,6 +69,10 @@ Route::group(['middleware' => ['jwt.verify']], function () {
             Route::post('/delete/course/module/{id}', 'deleteModule');
 
             Route::get('/submit/for/approval/{id}', 'submitForApproval');
+        });
+
+        Route::controller(VideoController::class)->prefix('instructor')->group(function () {
+            Route::post('/create/video/{id}', 'create');
         });
 
         Route::controller(DashboardController::class)->prefix('instructor')->group(function () {
