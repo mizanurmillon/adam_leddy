@@ -104,7 +104,7 @@ class LoginController extends Controller
 
                 $userData = auth()->user();
 
-                $userData->setAttribute('is_premium', $userData->isMember() && !$userData->isExpired() ? 1 : 0);
+                $userData->setAttribute('is_premium', $userData->isMember() && !$userData->isExpired() ? true : false);
                 unset($userData->membership);
                 $userData->setAttribute('token', $token);
             }
