@@ -220,4 +220,23 @@ class InstructorController extends Controller
             ]);
         }
     }
+
+    public function destroy($id)
+    {
+        $instructor = Instructor::find($id);
+
+        if (!$instructor) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Instructor not found.',
+            ]);
+        }
+
+        $instructor->delete();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Category deleted successfully.',
+         ]);
+    }
 }

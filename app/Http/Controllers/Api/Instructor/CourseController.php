@@ -24,8 +24,6 @@ class CourseController extends Controller
             'description' => 'required|string|max:255',
             'category_id' => 'required|exists:categories,id',
             'thumbnail'   => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-            'tags'        => 'nullable|array',
-            'tags.*'      => 'nullable|string|max:255',
         ]);
 
         if ($validator->fails()) {
@@ -54,11 +52,7 @@ class CourseController extends Controller
             'category_id'   => $request->category_id,
             'thumbnail'     => $thumbnailName,
         ]);
-
-        foreach ($request->tags as $tag) {
-            $course->tags()->attach($tag);
-        }
-        $course->load('category', 'tags');
+        $course->load('category');
         return $this->success($course, 'Course created successfully', 200);
     }
 

@@ -1,33 +1,31 @@
 <?php
-
 namespace App\Http\Controllers\Web\Backend;
 
+use App\Http\Controllers\Controller;
+use App\Models\Category;
+use App\Models\Course;
+use App\Models\CourseWatch;
+use App\Models\Instructor;
 use App\Models\Tag;
 use App\Models\User;
-use App\Models\Course;
-use App\Models\Category;
-use App\Models\Instructor;
-use App\Models\CourseWatch;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
-use App\Http\Controllers\Controller;
 
 class CourseManagementController extends Controller
 {
     public function index(Request $request)
     {
-        $data = $request->all();
+        $data       = $request->all();
         $categories = Category::all();
-    
+
         // Start with a query to filter by category if selected
         $query = Course::with('courseWatches', 'category');
-    
-        if (!empty($data['category']) && $data['category'] != 'undefined') {
+
+        if (! empty($data['category']) && $data['category'] != 'undefined') {
             $query->where('category_id', $data['category']);
         }
-    
+
         // Apply sorting at the database level
-        if (!empty($data['sort']) && $data['sort'] !== "default") {
+        if (! empty($data['sort']) && $data['sort'] !== "default") {
             if ($data['sort'] == 'watch-low') {
                 $query->withSum('courseWatches', 'watch_time')->orderBy('course_watches_sum_watch_time', 'asc');
             }
@@ -38,10 +36,10 @@ class CourseManagementController extends Controller
                 $query->orderBy('created_at', 'desc');
             }
         }
-    
-        // Paginate results
+
+                                                            // Paginate results
         $courses = $query->paginate(10)->withQueryString(); // Preserve query params in pagination
-    
+
         // Fetch instructor names
         $instructorNames = $courses->mapWithKeys(function ($course) {
             $instructor = Instructor::find($course->instructor_id);
@@ -51,12 +49,12 @@ class CourseManagementController extends Controller
             }
             return [$course->id => ''];
         });
-    
+
         return view('backend.layouts.courses.index', compact('courses', 'categories', 'instructorNames'));
     }
     public function content(Request $request, $id)
     {
-        $tags = Tag::all();
+        $tags   = Tag::all();
         $course = Course::with('instructor.user', 'modules.videos', 'modules.courseWatches', 'category', 'tags')
             ->where('id', $id)
             ->first();
@@ -90,9 +88,9 @@ class CourseManagementController extends Controller
             'tags:id,name',
             'courseWatches',
         ])
-        ->withCount('courseWatches as total_watch_time')
-        ->orderByDesc('total_watch_time')
-        ->first();
+            ->withCount('courseWatches as total_watch_time')
+            ->orderByDesc('total_watch_time')
+            ->first();
 
         $moduleIds = $topInstructor->modules ? $topInstructor->modules->pluck('id')->toArray() : [];
 
@@ -112,5 +110,27 @@ class CourseManagementController extends Controller
         }
 
         return view('backend.layouts.courses.content', compact('course', 'watchTimes', 'tags', 'topInstructor', 'topWatchTimes'));
+    }
+
+    public function tagStore(Request $request)
+    {
+        $request->validate([
+            'tag_id'    => 'required|exists:tags,id',
+            'course_id' => 'required|exists:courses,id',
+        ]);
+
+        $course = Course::find($request->course_id);
+
+        if (! $course) {
+            return response()->json(['success' => false, 'message' => 'Course not found'], 404);
+        }
+
+        if ($course->tags()->where('tag_id', $request->tag_id)->exists()) {
+            $course->tags()->detach($request->tag_id);
+            return response()->json(['error' => true, 'message' => 'Tag removed successfully']);
+        }
+
+        $course->tags()->attach($request->tag_id);
+        return response()->json(['success' => true, 'message' => 'Tag added successfully']);
     }
 }

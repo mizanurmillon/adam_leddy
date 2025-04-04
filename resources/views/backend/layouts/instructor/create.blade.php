@@ -116,7 +116,10 @@
                                     <textarea class="form-control @error('bio') is-invalid @enderror" id="bio" name="bio" rows="3" placeholder="Enter Bio">{{ old('bio') }}</textarea>
                                 </div>
 
-                                <button type="submit" class="btn btn-primary">Submit</button>
+                                <button type="submit" class="btn btn-primary" id="submitBtn">
+                                    <span id="btnText">Submit</span>
+                                    <span id="btnLoader" class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
+                                </button>
                                 <a href="{{ route('admin.instructors.index') }}" class="btn btn-danger">Cancel</a>
                             </form>
                         </div>
@@ -129,4 +132,18 @@
 
 @push('script')
     <script src="{{ asset('backend/assets/js/setu.js') }}"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const form = document.querySelector("form");
+            const submitBtn = document.getElementById("submitBtn");
+            const btnText = document.getElementById("btnText");
+            const btnLoader = document.getElementById("btnLoader");
+    
+            form.addEventListener("submit", function() {
+                submitBtn.disabled = true; 
+                btnText.textContent = "Submitting..."; 
+                btnLoader.classList.remove("d-none");
+            });
+        });
+    </script>
 @endpush

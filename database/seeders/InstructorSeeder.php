@@ -15,7 +15,6 @@ class InstructorSeeder extends Seeder
     {
         Instructor::create([
             'user_id' => 3,
-            'category_id' => 1,
             'bio' => 'Experienced web developer and instructor.',
             'expertise' => 'Data Security, Cloud Computing, AI'
         ]);

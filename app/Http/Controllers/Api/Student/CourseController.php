@@ -47,12 +47,16 @@ class CourseController extends Controller
         if ($request->filled('instructor_id')) {
             $query->where('instructor_id', $request->instructor_id);
         }
-
+        
         $courses = $query->where('status', 'approved')->paginate($request->per_page ?? 10);
 
+        
+
         $courses->map(function ($course) {
-            $course->is_bookmarked = $course->bookmarks->isNotEmpty(); // If bookmarks exist, set flag to true
-            unset($course->bookmarks); // Remove bookmarks relationship from response
+            $course->is_bookmarked = $course->bookmarks->isNotEmpty();
+            $course->is_modules_exists = $course->modules->isNotEmpty();
+            unset($course->bookmarks);
+            unset($course->modules);
             return $course;
         });
 

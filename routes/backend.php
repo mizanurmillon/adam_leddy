@@ -28,6 +28,7 @@ Route::controller(UserController::class)->prefix('users')->group(function () {
 Route::controller(CourseManagementController::class)->group(function () {
     Route::get('/courses/index', 'index')->name('admin.courses.index');
     Route::get('/courses/content/{id}', 'content')->name('admin.courses.content');
+    Route::post('/courses/tags/store', 'tagStore')->name('course.tag.store');
 });
 
 Route::controller(ApprovalController::class)->group(function () {
@@ -40,6 +41,8 @@ Route::controller(InstructorController::class)->group(function () {
     Route::get('/instructors/index', 'index')->name('admin.instructors.index');
     Route::get('/instructors/details/{id}', 'details')->name('admin.instructors.details');
     Route::get('/instructors/video/details/{id}', 'content')->name('admin.instructors.video.details');
+
+    Route::delete('/instructors/destroy/{id}', 'destroy')->name('admin.instructors.destroy');
 
     Route::post('/instructors/status/{id}', 'status')->name('admin.instructors.status');
 

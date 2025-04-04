@@ -15,7 +15,6 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             $table->string('stripe_account_id')->nullable();
-            $table->foreignId('category_id')->nullable()->constrained('categories')->onDelete('cascade');
             $table->text('bio')->nullable();
             $table->string('expertise')->nullable();
             $table->timestamps();
