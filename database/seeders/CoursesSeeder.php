@@ -60,17 +60,10 @@ class CoursesSeeder extends Seeder
 
         if (Schema::hasTable('course_videos')) {
             DB::table('course_videos')->insert([
-                ['course_module_id' => 1, 'video_url' => 'https://vimeo.com/manage/videos/1069882664', 'file_url' => null, 'duration' => 1200, 'created_at' => now(), 'updated_at' => now()],
-                ['course_module_id' => 2, 'video_url' => 'https://vimeo.com/manage/videos/1069903040', 'file_url' => null, 'duration' => 1800, 'created_at' => now(), 'updated_at' => now()],
-                ['course_module_id' => 3, 'video_url' => 'https://vimeo.com/manage/videos/1069882664', 'file_url' => null, 'duration' => 1500, 'created_at' => now(), 'updated_at' => now()],
-            ]);
-        }
-
-        if (Schema::hasTable('course_tags')) {
-            DB::table('course_tags')->insert([
-                ['course_id' => 1, 'tag_id' => 1, 'created_at' => now(), 'updated_at' => now()],
-                ['course_id' => 2, 'tag_id' => 2, 'created_at' => now(), 'updated_at' => now()],
-                ['course_id' => 3, 'tag_id' => 3, 'created_at' => now(), 'updated_at' => now()],
+                ['course_module_id' => 1, 'video_url' => 'https://player.vimeo.com/video/1072434276?title=1&byline=1&portrait=1&badge=1&autopause=1&player_id=1', 'file_url' => null, 'duration' => 1200, 'created_at' => now(), 'updated_at' => now()],
+                ['course_module_id' => 1, 'video_url' => 'https://player.vimeo.com/video/1072434276?title=1&byline=1&portrait=1&badge=1&autopause=1&player_id=1', 'file_url' => null, 'duration' => 1200, 'created_at' => now(), 'updated_at' => now()],
+                ['course_module_id' => 2, 'video_url' => 'https://player.vimeo.com/video/1072434886?title=1&byline=1&portrait=1&badge=1&autopause=1&player_id=1', 'file_url' => null, 'duration' => 1800, 'created_at' => now(), 'updated_at' => now()],
+                ['course_module_id' => 3, 'video_url' => 'https://player.vimeo.com/video/1072434276?title=1&byline=1&portrait=1&badge=1&autopause=1&player_id=1', 'file_url' => null, 'duration' => 1500, 'created_at' => now(), 'updated_at' => now()],
             ]);
         }
     }
