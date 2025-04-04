@@ -85,7 +85,6 @@ class RegisterController extends Controller
             $user->save();
 
             $user->instructor()->create([
-                'category_id' => $request->category_id,
                 'expertise'   => $request->expertise,
                 'bio'         => $request->bio,
             ]);
