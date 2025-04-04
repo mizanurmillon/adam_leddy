@@ -48,8 +48,6 @@
                                     </defs>
                                 </svg>
 
-
-
                             </div>
                             <p class="se--card--number">{{ $monthlyUsersCount }}</p>
                         </div>
