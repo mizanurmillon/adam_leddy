@@ -51,19 +51,40 @@ class CoursesSeeder extends Seeder
 
         if (Schema::hasTable('course_modules')) {
             DB::table('course_modules')->insert([
-                ['course_id' => 1, 'module_title' => 'Getting Started', 'created_at' => now(), 'updated_at' => now()],
-                ['course_id' => 1, 'module_title' => 'Routing & Middleware', 'created_at' => now(), 'updated_at' => now()],
-                ['course_id' => 2, 'module_title' => 'Vue Basics', 'created_at' => now(), 'updated_at' => now()],
-                ['course_id' => 3, 'module_title' => 'Advanced PHP Concepts', 'created_at' => now(), 'updated_at' => now()],
+                ['course_id' => 1, 'module_title' => 'Getting Started', 'file_url' => null, 'created_at' => now(), 'updated_at' => now()],
+                ['course_id' => 1, 'module_title' => 'Routing & Middleware', 'file_url' => null, 'created_at' => now(), 'updated_at' => now()],
+                ['course_id' => 2, 'module_title' => 'Vue Basics', 'file_url' => null, 'created_at' => now(), 'updated_at' => now()],
+                ['course_id' => 3, 'module_title' => 'Advanced PHP Concepts', 'file_url' => null, 'created_at' => now(), 'updated_at' => now()],
             ]);
         }
 
         if (Schema::hasTable('course_videos')) {
             DB::table('course_videos')->insert([
-                ['course_module_id' => 1, 'video_url' => 'https://player.vimeo.com/video/1072434276?title=1&byline=1&portrait=1&badge=1&autopause=1&player_id=1', 'file_url' => null, 'duration' => 1200, 'created_at' => now(), 'updated_at' => now()],
-                ['course_module_id' => 1, 'video_url' => 'https://player.vimeo.com/video/1072434276?title=1&byline=1&portrait=1&badge=1&autopause=1&player_id=1', 'file_url' => null, 'duration' => 1200, 'created_at' => now(), 'updated_at' => now()],
-                ['course_module_id' => 2, 'video_url' => 'https://player.vimeo.com/video/1072434886?title=1&byline=1&portrait=1&badge=1&autopause=1&player_id=1', 'file_url' => null, 'duration' => 1800, 'created_at' => now(), 'updated_at' => now()],
-                ['course_module_id' => 3, 'video_url' => 'https://player.vimeo.com/video/1072434276?title=1&byline=1&portrait=1&badge=1&autopause=1&player_id=1', 'file_url' => null, 'duration' => 1500, 'created_at' => now(), 'updated_at' => now()],
+                [
+                    'course_module_id' => 1,
+                    'video_title' => 'Introduction to Laravel',
+                    'video_url' => 'https://player.vimeo.com/video/1072434276?title=1&byline=1&portrait=1&badge=1&autopause=1&player_id=1', 'duration' => 1200, 'created_at' => now(), 
+                    'updated_at' => now()
+                ],
+                [
+                    'course_module_id' => 1,
+                    'video_title' => 'Routing & Middleware',
+                    'video_url' => 'https://player.vimeo.com/video/1072434276?title=1&byline=1&portrait=1&badge=1&autopause=1&player_id=1','duration' => 1200, 'created_at' => now(), 
+                    'updated_at' => now()
+                ],
+                [
+                    'course_module_id' => 2,
+                    'video_title' => 'Vue Basics',
+                    'video_url' => 'https://player.vimeo.com/video/1072434886?title=1&byline=1&portrait=1&badge=1&autopause=1&player_id=1','duration' => 1800,
+                    'created_at' => now(), 
+                    'updated_at' => now()
+                ],
+                [
+                    'course_module_id' => 3, 
+                    'video_title' => 'Advanced PHP Concepts',
+                    'video_url' => 'https://player.vimeo.com/video/1072434276?title=1&byline=1&portrait=1&badge=1&autopause=1&player_id=1','duration' => 1500, 'created_at' => now(), 
+                    'updated_at' => now()
+                ],
             ]);
         }
     }
