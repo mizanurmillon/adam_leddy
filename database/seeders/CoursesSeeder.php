@@ -63,13 +63,13 @@ class CoursesSeeder extends Seeder
                 [
                     'course_module_id' => 1,
                     'video_title' => 'Introduction to Laravel',
-                    'video_url' => 'https://player.vimeo.com/video/1072434276?title=1&byline=1&portrait=1&badge=1&autopause=1&player_id=1', 'duration' => 1200, 'created_at' => now(), 
+                    'video_url' => 'https://player.vimeo.com/video/1072754809?title=1&byline=1&portrait=1&badge=1&autopause=1&player_id=1', 'duration' => 1200, 'created_at' => now(), 
                     'updated_at' => now()
                 ],
                 [
                     'course_module_id' => 1,
                     'video_title' => 'Routing & Middleware',
-                    'video_url' => 'https://player.vimeo.com/video/1072434276?title=1&byline=1&portrait=1&badge=1&autopause=1&player_id=1','duration' => 1200, 'created_at' => now(), 
+                    'video_url' => 'https://player.vimeo.com/video/1072756011?title=1&byline=1&portrait=1&badge=1&autopause=1&player_id=1','duration' => 1100, 'created_at' => now(), 
                     'updated_at' => now()
                 ],
                 [
@@ -80,9 +80,16 @@ class CoursesSeeder extends Seeder
                     'updated_at' => now()
                 ],
                 [
+                    'course_module_id' => 2,
+                    'video_title' => 'Vue Basics',
+                    'video_url' => 'https://player.vimeo.com/video/1072756258?title=1&byline=1&portrait=1&badge=1&autopause=1&player_id=1','duration' => 1800,
+                    'created_at' => now(), 
+                    'updated_at' => now()
+                ],
+                [
                     'course_module_id' => 3, 
                     'video_title' => 'Advanced PHP Concepts',
-                    'video_url' => 'https://player.vimeo.com/video/1072434276?title=1&byline=1&portrait=1&badge=1&autopause=1&player_id=1','duration' => 1500, 'created_at' => now(), 
+                    'video_url' => 'https://player.vimeo.com/video/1072754809?title=1&byline=1&portrait=1&badge=1&autopause=1&player_id=1','duration' => 1500, 'created_at' => now(), 
                     'updated_at' => now()
                 ],
             ]);
