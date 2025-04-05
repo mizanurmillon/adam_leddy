@@ -18,6 +18,7 @@ class VideoController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'video_url' => 'required|mimetypes:video/mp4,video/quicktime,video/x-ms-wmv,video/x-msvideo|max:100000',
+            'video_title' => 'required|string|max:255',
         ]);
 
         if ($validator->fails()) {
@@ -94,6 +95,7 @@ class VideoController extends Controller
 
         $video = CourseVideo::create([
             'course_module_id' => $data->id,
+            'video_title'      => $request->video_title,
             'video_url'        => $videoEmbedUrl,
             'duration'         => $formattedDuration,
         ]);

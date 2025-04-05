@@ -62,6 +62,7 @@ class CourseController extends Controller
             'title'     => 'required|string|max:255',
             'video_url' => 'required|mimes:mp4,mov,ogg,qt,ogx,mkv,wmv,webm,flv,avi,ogv|max:100000',
             'file_url'  => 'nullable|mimes:pdf,doc,docx|max:4096',
+            'video_title' => 'required|string|max:255',
         ]);
 
         if ($validator->fails()) {
@@ -148,13 +149,14 @@ class CourseController extends Controller
         $module = CourseModule::create([
             'course_id'    => $course->id,
             'module_title' => $request->title,
+            'file_url'         => $fileName,
         ]);
 
         // Create Video Entry
         CourseVideo::create([
             'course_module_id' => $module->id,
+            'video_title'      => $request->title,
             'video_url'        => $videoEmbedUrl, // Store as string
-            'file_url'         => $fileName,
             'duration'         => $formattedDuration,
         ]);
 
@@ -282,6 +284,7 @@ class CourseController extends Controller
             'title'     => 'required|string|max:255',
             'video_url' => 'nullable|mimes:mp4,mov,ogg,qt,ogx,mkv,wmv,webm,flv,avi,ogv|max:100000',
             'file_url'  => 'nullable|mimes:pdf,doc,docx|max:4096',
+            'video_title' => 'nullable|string|max:255',
         ]);
 
         if ($validator->fails()) {
@@ -371,14 +374,15 @@ class CourseController extends Controller
         // Update Course Module
         $Course_module->update([
             'module_title' => $request->title,
+            'file_url'  => $fileName,
         ]);
 
         // Update or Create Course Video
         $Course_video = CourseVideo::updateOrCreate(
             ['course_module_id' => $Course_module->id],
             [
+                'video_title' => $request->video_title,
                 'video_url' => $videoEmbedUrl,
-                'file_url'  => $fileName,
                 'duration'  => $formattedDuration,
             ]
         );
