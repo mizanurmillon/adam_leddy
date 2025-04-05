@@ -19,10 +19,14 @@ class CourseController extends Controller
             'category:id,name',
             'tags:id,name'
         ])
-            ->withCount(['modules', 'modules as videos_count' => function ($query) {
+        ->withCount([
+            'modules',
+            'modules as videos_count' => function ($query) {
                 $query->join('course_videos', 'course_videos.course_module_id', '=', 'course_modules.id')
                     ->select(DB::raw('count(course_videos.id)'));
-            }]);
+            }
+        ])
+        ->whereHas('modules');
 
         // Filter by Tag
         if ($request->filled('tag')) {
@@ -54,9 +58,9 @@ class CourseController extends Controller
 
         $courses->map(function ($course) {
             $course->is_bookmarked = $course->bookmarks->isNotEmpty();
-            $course->is_modules_exists = $course->modules->isNotEmpty();
+            // $course->is_modules_exists = $course->modules->isNotEmpty();
             unset($course->bookmarks);
-            unset($course->modules);
+            // unset($course->modules);
             return $course;
         });
 
