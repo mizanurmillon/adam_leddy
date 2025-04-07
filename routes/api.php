@@ -73,6 +73,7 @@ Route::group(['middleware' => ['jwt.verify']], function () {
 
         Route::controller(VideoController::class)->prefix('instructor')->group(function () {
             Route::post('/create/video/{id}', 'create');
+            Route::delete('/delete/video/{id}', 'delete');
         });
 
         Route::controller(DashboardController::class)->prefix('instructor')->group(function () {

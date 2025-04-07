@@ -369,6 +369,8 @@ class CourseController extends Controller
             } catch (\Exception $e) {
                 return $this->error([], "Video upload failed: " . $e->getMessage(), 500);
             }
+        }else{
+            $videoEmbedUrl = $Course_module->videos->video_url ?? null;
         }
 
         // Update Course Module
@@ -504,13 +506,13 @@ class CourseController extends Controller
                     $vimeo->request("/videos/{$previousVideoId}", [], 'DELETE');
                 }
             }
+        }
 
-            // Delete local video file
-            if (! empty($video->file_url)) {
-                $previousFilePath = public_path($video->file_url);
-                if (file_exists($previousFilePath)) {
-                    unlink($previousFilePath);
-                }
+         // Delete local video file
+        if (! empty($module->file_url)) {
+            $previousFilePath = public_path($module->file_url);
+            if (file_exists($previousFilePath)) {
+                unlink($previousFilePath);
             }
         }
 
