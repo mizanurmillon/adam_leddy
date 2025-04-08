@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('stripe_account_id')->nullable();
             $table->text('bio')->nullable();
             $table->string('expertise')->nullable();
+            $table->enum('status', ['unpaid', 'paid', 'failed'])->default('unpaid');
             $table->timestamps();
         });
     }
