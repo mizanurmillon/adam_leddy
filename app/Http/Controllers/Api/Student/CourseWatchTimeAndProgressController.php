@@ -53,7 +53,7 @@ class CourseWatchTimeAndProgressController extends Controller
                     ]);
                 }
                 $data = $courseProgress;
-                $message = 'Watch time updated and course marked as finished';
+                $message = 'Course marked as finished';
             } else {
                 $courseWatch = CourseWatch::where('user_id', $user->id)
                     ->where('course_id', $request->course_id)
