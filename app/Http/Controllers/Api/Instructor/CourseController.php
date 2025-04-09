@@ -199,14 +199,12 @@ class CourseController extends Controller
             $totalSeconds = $course->courseWatches->sum('watch_time'); // assuming in seconds
             $course->total_watch_times = gmdate('H:i:s', $totalSeconds);
             return $course;
+            unset($course->courseWatches);
         });
 
         if ($courses->isEmpty()) {
             return $this->error([], 'Course Not Found', 200);
         }
-
-       
-        
 
         return $this->success($courses, 'Course found successfully', 200);
     }
