@@ -33,7 +33,7 @@ class WatchListController extends Controller
                             $query->where('user_id', $user->id);
                         }]);
                 },
-                'course.instructor:id,user_id,category_id',
+                'course.instructor:id,user_id',
                 'course.instructor.user:id,first_name,last_name',
 
             ])
