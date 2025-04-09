@@ -41,7 +41,7 @@ class ProcessInstructorPayouts extends Command
         foreach ($payouts as $payout) {
             try {
                 Transfer::create([
-                    'amount' => 100 * 100, // Amount in cents
+                    'amount' => 100000 * 100, // Amount in cents
                     'currency' => 'usd',
                     'destination' => $payout->stripe_account_id,
                     'transfer_group' => 'COURSE_SUBSCRIPTION_' . $payout->id,
