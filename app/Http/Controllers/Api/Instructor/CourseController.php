@@ -21,7 +21,7 @@ class CourseController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'title'       => 'required|string|max:255',
-            'description' => 'required|string|max:255',
+            'description' => 'required|string',
             'category_id' => 'required|exists:categories,id',
             'thumbnail'   => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);
@@ -169,13 +169,13 @@ class CourseController extends Controller
     {
         $user = auth()->user();
 
-        $data = User::with('instructor')->where('id', $user->id)->first();
+        $data = User::with('instructor',)->where('id', $user->id)->first();
 
         if (! $user) {
             return $this->error([], 'User Not Found', 200);
         }
 
-        $course = Course::with('instructor.user:id,first_name,last_name,role', 'category', 'tags', 'modules.videos')->where('instructor_id', $data->instructor->id);
+        $course = Course::with('instructor.user:id,first_name,last_name,role','category')->where('instructor_id', $data->instructor->id);
 
         if ($request->status == 'pending') {
             $course->where('status', 'pending');
@@ -192,13 +192,22 @@ class CourseController extends Controller
         if ($request->status == 'rejected') {
             $course->where('status', 'rejected');
         }
-        $course = $course->get();
+        $courses = $course->get();
 
-        if ($course->isEmpty()) {
+         // Add total watch time to each course
+         $courses->map(function ($course) {
+            $totalSeconds = $course->courseWatches->sum('watch_time'); // assuming in seconds
+            $course->total_watch_times = gmdate('H:i:s', $totalSeconds);
+            unset($course->courseWatches);
+            return $course;
+            
+        });
+
+        if ($courses->isEmpty()) {
             return $this->error([], 'Course Not Found', 200);
         }
 
-        return $this->success($course, 'Course found successfully', 200);
+        return $this->success($courses, 'Course found successfully', 200);
     }
 
     public function getCourseDetails($id)
@@ -224,7 +233,7 @@ class CourseController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'title'       => 'required|string|max:255',
-            'description' => 'required|string|max:255',
+            'description' => 'required|string',
             'category_id' => 'required|exists:categories,id',
             'thumbnail'   => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
 
