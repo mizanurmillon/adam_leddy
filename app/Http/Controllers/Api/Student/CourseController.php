@@ -19,14 +19,14 @@ class CourseController extends Controller
             'category:id,name',
             'tags:id,name'
         ])
-        ->withCount([
-            'modules',
-            'modules as videos_count' => function ($query) {
-                $query->join('course_videos', 'course_videos.course_module_id', '=', 'course_modules.id')
-                    ->select(DB::raw('count(course_videos.id)'));
-            }
-        ])
-        ->whereHas('modules');
+            ->withCount([
+                'modules',
+                'modules as videos_count' => function ($query) {
+                    $query->join('course_videos', 'course_videos.course_module_id', '=', 'course_modules.id')
+                        ->select(DB::raw('count(course_videos.id)'));
+                }
+            ])
+            ->whereHas('modules');
 
         // Filter by Tag
         if ($request->filled('tag')) {
@@ -51,10 +51,10 @@ class CourseController extends Controller
         if ($request->filled('instructor_id')) {
             $query->where('instructor_id', $request->instructor_id);
         }
-        
+
         $courses = $query->where('status', 'approved')->paginate($request->per_page ?? 10);
 
-        
+
 
         $courses->map(function ($course) {
             $course->is_bookmarked = $course->bookmarks->isNotEmpty();
@@ -91,5 +91,21 @@ class CourseController extends Controller
 
 
         return $this->success($course, 'Course found successfully', 200);
+    }
+
+    public function courseProgress(int $courseId)
+    {
+        $course = Course::where('id', $courseId)
+            ->withCount(['modules', 'progress'])
+            ->first();
+
+        if (!$course) {
+            return $this->error([], 'Course Not Found', 200);
+        }
+
+        $progress = $course->modules_count > 0 ? ($course->progress_count / $course->modules_count) * 100 : 0;
+
+
+        return $this->success($progress, 'Course Progress', 200);
     }
 }
