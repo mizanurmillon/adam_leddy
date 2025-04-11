@@ -21,6 +21,10 @@ Route::group(['middleware' => ['jwt.verify']], function () {
                 Route::get('/course/{id}', 'getCourseDetails');
             });
 
+            Route::controller(CourseController::class)->prefix('student')->group(function () {
+                Route::get('/course/{courseId}/progress', 'courseProgress');
+            });
+
             Route::controller(InstractorController::class)->group(function () {
                 Route::get('/instructors', 'getInstructors');
                 Route::get('/instructor/{id}', 'getInstructorDetails');
