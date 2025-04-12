@@ -75,10 +75,11 @@
                 @foreach ($courses as $course)
                     @php
                         $totalSeconds = $course->courseWatches->sum('watch_time');
+                        $time = ($totalSeconds / 1000);
                     @endphp
                     <div class="d-flex justify-content-between px-4 py-3 bg-dark">
                         <p>{{ $course->title }}</p>
-                        <p>{{ gmdate("H:i:s", $totalSeconds) }}</p>
+                        <p>{{ gmdate("H:i:s", $time) }}</p>
                     </div>
                 @endforeach
             </div>
@@ -93,10 +94,11 @@
                 @foreach ($courses as $course)
                     @php
                         $totalSeconds = $course->courseWatches->sum('watch_time');
+                        $time = ($totalSeconds / 1000);
                     @endphp
                     <div class="d-flex justify-content-between px-4 py-3 bg-dark">
                         <p>{{ $course->instructor->user->first_name }} {{ $course->instructor->user->last_name }}</p>
-                        <p>{{ gmdate("H:i:s", $totalSeconds) }}</p>
+                        <p>{{ gmdate("H:i:s", $time) }}</p>
                     </div>
                 @endforeach
             </div>

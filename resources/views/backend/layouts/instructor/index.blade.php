@@ -96,8 +96,9 @@
                                 <td class="se-td">
                                     @php
                                         $totalMinutes = $instructor->courses->flatMap->courseWatches->sum('watch_time');
+                                        $time = ($totalSeconds / 1000);
                                     @endphp
-                                    {{ gmdate('H:i:s', $totalMinutes) }}
+                                    {{ gmdate('H:i:s', $time) }}
                                 </td>
                                 <td class="se-td">
                                     <button
