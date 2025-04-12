@@ -23,8 +23,12 @@ class RevenueController extends Controller
         ->get();
 
         $courseData = $courses->map(function ($course) {
-            $totalSeconds = $course->courseWatches->sum('watch_time');
             
+            $totalMilliseconds = $course->courseWatches->sum('watch_time');
+        
+            
+            $totalSeconds = floor($totalMilliseconds / 1000);
+        
             
             $hours = floor($totalSeconds / 3600);
             $minutes = floor(($totalSeconds % 3600) / 60);
