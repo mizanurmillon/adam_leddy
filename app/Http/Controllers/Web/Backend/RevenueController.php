@@ -22,14 +22,20 @@ class RevenueController extends Controller
         ->limit(3)
         ->get();
 
-        // Prepare the data for the chart
         $courseData = $courses->map(function ($course) {
+            $totalSeconds = $course->courseWatches->sum('watch_time');
             
-            $watchTime =  number_format($course->courseWatches->sum('watch_time') / 3600, 2); 
+            
+            $hours = floor($totalSeconds / 3600);
+            $minutes = floor(($totalSeconds % 3600) / 60);
+            $seconds = $totalSeconds % 60;
+        
+            
+            $watchTime = sprintf('%02d:%02d:%02d', $hours, $minutes, $seconds);
         
             return [
-                'name' => $course->title, 
-                'watch_time' => $watchTime, 
+                'name' => $course->title,
+                'watch_time' => $watchTime,
             ];
         });
 
