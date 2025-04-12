@@ -29,6 +29,9 @@
         .se-category-item:hover .delete-category {
             display: block;
         }
+        .active {
+            background-color: #29FF65 !important;
+        }
     </style>
 @endpush
 @section('content')
@@ -102,7 +105,8 @@
                 <div class="se--Category">
                     @foreach ($categories as $category)
                         <div class="se-category-item">
-                            <button class="se--category-button">
+                            <button data-category-id="{{ $category->id }}"
+                                class="se--category-button robi-trending-btn {{ $category->status == 'active' ? 'active' : '' }}">
                                 {{ $category->name }}
                             </button>
                             <form action="{{ route('admin.categories.destroy', $category->id) }}" method="POST"
@@ -151,4 +155,38 @@
 
 @push('script')
     <script src="{{ asset('backend/assets/js/setu.js') }}"></script>
+
+    <script>
+        $(document).ready(function() {
+            $(".robi-trending-btn").on("click", function() {
+                var categoryId = $(this).data("category-id");
+                var button = $(this);
+
+                $.ajax({
+                    url: "{{ url('admin/categories/status') }}/" + categoryId,
+                    type: "POST",
+                    data: {
+                        _token: "{{ csrf_token() }}"
+                    },
+                    success: function(response) {
+                        if (response.success) {
+                            button.addClass("active");
+                            toastr.success(response.message);
+                        }
+                        if (response.error) {
+                            button.removeClass("active");
+                            toastr.error(response.message);
+                        }
+                    },
+                    error: function(xhr) {
+                        if (xhr.status === 400) {
+                            toastr.warning(xhr.responseJSON.message);
+                        } else {
+                            toastr.error("Something went wrong!");
+                        }
+                    }
+                });
+            });
+        });
+    </script>
 @endpush

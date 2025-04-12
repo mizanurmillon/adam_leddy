@@ -67,4 +67,32 @@ class CategoryController extends Controller
             return redirect(route('admin.categories.index'))->with('t-error', $exception->getMessage());
         }
     }
+
+    public function status($id)
+    {
+        $data = Category::find($id);
+
+        if ($data->status == 'active') {
+
+            $data->status = 'inactive';
+            $data->save();
+            return response()->json([
+                'error' => true,
+                'message' => 'Category unpublished successfully.',
+                'status'  => 'inactive',
+                'data'    => $data,
+            ]);
+
+        } else {
+
+            $data->status = 'active';
+            $data->save();
+            return response()->json([
+                'success' => true,
+                'message' => 'Category published successfully.',
+                'status'  => 'active',
+                'data'    => $data,
+            ]);
+        }
+    }
 }

@@ -68,6 +68,9 @@
             <button class="se-category-btn" onclick="filterTable('active')">Active</button>
             <button class="se-category-btn" onclick="filterTable('blocked')">Blocked</button>
         </div>
+        <div>
+           <input type="text" id="myInput" class="form-control" name="search" onkeyup="myFunction()" placeholder="Search for Instructors names">
+        </div>
 
         <div class="se--table--layout">
             <div class="se--table--row1">
@@ -310,6 +313,27 @@
                     row.style.display = "none";
                 }
             });
+        }
+
+        
+    </script>
+    <script>
+        function myFunction() {
+            var input = document.getElementById("myInput");
+            var filter = input.value.toUpperCase();
+            var rows = document.getElementsByClassName("se-tr");
+            
+            for (var i = 0; i < rows.length; i++) {
+                var td = rows[i].getElementsByClassName("se-td")[0]; 
+                if (td) {
+                    var txtValue = td.textContent || td.innerText;
+                    if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                        rows[i].style.display = "";
+                    } else {
+                        rows[i].style.display = "none";
+                    }
+                }
+            }
         }
     </script>
 @endpush
