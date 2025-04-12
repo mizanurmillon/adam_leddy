@@ -76,18 +76,12 @@ class CourseManagementController extends Controller
         }
 
         // Ensure watchTimes has values for all 12 months
-        $watchTimes = [];
-        $watchTimes = [];
+        $watchTimesInSeconds = [];
 
         for ($i = 1; $i <= 12; $i++) {
-            $milliseconds = $monthlyWatchTime[$i] ?? 0;
-            $totalSeconds = floor($milliseconds / 1000);
-
-            $hours   = floor($totalSeconds / 3600);
-            $minutes = floor(($totalSeconds % 3600) / 60);
-            $seconds = $totalSeconds % 60;
-
-            $watchTimes[] = sprintf('%02d:%02d:%02d', $hours, $minutes, $seconds);
+            $milliseconds          = $monthlyWatchTime[$i] ?? 0;
+            $totalSeconds          = floor($milliseconds / 1000);
+            $watchTimesInSeconds[] = $totalSeconds;
         }
 
         $topInstructor = Course::with([
@@ -115,17 +109,12 @@ class CourseManagementController extends Controller
 
         $topWatchTimes = [];
         for ($i = 1; $i <= 12; $i++) {
-            $milliseconds = $topMonthlyWatchTime[$i] ?? 0;
-            $totalSeconds = floor($milliseconds / 1000);
-        
-            $hours = floor($totalSeconds / 3600);
-            $minutes = floor(($totalSeconds % 3600) / 60);
-            $seconds = $totalSeconds % 60;
-        
-            $topWatchTimes[] = sprintf('%02d:%02d:%02d', $hours, $minutes, $seconds);
+            $milliseconds    = $topMonthlyWatchTime[$i] ?? 0;
+            $totalSeconds    = floor($milliseconds / 1000);
+            $topWatchTimes[] = $totalSeconds;
         }
 
-        return view('backend.layouts.courses.content', compact('course', 'watchTimes', 'tags', 'topInstructor', 'topWatchTimes'));
+        return view('backend.layouts.courses.content', compact('course', 'watchTimesInSeconds', 'tags', 'topInstructor', 'topWatchTimes'));
     }
 
     public function tagStore(Request $request)
