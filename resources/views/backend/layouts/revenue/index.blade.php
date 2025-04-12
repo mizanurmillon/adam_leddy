@@ -75,12 +75,10 @@
                 @foreach ($courses as $course)
                     @php
                         $totalSeconds = $course->courseWatches->sum('watch_time');
-                        $hours = floor($totalSeconds / 3600);
-                        $minutes = floor(($totalSeconds % 3600) / 60);
                     @endphp
                     <div class="d-flex justify-content-between px-4 py-3 bg-dark">
                         <p>{{ $course->title }}</p>
-                        <p>{{ $hours }}H {{ $minutes }}M</p>
+                        <p>{{ gmdate("H:i:s", $totalSeconds) }}</p>
                     </div>
                 @endforeach
             </div>
@@ -95,12 +93,10 @@
                 @foreach ($courses as $course)
                     @php
                         $totalSeconds = $course->courseWatches->sum('watch_time');
-                        $hours = floor($totalSeconds / 3600);
-                        $minutes = floor(($totalSeconds % 3600) / 60);
                     @endphp
                     <div class="d-flex justify-content-between px-4 py-3 bg-dark">
                         <p>{{ $course->instructor->user->first_name }} {{ $course->instructor->user->last_name }}</p>
-                        <p>{{ $hours }}H {{ $minutes }}M</p>
+                        <p>{{ gmdate("H:i:s", $totalSeconds) }}</p>
                     </div>
                 @endforeach
             </div>

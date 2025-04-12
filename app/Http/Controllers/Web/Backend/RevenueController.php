@@ -25,7 +25,7 @@ class RevenueController extends Controller
         // Prepare the data for the chart
         $courseData = $courses->map(function ($course) {
             
-            $watchTime = number_format($course->courseWatches->sum('watch_time') / 3600, 2); 
+            $watchTime =  number_format($course->courseWatches->sum('watch_time') / 3600, 2); 
         
             return [
                 'name' => $course->title, 
