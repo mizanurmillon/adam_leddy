@@ -96,7 +96,7 @@
                                 <td class="se-td">
                                     @php
                                         $totalMinutes = $instructor->courses->flatMap->courseWatches->sum('watch_time');
-                                        $time = ($totalSeconds / 1000);
+                                        $time = ($totalMinutes / 1000);
                                     @endphp
                                     {{ gmdate('H:i:s', $time) }}
                                 </td>
