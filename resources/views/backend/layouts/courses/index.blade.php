@@ -71,7 +71,7 @@
                                 <tr class="se-tr">
                                     <td class="se-td">{{ $course->title }}</td>
                                     <td class="se-td">{{ $instructorNames[$course->id] ?? 'N/A' }}</td>
-                                    <td class="se-td">{{ gmdate('H:i', $course->total_watch_time) }} H</td>
+                                    <td class="se-td">{{ gmdate('H:i:s', $course->total_watch_time) }} H</td>
                                     <td class="se-td">{{ $course->category->name ?? 'N/A' }}</td>
                                     <td class="se-td">
                                         <a href="{{ route('admin.courses.content', $course->id) }}"
