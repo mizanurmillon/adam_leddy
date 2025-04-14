@@ -150,7 +150,7 @@
 @push('script')
     <script src="{{ asset('backend/assets/js/ashiq.js') }}"></script>
     <script>
-        var watchTimes = @json($watchTimes);
+        var watchTimes = @json($watchTimesInSeconds);
 
         var options = {
             chart: {
@@ -178,7 +178,12 @@
                     style: {
                         colors: '#fff'
                     },
-                    formatter: (value) => value + ' H'
+                    formatter: function(value) {
+                        const hours = Math.floor(value / 3600);
+                        const minutes = Math.floor((value % 3600) / 60);
+                        const seconds = value % 60;
+                        return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+                    }
                 }
             },
             stroke: {
@@ -398,7 +403,7 @@
 
     <!-- bottom chart start -->
     <script>
-        var watchTimes = @json($watchTimes);
+        var watchTimes = @json($watchTimesInSeconds);
 
         var options = {
             chart: {
@@ -426,7 +431,12 @@
                     style: {
                         colors: '#fff'
                     },
-                    formatter: (value) => value + ' H'
+                    formatter: function(value) {
+                        const hours = Math.floor(value / 3600);
+                        const minutes = Math.floor((value % 3600) / 60);
+                        const seconds = value % 60;
+                        return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+                    }
                 }
             },
             stroke: {
@@ -483,7 +493,12 @@
                     style: {
                         colors: '#fff'
                     },
-                    formatter: (value) => value + ' H'
+                    formatter: function(value) {
+                        const hours = Math.floor(value / 3600);
+                        const minutes = Math.floor((value % 3600) / 60);
+                        const seconds = value % 60;
+                        return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+                    }
                 }
             },
             stroke: {

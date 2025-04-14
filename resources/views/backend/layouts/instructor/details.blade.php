@@ -153,7 +153,7 @@
     <script src="{{ asset('backend/assets/js/setu.js') }}"></script>
     <script>
         var months = @json($months);
-        var watchTime = @json($watchData).map(time => (time / 3600).toFixed(2));
+        var watchTime = @json($watchData).map(ms => (ms / (1000 * 60 * 60)).toFixed(2));
 
         var options1 = {
             chart: {

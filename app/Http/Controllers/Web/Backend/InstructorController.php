@@ -87,9 +87,11 @@ class InstructorController extends Controller
         }
 
         // Ensure watchTimes has values for all 12 months
-        $watchTimes = [];
+        $watchTimesInSeconds = [];
         for ($i = 1; $i <= 12; $i++) {
-            $watchTimes[] = isset($monthlyWatchTime[$i]) ? round($monthlyWatchTime[$i] / 3600, 2) : 0;
+            $milliseconds          = $monthlyWatchTime[$i] ?? 0;
+            $totalSeconds          = floor($milliseconds / 1000);
+            $watchTimesInSeconds[] = $totalSeconds;
         }
 
         $topInstructor = Course::with([
@@ -118,10 +120,12 @@ class InstructorController extends Controller
 
         $topWatchTimes = [];
         for ($i = 1; $i <= 12; $i++) {
-            $topWatchTimes[] = isset($topMonthlyWatchTime[$i]) ? round($topMonthlyWatchTime[$i] / 3600, 2) : 0;
+            $milliseconds    = $topMonthlyWatchTime[$i] ?? 0;
+            $totalSeconds    = floor($milliseconds / 1000);
+            $topWatchTimes[] = $totalSeconds;
         }
 
-        return view('backend.layouts.instructor.content', compact('course', 'watchTimes', 'topInstructor', 'topWatchTimes'));
+        return view('backend.layouts.instructor.content', compact('course', 'watchTimesInSeconds', 'topInstructor', 'topWatchTimes'));
     }
 
     public function create()

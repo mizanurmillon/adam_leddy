@@ -75,11 +75,11 @@
                 @foreach ($courses as $course)
                     @php
                         $totalSeconds = $course->courseWatches->sum('watch_time');
-                        $time = ($totalSeconds / 1000);
+                        $time = $totalSeconds / 1000;
                     @endphp
                     <div class="d-flex justify-content-between px-4 py-3 bg-dark">
                         <p>{{ $course->title }}</p>
-                        <p>{{ gmdate("H:i:s", $time) }}</p>
+                        <p>{{ gmdate('H:i:s', $time) }}</p>
                     </div>
                 @endforeach
             </div>
@@ -94,11 +94,11 @@
                 @foreach ($courses as $course)
                     @php
                         $totalSeconds = $course->courseWatches->sum('watch_time');
-                        $time = ($totalSeconds / 1000);
+                        $time = $totalSeconds / 1000;
                     @endphp
                     <div class="d-flex justify-content-between px-4 py-3 bg-dark">
                         <p>{{ $course->instructor->user->first_name }} {{ $course->instructor->user->last_name }}</p>
-                        <p>{{ gmdate("H:i:s", $time) }}</p>
+                        <p>{{ gmdate('H:i:s', $time) }}</p>
                     </div>
                 @endforeach
             </div>
@@ -131,7 +131,7 @@
 
 @push('script')
     <script>
-        var courseData = @json($courseData); 
+        var courseData = @json($courseData);
 
         var options = {
             chart: {
@@ -148,21 +148,43 @@
                     barHeight: '30%',
                 }
             },
-            colors: ['#00FF00', '#FFC107', '#FF0000'], 
+            colors: ['#00FF00', '#FFC107', '#FF0000'],
             series: [{
-                name: 'Watch Time (Hours)',
+                name: 'Watch Time',
                 data: courseData.map(function(course) {
                     return {
-                        x: course.name, 
-                        y: course.watch_time, 
-                        fillColor: getFillColor(course
-                            .watch_time) 
+                        x: course.name,
+                        y: course.hours_decimal,
+                        watch_time: course.watch_time, 
+                        fillColor: getFillColor(course.hours_decimal)
                     };
                 })
             }],
+            tooltip: {
+                y: {
+                    formatter: function(value, {
+                        dataPointIndex,
+                        w
+                    }) {
+                        return w.config.series[0].data[dataPointIndex].watch_time;
+                    }
+                }
+            },
+            dataLabels: {
+                enabled: true,
+                formatter: function(val, {
+                    dataPointIndex,
+                    w
+                }) {
+                    return w.config.series[0].data[dataPointIndex].watch_time;
+                },
+                style: {
+                    colors: ['#fff']
+                }
+            },
             xaxis: {
                 title: {
-                    text: 'Hours'
+                    text: 'Total Watch Time'
                 },
                 labels: {
                     style: {
@@ -196,14 +218,13 @@
         var chart = new ApexCharts(document.querySelector("#chart"), options);
         chart.render();
 
-        // Function to dynamically get color based on watch time
-        function getFillColor(watchTime) {
-            if (watchTime > 14) {
-                return '#00FF00'; // High Watch Time (Green)
-            } else if (watchTime >= 8 && watchTime <= 14) {
-                return '#FFC107'; // Medium Watch Time (Yellow)
+        function getFillColor(hoursDecimal) {
+            if (hoursDecimal > 14) {
+                return '#00FF00'; // High
+            } else if (hoursDecimal >= 8 && hoursDecimal <= 14) {
+                return '#FFC107'; // Medium
             } else {
-                return '#FF0000'; // Low Watch Time (Red)
+                return '#FF0000'; // Low
             }
         }
     </script>

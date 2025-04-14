@@ -69,7 +69,7 @@
             <button class="se-category-btn" onclick="filterTable('blocked')">Blocked</button>
         </div>
         <div>
-           <input type="text" id="myInput" class="form-control" name="search" onkeyup="myFunction()" placeholder="Search for Instructors names">
+           <input type="text" id="myInput" class="form-control p-3" name="search" onkeyup="myFunction()" placeholder="Search for Instructors names">
         </div>
 
         <div class="se--table--layout">

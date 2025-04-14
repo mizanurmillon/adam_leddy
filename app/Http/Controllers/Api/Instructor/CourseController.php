@@ -155,7 +155,7 @@ class CourseController extends Controller
         // Create Video Entry
         CourseVideo::create([
             'course_module_id' => $module->id,
-            'video_title'      => $request->title,
+            'video_title'      => $request->video_title,
             'video_url'        => $videoEmbedUrl, // Store as string
             'duration'         => $formattedDuration,
         ]);

@@ -23,23 +23,22 @@ class RevenueController extends Controller
         ->get();
 
         $courseData = $courses->map(function ($course) {
-            
             $totalMilliseconds = $course->courseWatches->sum('watch_time');
-        
-            
             $totalSeconds = floor($totalMilliseconds / 1000);
         
-            
             $hours = floor($totalSeconds / 3600);
             $minutes = floor(($totalSeconds % 3600) / 60);
             $seconds = $totalSeconds % 60;
         
-            
             $watchTime = sprintf('%02d:%02d:%02d', $hours, $minutes, $seconds);
+        
+            // decimal hours
+            $totalHoursDecimal = round($totalSeconds / 3600, 2);
         
             return [
                 'name' => $course->title,
                 'watch_time' => $watchTime,
+                'hours_decimal' => $totalHoursDecimal,
             ];
         });
 
