@@ -255,6 +255,23 @@ class CoursesSeeder extends Seeder
                 ['course_id' => 1, 'module_title' => 'Routing & Middleware', 'file_url' => null, 'created_at' => now(), 'updated_at' => now()],
                 ['course_id' => 2, 'module_title' => 'Vue Basics', 'file_url' => null, 'created_at' => now(), 'updated_at' => now()],
                 ['course_id' => 3, 'module_title' => 'Advanced PHP Concepts', 'file_url' => null, 'created_at' => now(), 'updated_at' => now()],
+                ['course_id' => 4, 'module_title' => 'Advanced PHP Concepts', 'file_url' => null, 'created_at' => now(), 'updated_at' => now()],
+                ['course_id' => 5, 'module_title' => 'Advanced PHP Concepts', 'file_url' => null, 'created_at' => now(), 'updated_at' => now()],
+                ['course_id' => 6, 'module_title' => 'Advanced PHP Concepts', 'file_url' => null, 'created_at' => now(), 'updated_at' => now()],
+                ['course_id' => 7, 'module_title' => 'Advanced PHP Concepts', 'file_url' => null, 'created_at' => now(), 'updated_at' => now()],
+                ['course_id' => 8, 'module_title' => 'Advanced PHP Concepts', 'file_url' => null, 'created_at' => now(), 'updated_at' => now()],
+                ['course_id' => 9, 'module_title' => 'Advanced PHP Concepts', 'file_url' => null, 'created_at' => now(), 'updated_at' => now()],
+                ['course_id' => 10, 'module_title' => 'Advanced PHP Concepts', 'file_url' => null, 'created_at' => now(), 'updated_at' => now()],
+                ['course_id' => 11, 'module_title' => 'Advanced PHP Concepts', 'file_url' => null, 'created_at' => now(), 'updated_at' => now()],
+                ['course_id' => 12, 'module_title' => 'Advanced PHP Concepts', 'file_url' => null, 'created_at' => now(), 'updated_at' => now()],
+                ['course_id' => 13, 'module_title' => 'Advanced PHP Concepts', 'file_url' => null, 'created_at' => now(), 'updated_at' => now()],
+                ['course_id' => 14, 'module_title' => 'Advanced PHP Concepts', 'file_url' => null, 'created_at' => now(), 'updated_at' => now()],
+                ['course_id' => 15, 'module_title' => 'Advanced PHP Concepts', 'file_url' => null, 'created_at' => now(), 'updated_at' => now()],
+                ['course_id' => 17, 'module_title' => 'Advanced PHP Concepts', 'file_url' => null, 'created_at' => now(), 'updated_at' => now()],
+                ['course_id' => 18, 'module_title' => 'Advanced PHP Concepts', 'file_url' => null, 'created_at' => now(), 'updated_at' => now()],
+                ['course_id' => 19, 'module_title' => 'Advanced PHP Concepts', 'file_url' => null, 'created_at' => now(), 'updated_at' => now()],
+                ['course_id' => 20, 'module_title' => 'Advanced PHP Concepts', 'file_url' => null, 'created_at' => now(), 'updated_at' => now()],
+                ['course_id' => 21, 'module_title' => 'Advanced PHP Concepts', 'file_url' => null, 'created_at' => now(), 'updated_at' => now()],
             ]);
         }
 

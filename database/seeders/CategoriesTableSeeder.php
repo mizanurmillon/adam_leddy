@@ -14,13 +14,13 @@ class CategoriesTableSeeder extends Seeder
     public function run(): void
     {
         $categories = [
-            ['name' => 'Programming'],
-            ['name' => 'Design'],
-            ['name' => 'Data Analysis'],
-            ['name' => 'Database'],
-            ['name' => 'AI'],
-            ['name' => 'Machine Learning'],
-            ['name' => 'Cloud Computing'],
+            ['name' => 'Programming', 'status' => 'active'],
+            ['name' => 'Design', 'status' => 'active'],
+            ['name' => 'Data Analysis', 'status' => 'active'],
+            ['name' => 'Database', 'status' => 'active'],
+            ['name' => 'AI','status' => 'inactive'],
+            ['name' => 'Machine Learning','status' => 'inactive'],
+            ['name' => 'Cloud Computing','status' => 'inactive'],
         ];
 
         DB::table('categories')->insert($categories);

@@ -107,8 +107,13 @@ class CourseController extends Controller
 
     public function getCategoryWiseCourses()
     {
-
-        $categories = Category::with(['courses.modules.videos', 'courses.tags', 'courses.instructor:id,user_id', 'courses.instructor.user:id,first_name,last_name,role'])
+        $categories = Category::with([
+            'courses.modules.videos',
+            'courses.tags',
+            'courses.instructor:id,user_id',
+            'courses.instructor.user:id,first_name,last_name,role',
+            'courses.bookmarks',
+        ])
             ->where('status', 'active')
             ->get();
 
@@ -116,34 +121,41 @@ class CourseController extends Controller
             return $this->error([], 'Category Not Found', 200);
         }
 
+        // Filter out categories that have NO courses with modules
+        $categories = $categories->filter(function ($category) {
+            return $category->courses->contains(function ($course) {
+                return $course->modules->isNotEmpty();
+            });
+        });
+
+        // If filtered result is empty
+        if ($categories->isEmpty()) {
+            return $this->error([], 'No categories with course modules found', 200);
+        }
+
+        // Process mapping
         $categories = $categories->map(function ($category) {
-            $category->course = $category->courses->map(function ($course) {
+            $category->course = $category->courses->filter(function ($course) {
+                return $course->modules->isNotEmpty(); // remove courses with no modules
+            })->map(function ($course) {
                 $course->module_count = $course->modules->count();
-        
-               
+
                 $course->videos_count = $course->modules->reduce(function ($carry, $module) {
                     return $carry + $module->videos->count();
                 }, 0);
-        
-                unset($course->modules); 
-                return $course;
-            });
-        
-            unset($category->courses); 
-        
-            return $category;
-        });
 
-        $categories->map(function ($category) {
-            $category->course->map(function ($course) {
                 $course->is_bookmarked = $course->bookmarks->isNotEmpty();
+
+                unset($course->modules);
                 unset($course->bookmarks);
                 return $course;
             });
-            unset($category->bookmarks);
+
+            unset($category->courses);
             return $category;
         });
 
-        return $this->success($categories, 'Category wise courses', 200);
+        return $this->success($categories->values(), 'Category wise courses', 200);
     }
+
 }
