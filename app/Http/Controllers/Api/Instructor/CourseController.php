@@ -195,12 +195,14 @@ class CourseController extends Controller
         $courses = $course->get();
 
          // Add total watch time to each course
-         $courses->map(function ($course) {
-            $totalSeconds = $course->courseWatches->sum('watch_time'); // assuming in seconds
+        $courses->map(function ($course) {
+            $totalMilliseconds = $course->courseWatches->sum('watch_time'); 
+            $totalSeconds = floor($totalMilliseconds / 1000); // Convert ms to s
+        
             $course->total_watch_times = gmdate('H:i:s', $totalSeconds);
             unset($course->courseWatches);
+        
             return $course;
-            
         });
 
         if ($courses->isEmpty()) {

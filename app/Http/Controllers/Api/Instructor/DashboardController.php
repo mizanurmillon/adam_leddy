@@ -28,9 +28,13 @@ class DashboardController extends Controller
         $thisMonthEarnings = InstructorPayment::where('instructor_id', $instructor->id)->whereMonth('created_at', date('m'))->sum('price');
         $previousMonthEarnings = InstructorPayment::where('instructor_id', $instructor->id)->whereMonth('created_at', date('m', strtotime('-1 month')))->sum('price');
 
-        $total_watch_seconds = $courses->pluck('courseWatches')->flatten()->sum('watch_time');
-        $hours               = floor($total_watch_seconds / 3600);
-        $minutes             = floor(($total_watch_seconds % 3600) / 60);
+        $total_watch_milliseconds = $courses->pluck('courseWatches')->flatten()->sum('watch_time');
+        $total_watch_seconds = floor($total_watch_milliseconds / 1000); // convert to seconds
+
+        $hours = floor($total_watch_seconds / 3600);
+        $minutes = floor(($total_watch_seconds % 3600) / 60);
+
+        $total_watch_time_formatted = "{$hours}h {$minutes}m";
 
         $thisMonthWatches = $courses->pluck('courseWatches')
             ->flatten()
@@ -38,8 +42,11 @@ class DashboardController extends Controller
                 return \Carbon\Carbon::parse($watch->created_at)->month == date('m');
             })
             ->sum('watch_time');
-        $thisMonthHours   = floor($thisMonthWatches / 3600);
-        $thisMonthMinutes = floor(($thisMonthWatches % 3600) / 60);
+        $thisMonthSeconds = floor($thisMonthWatches / 1000); // ✅ Convert ms to sec
+        $thisMonthHours   = floor($thisMonthSeconds / 3600);
+        $thisMonthMinutes = floor(($thisMonthSeconds % 3600) / 60);
+
+        $thisMonthFormatted = "{$thisMonthHours}h {$thisMonthMinutes}m";
 
         $earnings = [
             'this_month_earnings' => $thisMonthEarnings,
@@ -48,8 +55,8 @@ class DashboardController extends Controller
         ];
 
         $watches = [
-            'this_month_watches' => "{$thisMonthHours}h {$thisMonthMinutes}m",
-            'total_watches'      => "{$hours}h {$minutes}m",
+            'this_month_watches' => $thisMonthFormatted,
+            'total_watches'      => $total_watch_time_formatted,
         ];
 
         $data = [
