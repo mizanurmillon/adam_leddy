@@ -34,5 +34,10 @@ class Category extends Model
             'id' => 'integer',
         ];
     }
+
+    public function courses()
+    {
+        return $this->hasMany(Course::class);
+    }
     
 }
