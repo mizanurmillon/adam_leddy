@@ -95,7 +95,8 @@ class CourseController extends Controller
     {
         $course = Course::where('id', $courseId)
             ->withCount(['modules', 'progress', 'modules as videos_count' => function ($query) {
-                $query->withCount('videos');
+                $query->join('course_videos', 'course_videos.course_module_id', '=', 'course_modules.id')
+                    ->select(DB::raw('count(course_videos.id)'));
             }])
             ->first();
 
