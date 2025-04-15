@@ -94,14 +94,16 @@ class CourseController extends Controller
     public function courseProgress(int $courseId)
     {
         $course = Course::where('id', $courseId)
-            ->withCount(['modules', 'progress'])
+            ->withCount(['modules', 'progress', 'modules as videos_count' => function ($query) {
+                $query->withCount('videos');
+            }])
             ->first();
 
         if (! $course) {
             return $this->error([], 'Course Not Found', 200);
         }
 
-        $progress = $course->modules_count > 0 ? ($course->progress_count / $course->modules_count) * 100 : 0;
+        $progress = $course->videos_count > 0 ? ($course->progress_count / $course->videos_count) * 100 : 0;
 
         return $this->success($progress, 'Course Progress', 200);
     }
