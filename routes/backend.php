@@ -20,7 +20,7 @@ Route::controller(CategoryController::class)->group(function () {
     Route::delete('/tags/destroy/{id}', 'tagDestory')->name('admin.tags.destroy');
     Route::delete('/categories/destroy/{id}', 'categoryDestroy')->name('admin.categories.destroy');
 
-    Route::post('/categories/status/{id}','status')->name('admin.categories.status');
+    Route::post('/categories/status/{id}', 'status')->name('admin.categories.status');
 });
 
 Route::controller(UserController::class)->prefix('users')->group(function () {
@@ -48,7 +48,7 @@ Route::controller(InstructorController::class)->group(function () {
 
     Route::post('/instructors/status/{id}', 'status')->name('admin.instructors.status');
 
-    // Instructor create 
+    // Instructor create
     Route::get('/instructors/create', 'create')->name('admin.instructors.create');
     Route::post('/instructors/store', 'store')->name('admin.instructors.store');
 });
