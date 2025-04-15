@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers\Api\Student;
 
 use App\Http\Controllers\Controller;
@@ -107,12 +108,34 @@ class CourseController extends Controller
 
     public function getCategoryWiseCourses()
     {
+        $user = auth()->user();
+
+        if (!$user) {
+            return $this->error([], 'User not authenticated', 401);
+        }
+
+        $userId = $user->id;
+
         $categories = Category::with([
-            'courses.modules.videos',
-            'courses.tags',
-            'courses.instructor:id,user_id',
-            'courses.instructor.user:id,first_name,last_name,role',
-            'courses.bookmarks',
+            'courses' => function ($query) use ($userId) {
+                $query->with([
+                    'instructor:id,user_id',
+                    'instructor.user:id,first_name,last_name,role',
+                    'category:id,name',
+                    'tags:id,name',
+                ])
+                    ->withCount([
+                        'modules',
+                        'modules as videos_count' => function ($query) {
+                            $query->join('course_videos', 'course_videos.course_module_id', '=', 'course_modules.id')
+                                ->select(DB::raw('count(course_videos.id)'));
+                        },
+                        'bookmarks as is_bookmark' => function ($query) use ($userId) {
+                            $query->where('user_id', $userId);
+                        }
+                    ])
+                    ->whereHas('modules');
+            }
         ])
             ->where('status', 'active')
             ->get();
@@ -121,41 +144,6 @@ class CourseController extends Controller
             return $this->error([], 'Category Not Found', 200);
         }
 
-        // Filter out categories that have NO courses with modules
-        $categories = $categories->filter(function ($category) {
-            return $category->courses->contains(function ($course) {
-                return $course->modules->isNotEmpty();
-            });
-        });
-
-        // If filtered result is empty
-        if ($categories->isEmpty()) {
-            return $this->error([], 'No categories with course modules found', 200);
-        }
-
-        // Process mapping
-        $categories = $categories->map(function ($category) {
-            $category->course = $category->courses->filter(function ($course) {
-                return $course->modules->isNotEmpty(); // remove courses with no modules
-            })->map(function ($course) {
-                $course->module_count = $course->modules->count();
-
-                $course->videos_count = $course->modules->reduce(function ($carry, $module) {
-                    return $carry + $module->videos->count();
-                }, 0);
-
-                $course->is_bookmarked = $course->bookmarks->isNotEmpty();
-
-                unset($course->modules);
-                unset($course->bookmarks);
-                return $course;
-            });
-
-            unset($category->courses);
-            return $category;
-        });
-
-        return $this->success($categories->values(), 'Category wise courses', 200);
+        return $this->success($categories, 'Category wise courses', 200);
     }
-
 }

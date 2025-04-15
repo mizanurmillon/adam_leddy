@@ -32,6 +32,7 @@ class Course extends Model
             'id' => 'integer',
             'user_id' => 'integer',
             'category_id' => 'integer',
+            'is_bookmark' => 'boolean'
         ];
     }
 
