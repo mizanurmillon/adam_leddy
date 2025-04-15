@@ -63,7 +63,7 @@ class CourseController extends Controller
             'video_url' => 'required|mimes:mp4,mov,ogg,qt,ogx,mkv,wmv,webm,flv,avi,ogv|max:100000',
             'file_url'  => 'nullable|mimes:pdf,doc,docx|max:4096',
             'video_title' => 'required|string|max:255',
-            'description' => 'required|string|max:2000',
+            'description' => 'nullable|string|max:2000',
         ]);
 
         if ($validator->fails()) {
