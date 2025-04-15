@@ -106,7 +106,7 @@ class CourseController extends Controller
         return $this->success($progress, 'Course Progress', 200);
     }
 
-    public function getCategoryWiseCourses()
+    public function getCategoryWiseCourses(Request $request)
     {
         $user = auth()->user();
 
@@ -115,9 +115,10 @@ class CourseController extends Controller
         }
 
         $userId = $user->id;
+        $take = $request->query('take');
 
         $categories = Category::with([
-            'courses' => function ($query) use ($userId) {
+            'courses' => function ($query) use ($userId, $take) {
                 $query->with([
                     'instructor:id,user_id',
                     'instructor.user:id,first_name,last_name,role',
@@ -134,7 +135,8 @@ class CourseController extends Controller
                             $query->where('user_id', $userId);
                         }
                     ])
-                    ->whereHas('modules');
+                    ->whereHas('modules')
+                    ->take($take);
             }
         ])
             ->where('status', 'active')
