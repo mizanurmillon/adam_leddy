@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\Student;
 use App\Http\Controllers\Controller;
 use App\Models\CourseProgress;
 use App\Models\CourseWatch;
+use App\Models\CourseWatchHistory;
 use App\Traits\ApiResponse;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -78,8 +79,16 @@ class CourseWatchTimeAndProgressController extends Controller
                     $courseWatch->watch_time = $request->watch_time;
                     $courseWatch->last_watched_at = Carbon::now();
                 }
-
                 $courseWatch->save();
+
+                $courseWatchHistory = CourseWatchHistory::create([
+                    'user_id' => $user->id,
+                    'course_id' => $request->course_id,
+                    'course_module_id' => $request->course_module_id,
+                    'course_video_id' => $request->course_video_id,
+                    'watch_time' => $request->watch_time ?? 0,
+                    'watched_at' => Carbon::now(),
+                ]);
 
                 $data = $courseWatch;
 
