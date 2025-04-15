@@ -105,7 +105,13 @@ class CourseController extends Controller
 
         $progress = $course->videos_count > 0 ? ($course->progress_count / $course->videos_count) * 100 : 0;
 
-        return $this->success($progress, 'Course Progress', 200);
+        $response = [
+            'video_count' => $course->videos_count,
+            'progress_count' => $course->progress_count,
+            'progress' => $progress,
+        ];
+
+        return $this->success($response, 'Course Progress', 200);
     }
 
     public function getCategoryWiseCourses(Request $request)
