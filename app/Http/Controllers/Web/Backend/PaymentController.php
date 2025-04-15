@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers\Web\Backend;
 
 use App\Models\User;
@@ -22,10 +23,11 @@ class PaymentController extends Controller
         return view('backend.layouts.payment.change');
     }
 
-    public function update(Request $request) {
+    public function update(Request $request)
+    {
         if (User::find(auth()->user()->id)) {
             $request->validate([
-                'STRIPE_SECRET' => 'nullable|string',
+                'STRIPE_PUBLIC' => 'nullable|string',
                 'STRIPE_SECRET' => 'nullable|string',
             ]);
             try {
@@ -35,7 +37,7 @@ class PaymentController extends Controller
                     '/STRIPE_PUBLIC=(.*)\s/',
                     '/STRIPE_SECRET=(.*)\s/',
                 ], [
-                    'STRIPE_PUBLIC=' . $request->STRIPE_SECRET . $lineBreak,
+                    'STRIPE_PUBLIC=' . $request->STRIPE_PUBLIC . $lineBreak,
                     'STRIPE_SECRET=' . $request->STRIPE_SECRET . $lineBreak,
                 ], $envContent);
 
@@ -49,5 +51,4 @@ class PaymentController extends Controller
         }
         return redirect()->back();
     }
-
 }
