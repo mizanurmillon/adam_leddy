@@ -15,6 +15,8 @@ return new class extends Migration
             $table->id();
             $table->foreignId('instructor_id')->constrained()->onDelete('cascade');
             $table->decimal('price', 8, 2);
+            $table->string('transaction_id');
+            $table->string('transaction_group');
             $table->timestamps();
         });
     }

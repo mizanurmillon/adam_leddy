@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class InstructorPayment extends Model
 {
-    protected $fillable = ['instructor_id', 'price'];
+    protected $fillable = ['instructor_id', 'price', 'transaction_id', 'transaction_group'];
 
     protected $hidden = ['updated_at'];
 

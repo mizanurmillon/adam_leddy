@@ -138,9 +138,11 @@
                     <tbody class="se-tbody">
                         @foreach ($payment_history as $history)
                             <tr class="se-tr">
-                                <td class="se-td">{{ $history->instructor->user->first_name }} {{ $history->instructor->user->last_name }}</td>
-                                <td class="se-td">€ {{ $history->price}}</td>
-                                <td class="se-td">{{ \Carbon\Carbon::parse($history->created_at)->format('d/m/Y h:i A') }}</td>
+                                <td class="se-td">{{ $history->instructor->user->first_name }}
+                                    {{ $history->instructor->user->last_name }}</td>
+                                <td class="se-td">€ {{ $history->price }}</td>
+                                <td class="se-td">{{ \Carbon\Carbon::parse($history->created_at)->format('d/m/Y h:i A') }}
+                                </td>
                                 <td class="se-td"></td>
                             </tr>
                         @endforeach
@@ -155,15 +157,15 @@
         <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog"
             aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered" role="document">
-                <div class="modal-content ak-bg-black text-white p-4 rounded">
-                    <div class="modal-header border-0">
-                        <h5 class="modal-title mx-auto">Transfer € 891 to Tadhg Kavanagh</h5>
+                <div class="p-4 text-white rounded modal-content ak-bg-black">
+                    <div class="border-0 modal-header">
+                        <h5 class="mx-auto modal-title">Transfer € 891 to Tadhg Kavanagh</h5>
                     </div>
-                    <div class="modal-footer border-0 d-flex w-100 p-0">
-                        <button type="button" class="btn btn-outline-black text-white border py-2 rounded-0 flex-grow-1"
+                    <div class="p-0 border-0 modal-footer d-flex w-100">
+                        <button type="button" class="py-2 text-white border btn btn-outline-black rounded-0 flex-grow-1"
                             data-dismiss="modal">Cancel</button>
                         <button type="button"
-                            class="btn btn-danger confirm_btn py-2 rounded-0 flex-grow-1">Confirm</button>
+                            class="py-2 btn btn-danger confirm_btn rounded-0 flex-grow-1">Confirm</button>
                     </div>
                 </div>
             </div>
@@ -173,20 +175,20 @@
         <div class="modal fade" id="successModal" tabindex="-1" role="dialog" aria-labelledby="successModalLabel"
             aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered" role="document">
-                <div class="modal-content ak-bg-black text-white p-4 rounded">
-                    <div class="modal-header border-0 position-relative">
+                <div class="p-4 text-white rounded modal-content ak-bg-black">
+                    <div class="border-0 modal-header position-relative">
 
                         <!-- Close Icon -->
                         <button type="button" class="close position-absolute" style="right: 1rem; top: 1rem;"
                             data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true"><i class="fa-solid fa-close text-white"></i></span>
+                            <span aria-hidden="true"><i class="text-white fa-solid fa-close"></i></span>
                         </button>
                     </div>
-                    <div class="modal-body text-center">
+                    <div class="text-center modal-body">
                         <img src="./assets/images/confirmed.png" alt="">
                         <p class="ak-mt-3">Amount transferred!</p>
                     </div>
-                    <div class="modal-footer border-0 d-flex w-100 p-0">
+                    <div class="p-0 border-0 modal-footer d-flex w-100">
 
                     </div>
                 </div>

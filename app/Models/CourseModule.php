@@ -53,4 +53,9 @@ class CourseModule extends Model
     {
         return $this->hasMany(CourseProgress::class);
     }
+
+    public function watchHistories()
+    {
+        return $this->hasMany(CourseWatchHistory::class);
+    }
 }

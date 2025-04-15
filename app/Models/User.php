@@ -98,6 +98,11 @@ class User extends Authenticatable implements JWTSubject
         return $this->hasMany(MembershipHistory::class);
     }
 
+    public function watchHistories()
+    {
+        return $this->hasMany(CourseWatchHistory::class);
+    }
+
     public function isMember(): bool
     {
         return (bool) $this->membership()->exists();
