@@ -140,6 +140,7 @@ class CourseController extends Controller
             }
         ])
             ->where('status', 'active')
+            ->whereHas('courses')
             ->get();
 
         if ($categories->isEmpty()) {
