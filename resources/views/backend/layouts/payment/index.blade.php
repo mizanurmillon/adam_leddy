@@ -37,12 +37,13 @@
             </button>
         </div> --}}
 
-        <a href="{{ route('admin.payments.method.change') }}">
-            <button type="button" class="btn btn-light fixed-width"><i class="fa-solid fa-pen"></i>Change
-                Payment
-                Method</button>
-        </a>
-
+        <div>
+            <a href="{{ route('admin.payments.method.change') }}">
+                <button type="button" class="btn btn-light fixed-width"><i class="fa-solid fa-pen"></i>Change
+                    Payment
+                    Method</button>
+            </a>
+        </div>
         <!-- pending payment table  -->
         <div class="se--table--layout">
             <div class="se--table--row1">
@@ -53,68 +54,26 @@
                     <thead class="se-thead">
                         <tr class="se-tr">
                             <th class="se-th">Instructor</th>
-                            <th class="se-th">ID</th>
                             <th class="se-th">Total Earnings</th>
                             <th class="se-th">Last Payment Date</th>
                             <th class="se-th">Last Payment Amount</th>
                             <th class="se-th">Due</th>
-                            <th class="se-th"></th>
                         </tr>
                     </thead>
                     <tbody class="se-tbody">
-                        <tr class="se-tr">
-                            <td class="se-td">Tadhg Kavanagh</td>
-                            <td class="se-td">3617</td>
-                            <td class="se-td">€ 7376</td>
-                            <td class="se-td">27/09/2024</td>
-                            <td class="se-td">€ 432</td>
-                            <td class="se-td">€ 891</td>
-                            <td class="se-td"><button class="ak-button" data-toggle="modal"
-                                    data-target="#exampleModalCenter">Pay</button></td>
-                        </tr>
-
-                        <tr class="se-tr">
-                            <td class="se-td">Tadhg Kavanagh</td>
-                            <td class="se-td">3617</td>
-                            <td class="se-td">€ 7376</td>
-                            <td class="se-td">27/09/2024</td>
-                            <td class="se-td">€ 432</td>
-                            <td class="se-td">€ 891</td>
-                            <td class="se-td"><button class="ak-button" data-toggle="modal"
-                                    data-target="#exampleModalCenter">Pay</button></td>
-                        </tr>
-
-                        <tr class="se-tr">
-                            <td class="se-td">Tadhg Kavanagh</td>
-                            <td class="se-td">3617</td>
-                            <td class="se-td">€ 7376</td>
-                            <td class="se-td">27/09/2024</td>
-                            <td class="se-td">€ 432</td>
-                            <td class="se-td">€ 891</td>
-                            <td class="se-td"><button class="ak-button" data-toggle="modal"
-                                    data-target="#exampleModalCenter">Pay</button></td>
-                        </tr>
-                        <tr class="se-tr">
-                            <td class="se-td">Tadhg Kavanagh</td>
-                            <td class="se-td">3617</td>
-                            <td class="se-td">€ 7376</td>
-                            <td class="se-td">27/09/2024</td>
-                            <td class="se-td">€ 432</td>
-                            <td class="se-td">€ 891</td>
-                            <td class="se-td"><button class="ak-button" data-toggle="modal"
-                                    data-target="#exampleModalCenter">Pay</button></td>
-                        </tr>
-                        <tr class="se-tr">
-                            <td class="se-td">Tadhg Kavanagh</td>
-                            <td class="se-td">3617</td>
-                            <td class="se-td">€ 7376</td>
-                            <td class="se-td">27/09/2024</td>
-                            <td class="se-td">€ 432</td>
-                            <td class="se-td">€ 891</td>
-                            <td class="se-td"><button class="ak-button" data-toggle="modal"
-                                    data-target="#exampleModalCenter">Pay</button></td>
-                        </tr>
-                        <!-- Add more rows as needed -->
+                        @forelse ($data as $item)
+                            <tr class="se-tr">
+                                <td class="se-td">{{ $item['name'] }}</td>
+                                <td class="se-td">€ {{ $item['total_earning'] ?? 0 }}</td>
+                                <td class="se-td">{{ $item['last_payment_date'] ?? 'N/A' }}</td>
+                                <td class="se-td">€ {{ $item['last_payment_amount'] ?? 0 }}</td>
+                                <td class="se-td">€ {{ $item['due'] ?? 0 }}</td>
+                            </tr>
+                        @empty
+                            <tr class="se-tr">
+                                <td class="se-td text-danger" colspan="20">No Data Found</td>
+                            </tr>
+                        @endforelse
                     </tbody>
                 </table>
             </div>
