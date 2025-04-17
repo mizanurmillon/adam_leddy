@@ -95,7 +95,7 @@
                         </tr>
                     </thead>
                     <tbody class="se-tbody">
-                        @foreach ($payment_history as $history)
+                        @forelse ($payment_history as $history)
                             <tr class="se-tr">
                                 <td class="se-td">{{ $history->instructor->user->first_name }}
                                     {{ $history->instructor->user->last_name }}</td>
@@ -104,7 +104,11 @@
                                 </td>
                                 <td class="se-td"></td>
                             </tr>
-                        @endforeach
+                        @empty
+                            <tr class="se-tr">
+                                <td class="se-td text-danger" colspan="20">No Data Found</td>
+                            </tr>
+                        @endforelse
 
                         <!-- Add more rows as needed -->
                     </tbody>
