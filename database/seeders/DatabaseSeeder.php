@@ -21,7 +21,7 @@ class DatabaseSeeder extends Seeder
         $this->call(CourseWatchSeeder::class);
         $this->call(SubscriptionSeeder::class);
         $this->call(MembershipSeeder::class);
-        $this->call(InstructorPaymentSeeder::class);
+        // $this->call(InstructorPaymentSeeder::class);
         $this->call(CourseWatchHistorySeeder::class);
     }
 }
