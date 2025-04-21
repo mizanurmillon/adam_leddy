@@ -32,6 +32,7 @@ class Course extends Model
             'id' => 'integer',
             'user_id' => 'integer',
             'category_id' => 'integer',
+            'is_bookmark' => 'boolean'
         ];
     }
 
@@ -73,5 +74,10 @@ class Course extends Model
     public function progress()
     {
         return $this->hasMany(CourseProgress::class);
+    }
+
+    public function watchHistories()
+    {
+        return $this->hasMany(CourseWatchHistory::class);
     }
 }

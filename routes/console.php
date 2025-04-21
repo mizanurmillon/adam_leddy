@@ -11,3 +11,4 @@ Artisan::command('inspire', function () {
 
 // Per minute
 Schedule::command(ProcessInstructorPayouts::class)->everyMinute();
+// Schedule::command(ProcessInstructorPayouts::class)->monthlyOn(1, '00:01');

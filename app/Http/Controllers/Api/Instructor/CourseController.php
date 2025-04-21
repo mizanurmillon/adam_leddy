@@ -63,6 +63,7 @@ class CourseController extends Controller
             'video_url' => 'required|mimes:mp4,mov,ogg,qt,ogx,mkv,wmv,webm,flv,avi,ogv|max:100000',
             'file_url'  => 'nullable|mimes:pdf,doc,docx|max:4096',
             'video_title' => 'required|string|max:255',
+            'description' => 'nullable|string|max:2000',
         ]);
 
         if ($validator->fails()) {
@@ -151,6 +152,7 @@ class CourseController extends Controller
             'course_id'    => $course->id,
             'module_title' => $request->title,
             'file_url'         => $fileName,
+            'description' => $request->description,
         ]);
 
         // Create Video Entry
@@ -176,7 +178,7 @@ class CourseController extends Controller
             return $this->error([], 'User Not Found', 200);
         }
 
-        $course = Course::with('instructor.user:id,first_name,last_name,role','category')->where('instructor_id', $data->instructor->id);
+        $course = Course::with('instructor.user:id,first_name,last_name,role', 'category')->where('instructor_id', $data->instructor->id);
 
         if ($request->status == 'pending') {
             $course->where('status', 'pending');
@@ -195,14 +197,14 @@ class CourseController extends Controller
         }
         $courses = $course->get();
 
-         // Add total watch time to each course
+        // Add total watch time to each course
         $courses->map(function ($course) {
-            $totalMilliseconds = $course->courseWatches->sum('watch_time'); 
+            $totalMilliseconds = $course->courseWatches->sum('watch_time');
             $totalSeconds = floor($totalMilliseconds / 1000); // Convert ms to s
-        
+
             $course->total_watch_times = gmdate('H:i:s', $totalSeconds);
             unset($course->courseWatches);
-        
+
             return $course;
         });
 
@@ -381,7 +383,7 @@ class CourseController extends Controller
             } catch (\Exception $e) {
                 return $this->error([], "Video upload failed: " . $e->getMessage(), 500);
             }
-        }else{
+        } else {
             $videoEmbedUrl = $Course_module->videos->video_url ?? null;
         }
 
@@ -520,7 +522,7 @@ class CourseController extends Controller
             }
         }
 
-         // Delete local video file
+        // Delete local video file
         if (! empty($module->file_url)) {
             $previousFilePath = public_path($module->file_url);
             if (file_exists($previousFilePath)) {

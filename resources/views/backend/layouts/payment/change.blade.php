@@ -41,9 +41,11 @@
         <form action="{{ route('admin.payments.method.update') }}" method="post">
             @csrf
             <label for="">STRIPE_PUBLIC_KEY</label>
-            <div class="bg-black py-2 border rounded gap-3 px-3 ak-w-34 d-flex justify-content-between border-dark">
-                <input type="text" name="STRIPE_SECRET" placeholder="Enter Stripe Public Key" value="{{ old('STRIPE_SECRET', env('STRIPE_PUBLIC')) }}"  class="bg-black text-white border-0 @error('STRIPE_SECRET') is-invalid @enderror">
-                @error('STRIPE_SECRET')
+            <div class="gap-3 px-3 py-2 bg-black border rounded ak-w-34 d-flex justify-content-between border-dark">
+                <input type="text" name="STRIPE_PUBLIC" placeholder="Enter Stripe Public Key"
+                    value="{{ old('STRIPE_PUBLIC', env('STRIPE_PUBLIC')) }}"
+                    class="bg-black text-white border-0 @error('STRIPE_PUBLIC') is-invalid @enderror">
+                @error('STRIPE_PUBLIC')
                     <span class="invalid-feedback" role="alert">
                         <strong>{{ $message }}</strong>
                     </span>
@@ -51,20 +53,22 @@
             </div>
             <br>
             <label for="">STRIPE_SECRET_KEY</label>
-            <div class="bg-black py-2 border rounded gap-3 px-3 ak-w-34 d-flex justify-content-between border-dark">
-                <input type="text" name="STRIPE_SECRET" placeholder="Enter Stripe Secret Key" value="{{ old('STRIPE_SECRET', env('STRIPE_SECRET')) }}" class="bg-black text-white border-0 @error('STRIPE_SECRET') is-invalid @enderror">
+            <div class="gap-3 px-3 py-2 bg-black border rounded ak-w-34 d-flex justify-content-between border-dark">
+                <input type="text" name="STRIPE_SECRET" placeholder="Enter Stripe Secret Key"
+                    value="{{ old('STRIPE_SECRET', env('STRIPE_SECRET')) }}"
+                    class="bg-black text-white border-0 @error('STRIPE_SECRET') is-invalid @enderror">
 
                 @error('STRIPE_SECRET')
-                <span class="invalid-feedback" role="alert">
-                    <strong>{{ $message }}</strong>
-                </span>
-            @enderror
+                    <span class="invalid-feedback" role="alert">
+                        <strong>{{ $message }}</strong>
+                    </span>
+                @enderror
             </div>
-            
-            <br/>
 
-        <button type="submit" class="btn btn-light fixed-width" >Change Payment
-            Method</button>
+            <br />
+
+            <button type="submit" class="btn btn-light fixed-width">Change Payment
+                Method</button>
         </form>
 
 
@@ -72,19 +76,19 @@
         <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog"
             aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered" role="document">
-                <div class="modal-content ak-bg-black text-white p-4 rounded">
-                    <div class="modal-header border-0 d-flex flex-column justify-content-center align-content-center">
+                <div class="p-4 text-white rounded modal-content ak-bg-black">
+                    <div class="border-0 modal-header d-flex flex-column justify-content-center align-content-center">
                         <img src="./assets/images/caution.png" class="mx-auto" alt="">
-                        <p class=" ">
+                        <p class="">
                             You are about to change your current payment method. After which, all the payments
                             will be transferred from your new payment method
                         </p>
                     </div>
-                    <div class="modal-footer border-0 d-flex w-100 p-0">
-                        <button type="button" class="btn btn-outline-black text-white border py-2 rounded-0 flex-grow-1"
+                    <div class="p-0 border-0 modal-footer d-flex w-100">
+                        <button type="button" class="py-2 text-white border btn btn-outline-black rounded-0 flex-grow-1"
                             data-dismiss="modal">Cancel</button>
                         <button type="button"
-                            class="btn btn-warning confirm_btn py-2 rounded-0 flex-grow-1">Confirm</button>
+                            class="py-2 btn btn-warning confirm_btn rounded-0 flex-grow-1">Confirm</button>
                     </div>
                 </div>
             </div>

@@ -24,6 +24,8 @@ class InstructorPaymentSeeder extends Seeder
                 DB::table('instructor_payments')->insert([
                     'instructor_id' => $instructorId,
                     'price' => rand(50, 500),
+                    'transaction_id' => rand(),
+                    'transaction_group' => rand(),
                     'created_at' => $paymentDate,
                     'updated_at' => $paymentDate,
                 ]);
