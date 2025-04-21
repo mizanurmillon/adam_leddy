@@ -70,6 +70,7 @@ class CourseController extends Controller
         }
 
         $user = auth()->user();
+        
         if ($user->status != "active") {
             return $this->error([], 'You don’t have permission to upload courses', 403);
         }
