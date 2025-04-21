@@ -73,7 +73,7 @@ class CourseController extends Controller
         $user = auth()->user();
         
         if ($user->status != "active") {
-            return $this->error([], 'You don’t have permission to upload courses', 403);
+            return $this->error([], 'You don’t have permission to upload courses', 200);
         }
 
         $fileName = $request->hasFile('file_url')
@@ -306,8 +306,8 @@ class CourseController extends Controller
         }
 
         $user = auth()->user();
-        if (! $user || $user->status != "active") {
-            return $this->error([], 'You don’t have permission to upload courses', 403);
+        if ($user->status != "active") {
+            return $this->error([], 'You don’t have permission to upload courses', 200);
         }
 
         $Course_module = CourseModule::with('videos')->find($id);
@@ -415,7 +415,7 @@ class CourseController extends Controller
         }
 
         if ($user->status != "active") {
-            return $this->error([], 'You don’t have permission to delete courses', 403);
+            return $this->error([], 'You don’t have permission to delete courses', 200);
         }
 
         $data = User::with('instructor')->where('id', $user->id)->first();
@@ -493,9 +493,10 @@ class CourseController extends Controller
         if (! $user) {
             return $this->error([], 'User Not Found', 200);
         }
+        
 
         if ($user->status != "active") {
-            return $this->error([], 'You don’t have permission to delete modules', 403);
+            return $this->error([], 'You don’t have permission to delete modules', 200);
         }
 
         $data = User::with('instructor')->where('id', $user->id)->first();
