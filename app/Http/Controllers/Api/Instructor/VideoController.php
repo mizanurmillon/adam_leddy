@@ -16,7 +16,7 @@ class VideoController extends Controller
     public function create(Request $request, $id)
     {
         $validator = Validator::make($request->all(), [
-            'video_url'   => 'required|mimetypes:video/mp4,video/quicktime,video/x-ms-wmv,video/x-msvideo|max:100000',
+            'video_url'   => 'required|mimetypes:video/mp4,video/quicktime,video/x-ms-wmv,video/x-msvideo|max:512000',
             'video_title' => 'required|string|max:255',
         ]);
 

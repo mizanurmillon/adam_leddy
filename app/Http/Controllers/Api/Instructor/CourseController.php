@@ -60,7 +60,7 @@ class CourseController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'title'     => 'required|string|max:255',
-            'video_url' => 'required|mimes:mp4,mov,ogg,qt,ogx,mkv,wmv,webm,flv,avi,ogv|max:100000',
+            'video_url' => 'required|mimes:mp4,mov,ogg,qt,ogx,mkv,wmv,webm,flv,avi,ogv|max:512000',
             'file_url'  => 'nullable|mimes:pdf,doc,docx|max:4096',
             'video_title' => 'required|string|max:255',
             'description' => 'nullable|string|max:2000',
@@ -296,7 +296,7 @@ class CourseController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'title'     => 'required|string|max:255',
-            'video_url' => 'nullable|mimes:mp4,mov,ogg,qt,ogx,mkv,wmv,webm,flv,avi,ogv|max:100000',
+            'video_url' => 'nullable|mimes:mp4,mov,ogg,qt,ogx,mkv,wmv,webm,flv,avi,ogv|max:512000',
             'file_url'  => 'nullable|mimes:pdf,doc,docx|max:4096',
             'video_title' => 'nullable|string|max:255',
         ]);
