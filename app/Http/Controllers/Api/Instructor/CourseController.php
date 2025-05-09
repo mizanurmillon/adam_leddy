@@ -299,6 +299,7 @@ class CourseController extends Controller
             'video_url' => 'nullable|mimes:mp4,mov,ogg,qt,ogx,mkv,wmv,webm,flv,avi,ogv|max:512000',
             'file_url'  => 'nullable|mimes:pdf,doc,docx|max:4096',
             'video_title' => 'nullable|string|max:255',
+            'description' => 'nullable|string',
         ]);
 
         if ($validator->fails()) {
@@ -391,6 +392,7 @@ class CourseController extends Controller
         $Course_module->update([
             'module_title' => $request->title,
             'file_url'  => $fileName,
+            'description' => $request->description,
         ]);
 
         // Update or Create Course Video
