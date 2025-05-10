@@ -295,7 +295,7 @@ class CourseController extends Controller
     public function updateModule(Request $request, $id)
     {
         $validator = Validator::make($request->all(), [
-            'title'     => 'required|string|max:255',
+            'title'     => 'nullable|string|max:255',
             'video_url' => 'nullable|mimes:mp4,mov,ogg,qt,ogx,mkv,wmv,webm,flv,avi,ogv|max:512000',
             'file_url'  => 'nullable|mimes:pdf,doc,docx|max:4096',
             'video_title' => 'nullable|string|max:255',
@@ -327,6 +327,8 @@ class CourseController extends Controller
             }
             $file     = $request->file('file_url');
             $fileName = uploadImage($file, 'course');
+        }else{
+            $fileName = $Course_module->videos->file_url;
         }
 
         // Handle Video Upload to Vimeo
