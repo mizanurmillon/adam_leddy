@@ -317,7 +317,7 @@ class CourseController extends Controller
         }
 
         // Handle File Upload
-        $fileName = $Course_module->videos->file_url ?? null;
+        $fileName = $Course_module->file_url ?? null;
         if ($request->hasFile('file_url')) {
             if ($fileName) {
                 $previousFilePath = public_path($fileName);
@@ -328,7 +328,7 @@ class CourseController extends Controller
             $file     = $request->file('file_url');
             $fileName = uploadImage($file, 'course');
         }else{
-            $fileName = $Course_module->videos->file_url;
+            $fileName = $Course_module->file_url;
         }
 
         // Handle Video Upload to Vimeo
