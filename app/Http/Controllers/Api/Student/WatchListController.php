@@ -36,6 +36,7 @@ class WatchListController extends Controller
                     $query->join('course_videos', 'course_videos.course_module_id', '=', 'course_modules.id');
                 }
             ])
+            ->havingRaw('progress_count < videos_count')
             ->withExists([
                 'bookmarks as is_bookmarked' => function ($query) use ($user) {
                     $query->where('user_id', $user->id);
@@ -55,6 +56,8 @@ class WatchListController extends Controller
             )
             ->paginate($request->per_page ?? 10);
 
+
+        // return $watchList;
 
 
         // $watchList->setCollection(

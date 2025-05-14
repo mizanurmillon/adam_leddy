@@ -71,7 +71,7 @@ class CourseController extends Controller
         }
 
         $user = auth()->user();
-        
+
         if ($user->status != "active") {
             return $this->error([], 'You don’t have permission to upload courses', 200);
         }
@@ -316,7 +316,7 @@ class CourseController extends Controller
         if (! $Course_module) {
             return $this->error([], 'Module Not Found', 200);
         }
-        
+
         // Handle File Upload
         $fileName = $Course_module->file_url ?? null;
         if ($request->hasFile('file_url')) {
@@ -328,7 +328,7 @@ class CourseController extends Controller
             }
             $file     = $request->file('file_url');
             $fileName = uploadImage($file, 'course');
-        }else{
+        } else {
             $fileName = $Course_module->file_url;
         }
 
@@ -429,7 +429,7 @@ class CourseController extends Controller
         if (! $user) {
             return $this->error([], 'User Not Found', 200);
         }
-        
+
 
         if ($user->status != "active") {
             return $this->error([], 'You don’t have permission to delete modules', 200);
