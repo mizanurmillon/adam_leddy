@@ -328,7 +328,7 @@ class CourseController extends Controller
             }
             $file     = $request->file('file_url');
             $fileName = uploadImage($file, 'course');
-        }else{
+        } else {
             $fileName = $Course_module->file_url;
         }
 
