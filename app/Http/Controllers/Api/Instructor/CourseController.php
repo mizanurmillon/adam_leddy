@@ -60,7 +60,7 @@ class CourseController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'title'     => 'required|string|max:255',
-            'video_url' => 'required|mimes:mp4,mov,ogg,qt,ogx,mkv,wmv,webm,flv,avi,ogv|max:100000',
+            'video_url' => 'required|mimes:mp4,mov,ogg,qt,ogx,mkv,wmv,webm,flv,avi,ogv|max:512000',
             'file_url'  => 'nullable|mimes:pdf,doc,docx|max:4096',
             'video_title' => 'required|string|max:255',
             'description' => 'nullable|string|max:2000',
@@ -71,8 +71,9 @@ class CourseController extends Controller
         }
 
         $user = auth()->user();
+
         if ($user->status != "active") {
-            return $this->error([], 'You don’t have permission to upload courses', 403);
+            return $this->error([], 'You don’t have permission to upload courses', 200);
         }
 
         $fileName = $request->hasFile('file_url')
@@ -293,11 +294,13 @@ class CourseController extends Controller
 
     public function updateModule(Request $request, $id)
     {
+
         $validator = Validator::make($request->all(), [
-            'title'     => 'required|string|max:255',
-            'video_url' => 'nullable|mimes:mp4,mov,ogg,qt,ogx,mkv,wmv,webm,flv,avi,ogv|max:100000',
+            'title'     => 'nullable|string|max:255',
+            'video_url' => 'nullable|mimes:mp4,mov,ogg,qt,ogx,mkv,wmv,webm,flv,avi,ogv|max:512000',
             'file_url'  => 'nullable|mimes:pdf,doc,docx|max:4096',
             'video_title' => 'nullable|string|max:255',
+            'description' => 'nullable|string',
         ]);
 
         if ($validator->fails()) {
@@ -305,17 +308,17 @@ class CourseController extends Controller
         }
 
         $user = auth()->user();
-        if (! $user || $user->status != "active") {
-            return $this->error([], 'You don’t have permission to upload courses', 403);
+        if ($user->status != "active") {
+            return $this->error([], 'You don’t have permission to upload courses', 200);
         }
 
-        $Course_module = CourseModule::with('videos')->find($id);
+        $Course_module = CourseModule::find($id);
         if (! $Course_module) {
             return $this->error([], 'Module Not Found', 200);
         }
 
         // Handle File Upload
-        $fileName = $Course_module->videos->file_url ?? null;
+        $fileName = $Course_module->file_url ?? null;
         if ($request->hasFile('file_url')) {
             if ($fileName) {
                 $previousFilePath = public_path($fileName);
@@ -325,86 +328,18 @@ class CourseController extends Controller
             }
             $file     = $request->file('file_url');
             $fileName = uploadImage($file, 'course');
-        } else {
-            $fileName = $Course_module->videos->file_url ?? null;
-        }
-
-        // Handle Video Upload to Vimeo
-        $videoEmbedUrl     = $Course_module->videos->video_url ?? null;
-        $formattedDuration = $Course_module->videos->duration ?? "00:00:00";
-
-        if ($request->hasFile('video_url')) {
-            $videoFile = $request->file('video_url');
-            if (! $videoFile->isValid()) {
-                return $this->error([], "Invalid video file", 422);
-            }
-
-            $allowedMimeTypes = ['video/mp4', 'video/quicktime', 'video/x-ms-wmv', 'video/x-msvideo'];
-            if (! in_array($videoFile->getMimeType(), $allowedMimeTypes)) {
-                return $this->error([], "Unsupported video format", 422);
-            }
-
-            try {
-                $vimeo = new Vimeo(env('VIMEO_CLIENT'), env('VIMEO_SECRET'), env('VIMEO_ACCESS'));
-
-                // Delete previous Vimeo video if exists
-                if ($Course_module->videos->video_url) {
-                    $previousVideoUrl = $Course_module->videos->video_url;
-                    preg_match('/\/video\/(\d+)/', $previousVideoUrl, $matches);
-                    if (! empty($matches[1])) {
-                        $previousVideoId = $matches[1];
-                        $vimeo->request("/videos/{$previousVideoId}", [], 'DELETE');
-                    }
-                }
-
-                // Upload new video
-                $videoResponse = $vimeo->upload($videoFile->getPathname(), [
-                    'name'    => $request->input('title'),
-                    'privacy' => ['view' => 'anybody'],
-                    'embed'   => [
-                        'title'   => ['name' => 'hide', 'owner' => 'hide', 'portrait' => 'hide'],
-                        'buttons' => ['like' => false, 'watchlater' => false, 'share' => false, 'embed' => false],
-                        'logos'   => ['vimeo' => false],
-                    ],
-                ]);
-
-                $videoData     = $vimeo->request($videoResponse, [], 'GET')['body'];
-                $videoId       = trim($videoData['uri'], '/videos/');
-                $videoEmbedUrl = "https://player.vimeo.com/video/" . $videoId . "?title=1&byline=1&portrait=1&badge=1&autopause=1&player_id=1";
-
-                // Wait for video duration update
-                $retryCount = 0;
-                while ($videoData['duration'] == 0 && $retryCount < 5) {
-                    sleep(5);
-                    $videoData = $vimeo->request($videoResponse, [], 'GET')['body'];
-                    $retryCount++;
-                }
-
-                $formattedDuration = ($videoData['duration'] > 0) ? gmdate("H:i:s", $videoData['duration']) : "00:00:00";
-            } catch (\Exception $e) {
-                return $this->error([], "Video upload failed: " . $e->getMessage(), 500);
-            }
-        } else {
-            $videoEmbedUrl = $Course_module->videos->video_url ?? null;
+        }else{
+            $fileName = $Course_module->file_url;
         }
 
         // Update Course Module
         $Course_module->update([
             'module_title' => $request->title,
             'file_url'  => $fileName,
+            'description' => $request->description,
         ]);
 
-        // Update or Create Course Video
-        $Course_video = CourseVideo::updateOrCreate(
-            ['course_module_id' => $Course_module->id],
-            [
-                'video_title' => $request->video_title,
-                'video_url' => $videoEmbedUrl,
-                'duration'  => $formattedDuration,
-            ]
-        );
-
-        return $this->success($Course_module->load('videos'), 'Module updated successfully', 200);
+        return $this->success($Course_module, 'Module updated successfully', 200);
     }
 
     public function delete($id)
@@ -416,7 +351,7 @@ class CourseController extends Controller
         }
 
         if ($user->status != "active") {
-            return $this->error([], 'You don’t have permission to delete courses', 403);
+            return $this->error([], 'You don’t have permission to delete courses', 200);
         }
 
         $data = User::with('instructor')->where('id', $user->id)->first();
@@ -495,8 +430,9 @@ class CourseController extends Controller
             return $this->error([], 'User Not Found', 200);
         }
 
+
         if ($user->status != "active") {
-            return $this->error([], 'You don’t have permission to delete modules', 403);
+            return $this->error([], 'You don’t have permission to delete modules', 200);
         }
 
         $data = User::with('instructor')->where('id', $user->id)->first();
