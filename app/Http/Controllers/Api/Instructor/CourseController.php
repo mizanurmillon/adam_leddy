@@ -325,6 +325,8 @@ class CourseController extends Controller
             }
             $file     = $request->file('file_url');
             $fileName = uploadImage($file, 'course');
+        } else {
+            $fileName = $Course_module->videos->file_url ?? null;
         }
 
         // Handle Video Upload to Vimeo
