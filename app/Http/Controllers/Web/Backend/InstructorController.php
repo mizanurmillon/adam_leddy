@@ -42,7 +42,10 @@ class InstructorController extends Controller
                 $query->join('course_videos', 'course_videos.course_module_id', '=', 'course_modules.id')
                     ->select(DB::raw('count(course_videos.id)'));
             }])
-            ->where('instructor_id', $id);
+            ->where('instructor_id', $id)
+            ->whereHas('modules', function ($query) {
+                $query->whereHas('videos');
+            });
 
         $courses = $query->get();
 
@@ -101,10 +104,9 @@ class InstructorController extends Controller
             'tags:id,name',
             'courseWatches',
         ])
-        ->withSum('courseWatches', 'watch_time') 
-        ->orderByDesc('course_watches_sum_watch_time') 
-        ->first();
-
+            ->withSum('courseWatches', 'watch_time')
+            ->orderByDesc('course_watches_sum_watch_time')
+            ->first();
 
         $moduleIds = $topInstructor->modules ? $topInstructor->modules->pluck('id')->toArray() : [];
 
@@ -229,7 +231,7 @@ class InstructorController extends Controller
     {
         $instructor = Instructor::find($id);
 
-        if (!$instructor) {
+        if (! $instructor) {
             return response()->json([
                 'success' => false,
                 'message' => 'Instructor not found.',
@@ -241,6 +243,6 @@ class InstructorController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Category deleted successfully.',
-         ]);
+        ]);
     }
 }

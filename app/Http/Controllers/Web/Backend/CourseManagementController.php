@@ -18,7 +18,9 @@ class CourseManagementController extends Controller
         $categories = Category::all();
 
         // Start with a query to filter by category if selected
-        $query = Course::with('courseWatches', 'category');
+        $query = Course::with('courseWatches', 'category')->whereHas('modules', function ($query) {
+                $query->whereHas('videos');
+            });
 
         if (! empty($data['category']) && $data['category'] != 'undefined') {
             $query->where('category_id', $data['category']);
