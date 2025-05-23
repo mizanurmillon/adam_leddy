@@ -1,14 +1,17 @@
 <?php
 namespace App\Http\Controllers\Web\Backend;
 
-use App\Http\Controllers\Controller;
-use App\Models\Category;
-use App\Models\Course;
-use App\Models\CourseWatch;
-use App\Models\Instructor;
+use Vimeo\Vimeo;
 use App\Models\Tag;
 use App\Models\User;
+use App\Models\Course;
+use App\Models\Category;
+use App\Models\Instructor;
+use App\Models\CourseVideo;
+use App\Models\CourseWatch;
+use App\Models\CourseModule;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
 
 class CourseManagementController extends Controller
 {
@@ -139,5 +142,78 @@ class CourseManagementController extends Controller
 
         $course->tags()->attach($request->tag_id);
         return response()->json(['success' => true, 'message' => 'Tag added successfully']);
+    }
+
+    public function destroy($id)
+    {
+       $course = Course::find($id);
+
+       if(file_exists($course->thumbnail)){
+            unlink($course->thumbnail);
+        }
+
+        if (!$course) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Course not found.',
+            ]);
+        }
+
+        $course->delete();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Course deleted successfully.',
+        ]);
+    }
+
+    public function moduleDestroy($id)
+    {
+       $module = CourseModule::find($id);
+
+       if(file_exists($module->file_url)){
+            unlink($module->file_url);
+        }
+
+        if (!$module) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Module not found.',
+            ]);
+        }
+
+        $module->delete();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Module deleted successfully.',
+        ]);
+    }
+
+    public function videoDestroy($id)
+    {
+       $video = CourseVideo::find($id);
+
+        if (!$video) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Video not found.',
+            ]);
+        }
+        
+       $vimeo = new Vimeo(env('VIMEO_CLIENT'), env('VIMEO_SECRET'), env('VIMEO_ACCESS'));
+        if (! empty($video->video_url)) {
+            preg_match('/\/video\/(\d+)/', $video->video_url, $matches);
+            if (! empty($matches[1])) {
+                $previousVideoId = $matches[1];
+                $vimeo->request("/videos/{$previousVideoId}", [], 'DELETE');
+            }
+        }
+        $video->delete();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Video deleted successfully.',
+        ]);
     }
 }

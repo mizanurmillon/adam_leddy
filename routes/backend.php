@@ -31,6 +31,12 @@ Route::controller(CourseManagementController::class)->group(function () {
     Route::get('/courses/index', 'index')->name('admin.courses.index');
     Route::get('/courses/content/{id}', 'content')->name('admin.courses.content');
     Route::post('/courses/tags/store', 'tagStore')->name('course.tag.store');
+
+    Route::delete('/courses/destroy/{id}', 'destroy')->name('admin.courses.destroy');
+
+    Route::delete('/courses/module/destroy/{id}', 'moduleDestroy')->name('admin.modules.destroy');
+
+    Route::delete('/courses/videos/destroy/{id}', 'videoDestroy')->name('admin.videos.destroy');
 });
 
 Route::controller(ApprovalController::class)->group(function () {

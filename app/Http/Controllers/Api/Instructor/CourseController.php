@@ -2,15 +2,16 @@
 
 namespace App\Http\Controllers\Api\Instructor;
 
-use App\Http\Controllers\Controller;
-use App\Models\Course;
-use App\Models\CourseModule;
-use App\Models\CourseVideo;
-use App\Models\User;
-use App\Traits\ApiResponse;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
 use Vimeo\Vimeo;
+use App\Models\User;
+use App\Models\Course;
+use App\Models\CourseTag;
+use App\Models\CourseVideo;
+use App\Traits\ApiResponse;
+use App\Models\CourseModule;
+use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Validator;
 
 class CourseController extends Controller
 {
@@ -52,6 +53,10 @@ class CourseController extends Controller
             'category_id'   => $request->category_id,
             'thumbnail'     => $thumbnailName,
         ]);
+        // $tag = CourseTag::create([
+        //     'course_id' => $course->id,
+        //     'tag_id'    => $request->tag_id
+        // ]);
         $course->load('category');
         return $this->success($course, 'Course created successfully', 200);
     }

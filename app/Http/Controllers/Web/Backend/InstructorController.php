@@ -242,7 +242,7 @@ class InstructorController extends Controller
 
         return response()->json([
             'success' => true,
-            'message' => 'Category deleted successfully.',
+            'message' => 'Instructor deleted successfully.',
         ]);
     }
 }
