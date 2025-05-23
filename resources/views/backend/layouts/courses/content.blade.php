@@ -371,13 +371,13 @@
                 confirmButtonText: 'Yes, delete it!',
             }).then((result) => {
                 if (result.isConfirmed) {
-                    deleteItem(id);
+                    deleteVideosItem(id);
                 }
             });
         }
 
         // Delete Button
-        function deleteItem(id) {
+        function deleteVideosItem(id) {
             let url = "{{ route('admin.videos.destroy', ':id') }}";
             let csrfToken = '{{ csrf_token() }}';
             $.ajax({
