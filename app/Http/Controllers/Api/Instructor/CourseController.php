@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\Instructor;
 
 use Vimeo\Vimeo;
+use App\Models\Tag;
 use App\Models\User;
 use App\Models\Course;
 use App\Models\CourseTag;
@@ -53,10 +54,14 @@ class CourseController extends Controller
             'category_id'   => $request->category_id,
             'thumbnail'     => $thumbnailName,
         ]);
-        // $tag = CourseTag::create([
-        //     'course_id' => $course->id,
-        //     'tag_id'    => $request->tag_id
-        // ]);
+        $tagData = Tag::where('id', 2)->first();
+        if($tagData){
+            $tag = CourseTag::create([
+                'course_id' => $course->id,
+                'tag_id'    => $tagData->id 
+            ]);
+        }
+        
         $course->load('category');
         return $this->success($course, 'Course created successfully', 200);
     }
