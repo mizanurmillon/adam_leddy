@@ -17,6 +17,7 @@ class SubscriptionSeeder extends Seeder
             'name' => 'Monthly Subscription',
             'price' => 8,
             'type' => 'monthly',
+            'stripe_price_id' => 'price_1RXweRGLNPzCEpVVFCNgvGsk',
         ]);
     }
 }

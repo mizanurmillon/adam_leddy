@@ -51,6 +51,7 @@ Route::group(['middleware' => ['jwt.verify']], function () {
 
         Route::controller(PaymentController::class)->prefix('student')->group(function () {
             Route::post('/checkout', 'checkout');
+            Route::post('/subscription-cancel', 'subscriptionCancel');
         });
     });
 
@@ -64,6 +65,7 @@ Route::group(['middleware' => ['jwt.verify']], function () {
 Route::controller(PaymentController::class)->group(function () {
     Route::get('/checkout-success', 'checkoutSuccess')->name('checkout.success');
     Route::get('/checkout-cancel', 'checkoutCancel')->name('checkout.cancel');
+    Route::post('/webhook/stripe/auto-renew', 'AutoRenewWebhook')->name('stripe.auto_renew_webhook');
 });
 
 Route::controller(ConnectAccount::class)->prefix('instructor')->group(function () {

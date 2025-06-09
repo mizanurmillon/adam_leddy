@@ -9,6 +9,7 @@ use App\Http\Controllers\Web\Backend\DashboardController;
 use App\Http\Controllers\Web\Backend\InstructorController;
 use App\Http\Controllers\Web\Backend\CourseManagementController;
 use App\Http\Controllers\Web\Backend\RevenueController;
+use App\Http\Controllers\Web\Backend\SubscriptionController;
 use App\Http\Controllers\Web\Backend\WatchTimeController;
 
 Route::get('/dashboard', [DashboardController::class, 'index'])->name('admin.dashboard');
@@ -65,4 +66,8 @@ Route::controller(WatchTimeController::class)->group(function () {
 
 Route::controller(RevenueController::class)->group(function () {
     Route::get('/revenue/index', 'index')->name('admin.revenue.index');
+});
+
+Route::controller(SubscriptionController::class)->group(function () {
+    Route::post('/subscription/update', 'update')->name('admin.subscription.update');
 });

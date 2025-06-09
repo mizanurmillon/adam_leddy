@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Subscription extends Model
 {
-    protected $fillable = ['name', 'price'];
+    protected $guarded = [];
 
     protected $hidden = ['created_at', 'updated_at'];
 

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\Student;
 use App\Http\Controllers\Controller;
 use App\Models\Membership;
 use App\Models\MembershipHistory;
+use App\Models\Student;
 use App\Models\Subscription;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -12,7 +13,9 @@ use Stripe\Stripe;
 use App\Traits\ApiResponse;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
+use Stripe\Subscription as StripeSubscription;
 
 class PaymentController extends Controller
 {
@@ -41,33 +44,24 @@ class PaymentController extends Controller
 
         $subscriptionPlan = Subscription::find($request->plan_id);
 
-        if (!$subscriptionPlan) {
-            return $this->error([], 'Subscription plan not found.', 200);
+        if (!$subscriptionPlan || !$subscriptionPlan->stripe_price_id) {
+            return $this->error([], 'Subscription plan or Stripe price ID not found.', 200);
         }
 
         try {
             $checkoutSession = \Stripe\Checkout\Session::create([
                 'payment_method_types' => ['card'],
+                'mode' => 'subscription',
                 'line_items' => [[
-                    'price_data' => [
-                        'currency' => 'usd',
-                        'unit_amount' => $subscriptionPlan->price * 100,
-                        'product_data' => [
-                            'name' => $subscriptionPlan->name,
-                        ],
-                    ],
+                    'price' => $subscriptionPlan->stripe_price_id,
                     'quantity' => 1,
                 ]],
-                'customer_email' => auth()->user()->email,
-                'mode' => 'payment',
+                'customer_email' => $user->email,
                 'success_url' => route('checkout.success') . '?session_id={CHECKOUT_SESSION_ID}',
                 'cancel_url' => route('checkout.cancel') . '?redirect_url=' . $request->get('cancel_redirect_url'),
                 'metadata' => [
-                    'plan_id' => $subscriptionPlan->id,
-                    'plan_name' => $subscriptionPlan->name,
-                    'plan_price' => $subscriptionPlan->price,
-                    'plan_type' => $subscriptionPlan->type,
-                    'user_id' => (int) $user->id,
+                    'user_id' => $user->id,
+                    'subscription_id' => $subscriptionPlan->id,
                     'success_redirect_url' => $request->get('success_redirect_url'),
                     'cancel_redirect_url' => $request->get('cancel_redirect_url'),
                 ],
@@ -77,8 +71,6 @@ class PaymentController extends Controller
         } catch (\Exception $e) {
             return $this->error([], $e->getMessage(), 500);
         }
-
-        return $checkoutSession;
     }
 
     public function checkoutSuccess(Request $request)
@@ -91,41 +83,50 @@ class PaymentController extends Controller
         try {
             $sessionId = $request->query('session_id');
             $checkoutSession = \Stripe\Checkout\Session::retrieve($sessionId);
+            $subscriptionId = $checkoutSession->subscription;
+
+            $stripeSubscription = \Stripe\Subscription::retrieve($subscriptionId);
+            $priceId = $stripeSubscription->items->data[0]->price->id;
+            $currentPeriodEnd = Carbon::createFromTimestamp($stripeSubscription->current_period_end);
+
             $metadata = $checkoutSession->metadata;
 
-            $success_redirect_url = $metadata->success_redirect_url ?? null;
-            $user_id = $metadata->user_id ?? null;
-            $plan_id = $metadata->plan_id ?? null;
-            $plan_name = $metadata->plan_name ?? null;
-            $plan_price = $metadata->plan_price ?? null;
-            $plan_type = $metadata->plan_type ?? null;
+            $user = User::find($metadata->user_id);
+            $subscriptionPlan = Subscription::find($metadata->subscription_id);
+            $success_redirect_url = $metadata->success_redirect_url ?? '/';
 
-            $user = User::find($user_id);
-
-            if (!$user) {
-                return $this->error([], 'User not found.', 200);
+            if (!$user || !$subscriptionPlan) {
+                return $this->error([], 'User or Plan not found.', 200);
             }
 
-            $membershipHistory = MembershipHistory::create([
-                'user_id' => $user_id,
-                'subscription_id' => $plan_id,
-                'price' => $plan_price,
-                'type' => $plan_type,
-                'start_date' => Carbon::now(),
-                'end_date' => $plan_type == 'monthly' ? Carbon::now()->addMonth() : Carbon::now()->addYear(),
+            // Save student stripe subscription info
+            $user->student()->updateOrCreate([], [
+                'stripe_customer_id' => $checkoutSession->customer,
+                'stripe_subscription_id' => $subscriptionId,
             ]);
 
-            $membership = Membership::updateOrCreate([
-                'user_id' => $user_id,
-                'subscription_id' => $plan_id,
+            // Save active membership
+            $user->membership()->updateOrCreate([
+                'subscription_id' => $subscriptionPlan->id,
             ], [
-                'price' => $plan_price,
-                'type' => $plan_type,
-                'start_date' => Carbon::now(),
-                'end_date' => $plan_type == 'monthly' ? Carbon::now()->addMonth() : Carbon::now()->addYear(),
+                'price' => $subscriptionPlan->price,
+                'type' => $subscriptionPlan->type,
+                'stripe_subscription_id' => $subscriptionId,
+                'start_date' => now(),
+                'end_date' => $currentPeriodEnd,
+                'starts_at' => now(),
             ]);
 
-
+            // Save to history
+            $user->membershipHistories()->create([
+                'subscription_id' => $subscriptionPlan->id,
+                'price' => $subscriptionPlan->price,
+                'type' => $subscriptionPlan->type,
+                'stripe_subscription_id' => $subscriptionId,
+                'start_date' => now(),
+                'end_date' => $currentPeriodEnd,
+                'starts_at' => now(),
+            ]);
 
             DB::commit();
             return redirect($success_redirect_url);
@@ -140,14 +141,80 @@ class PaymentController extends Controller
         $sessionId = $request->query('session_id');
 
         if (!$sessionId) {
-            return redirect($request->redirect_url ?? null);
+            return redirect($request->redirect_url ?? '/');
         }
 
         $checkoutSession = \Stripe\Checkout\Session::retrieve($sessionId);
         $metadata = $checkoutSession->metadata;
-
-        $cancel_redirect_url = $metadata->cancel_redirect_url ?? null;
+        $cancel_redirect_url = $metadata->cancel_redirect_url ?? '/';
 
         return redirect($cancel_redirect_url);
+    }
+
+    public function AutoRenewWebhook(Request $request)
+    {
+        $payload = $request->all();
+
+        $subscriptionId = $payload['data']['object']['subscription'];
+        $stripeCustomerId = $payload['data']['object']['customer'];
+
+        $student = Student::where('stripe_customer_id', $stripeCustomerId)->first();
+        Log::info('AutoRenewWebhook called for student ID: ' . $student->id);
+
+        if (!$student) return response()->json(['message' => 'Student not found'], 404);
+        Log::info('Found student: ' . $student->id);
+
+        $membership = $student->user->membership()->where('stripe_subscription_id', $subscriptionId)->first();
+        Log::info('Found membership: ' . ($membership ? $membership->id : 'none'));
+
+        if (!$membership) return response()->json(['message' => 'Membership not found'], 404);
+
+
+        $stripeSubscription = \Stripe\Subscription::retrieve($subscriptionId);
+        $newEndDate = Carbon::createFromTimestamp($stripeSubscription->current_period_end);
+
+        $membership->update(['end_date' => $newEndDate]);
+
+        MembershipHistory::create([
+            'user_id' => $student->user_id,
+            'subscription_id' => $membership->subscription_id,
+            'price' => $membership->price,
+            'type' => $membership->type,
+            'stripe_subscription_id' => $subscriptionId,
+            'start_date' => now(),
+            'end_date' => $newEndDate,
+        ]);
+
+        return response()->json(['message' => 'Membership renewed.'], 200);
+    }
+
+    public function subscriptionCancel(Request $request)
+    {
+        $user = auth()->user();
+        if (!$user) {
+            return $this->error([], 'User not found.', 401);
+        }
+
+        $membership = Membership::where('user_id', $user->id)->first();
+
+        if (!$membership || !$membership->stripe_subscription_id) {
+            return $this->error([], 'Active subscription not found.', 404);
+        }
+
+        try {
+            Stripe::setApiKey(config('services.stripe.secret'));
+
+            $subscription = StripeSubscription::retrieve($membership->stripe_subscription_id);
+            $subscription->cancel();
+
+            // Optionally update your DB to mark it pending cancel
+            $user->membership()->where('stripe_subscription_id', $membership->stripe_subscription_id)->update([
+                'status' => 'cancelled',
+            ]);
+
+            return $this->success([], 'Subscription will be cancelled at period end.', 200);
+        } catch (\Exception $e) {
+            return $this->error([], $e->getMessage(), 500);
+        }
     }
 }

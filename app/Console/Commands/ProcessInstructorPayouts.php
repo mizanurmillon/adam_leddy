@@ -44,10 +44,14 @@ class ProcessInstructorPayouts extends Command
 
         $lastMonth = Carbon::now()->subMonth();
 
-        $totalBalance = MembershipHistory::query()
+        $MegaTotalBalance = MembershipHistory::query()
             ->whereMonth('created_at', $lastMonth->month)
             ->whereYear('created_at', $lastMonth->year)
             ->sum('price');
+
+        // minus 60% form MegaTotalBalance
+        $totalBalance = $MegaTotalBalance - ($MegaTotalBalance * 0.6);
+        Log::info("Mega Total Balance for last month: $MegaTotalBalance, After 60% deduction: $totalBalance");
 
         $courseWatchTime = CourseWatchHistory::query()
             ->whereMonth('watched_at', $lastMonth->month)
