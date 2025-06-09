@@ -68,7 +68,7 @@
                         <tbody class="se-tbody">
 
                             @foreach ($courses as $course)
-                                <tr class="se-tr">
+                                <tr class="se-tr" id="row-{{ $course->id }}">
                                     <td class="se-td">{{ $course->title }}</td>
                                     <td class="se-td">{{ $instructorNames[$course->id] ?? 'N/A' }}</td>
                                     <td class="se-td">{{ gmdate('H:i:s', $course->total_watch_time / 1000) }}</td>
@@ -76,6 +76,8 @@
                                     <td class="se-td">
                                         <a href="{{ route('admin.courses.content', $course->id) }}"
                                             class="se--view-btn">View Details</a>
+                                        <button onclick="showDeleteConfirm({{ $course->id }})"
+                                        class="text-decoration-underline fw-bold text-danger bg-transparent border-0">Delete</button>
                                     </td>
                                 </tr>
                             @endforeach
@@ -168,5 +170,57 @@
                 }
             })
         });
+    </script>
+    <script>
+         $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        })
+
+        function showDeleteConfirm(id) {
+            event.preventDefault();
+            Swal.fire({
+                title: 'Are you sure you want to delete this record?',
+                text: 'If you delete this, it will be gone forever.',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, delete it!',
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    deleteItem(id);
+                }
+            });
+        }
+
+        // Delete Button
+        function deleteItem(id) {
+            let url = "{{ route('admin.courses.destroy', ':id') }}";
+            let csrfToken = '{{ csrf_token() }}';
+            $.ajax({
+                type: "DELETE",
+                url: url.replace(':id', id),
+                headers: {
+                    'X-CSRF-TOKEN': csrfToken
+                },
+                success: function(resp) {
+                    
+                    if (resp.success === true) {
+                        // show toast message
+                        toastr.success(resp.message);
+                        $("#row-" + id).remove();
+                    } else if (resp.errors) {
+                        toastr.error(resp.errors[0]);
+                    } else {
+                        toastr.error(resp.message);
+                    }
+                },
+                error: function(error) {
+                    // location.reload();
+                }
+            })
+        }
     </script>
 @endpush

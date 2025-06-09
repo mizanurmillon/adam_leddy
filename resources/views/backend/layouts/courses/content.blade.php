@@ -37,7 +37,7 @@
         <div>
             <div class="accordion accordion-flush" id="accordionFlushExample">
                 @foreach ($course->modules as $index => $module)
-                    <div class="accordion-item">
+                    <div class="accordion-item" id="module-{{ $module->id }}">
                         <h2 class="accordion-header" id="heading{{ $index }}">
                             <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
                                 data-bs-target="#flush-collapse{{ $index }}" aria-expanded="false"
@@ -48,10 +48,25 @@
                         <div id="flush-collapse{{ $index }}" class="accordion-collapse collapse"
                             data-bs-parent="#accordionFlushExample">
                             <div class="accordion-body">
+                                <button onclick="showDeleteConfirm({{ $module->id }})"
+                                    class="text-decoration-underline fw-bold text-danger bg-transparent border-0 float-end">Delete
+                                    Chapter</button>
                                 @if ($module->videos && $module->videos->isNotEmpty())
                                     @foreach ($module->videos as $index => $video)
                                         @if ($video->video_url)
-                                            <div class="robi-lesson-content">
+                                            <div class="robi-lesson-content" id="video-{{ $video->id }}">
+                                                <button onclick="showDeleteVideoConfirm({{ $video->id }})"
+                                                    class="bg-transparent">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                                        viewBox="0 0 24 24" fill="none" stroke="#FF0000" stroke-width="1"
+                                                        stroke-linecap="round" stroke-linejoin="round">
+                                                        <path d="M4 7l16 0" />
+                                                        <path d="M10 11l0 6" />
+                                                        <path d="M14 11l0 6" />
+                                                        <path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12" />
+                                                        <path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3" />
+                                                    </svg>
+                                                </button>
                                                 <a href="{{ $video->video_url }}">
                                                     <p class="robi-lesson">
                                                         Lesson {{ $index + 1 }}:
@@ -72,19 +87,21 @@
                                 @endif
                                 <div class="robi-lesson-content">
                                     <p class="robi-lesson">
-                                        Lesson File:
-                                        <span>
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="18"
-                                                viewBox="0 0 14 18" fill="none">
-                                                <path
-                                                    d="M1.58203 18H12.1289C13.0013 18 13.7109 17.2903 13.7109 16.418V5.27344H10.0195C9.14716 5.27344 8.4375 4.56377 8.4375 3.69141V0H1.58203C0.709664 0 0 0.709664 0 1.58203V16.418C0 17.2903 0.709664 18 1.58203 18ZM3.69141 7.41797H10.0195C10.311 7.41797 10.5469 7.65383 10.5469 7.94531C10.5469 8.23679 10.311 8.47266 10.0195 8.47266H3.69141C3.39993 8.47266 3.16406 8.23679 3.16406 7.94531C3.16406 7.65383 3.39993 7.41797 3.69141 7.41797ZM3.69141 9.52734H10.0195C10.311 9.52734 10.5469 9.76321 10.5469 10.0547C10.5469 10.3462 10.311 10.582 10.0195 10.582H3.69141C3.39993 10.582 3.16406 10.3462 3.16406 10.0547C3.16406 9.76321 3.39993 9.52734 3.69141 9.52734ZM3.69141 11.6367H10.0195C10.311 11.6367 10.5469 11.8726 10.5469 12.1641C10.5469 12.4555 10.311 12.6914 10.0195 12.6914H3.69141C3.39993 12.6914 3.16406 12.4555 3.16406 12.1641C3.16406 11.8726 3.39993 11.6367 3.69141 11.6367ZM3.69141 13.7461H7.91016C8.20164 13.7461 8.4375 13.982 8.4375 14.2734C8.4375 14.5649 8.20164 14.8008 7.91016 14.8008H3.69141C3.39993 14.8008 3.16406 14.5649 3.16406 14.2734C3.16406 13.982 3.39993 13.7461 3.69141 13.7461Z"
-                                                    fill="white" />
-                                                <path
-                                                    d="M10.0195 4.21884H13.4019L9.49219 0.309082V3.6915C9.49219 3.98245 9.72858 4.21884 10.0195 4.21884Z"
-                                                    fill="white" />
-                                            </svg>
-                                            {{ $module->file_url }}
-                                        </span>
+                                        @if ($module->file_url != null)
+                                            Lesson File:
+                                            <span>
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="18"
+                                                    viewBox="0 0 14 18" fill="none">
+                                                    <path
+                                                        d="M1.58203 18H12.1289C13.0013 18 13.7109 17.2903 13.7109 16.418V5.27344H10.0195C9.14716 5.27344 8.4375 4.56377 8.4375 3.69141V0H1.58203C0.709664 0 0 0.709664 0 1.58203V16.418C0 17.2903 0.709664 18 1.58203 18ZM3.69141 7.41797H10.0195C10.311 7.41797 10.5469 7.65383 10.5469 7.94531C10.5469 8.23679 10.311 8.47266 10.0195 8.47266H3.69141C3.39993 8.47266 3.16406 8.23679 3.16406 7.94531C3.16406 7.65383 3.39993 7.41797 3.69141 7.41797ZM3.69141 9.52734H10.0195C10.311 9.52734 10.5469 9.76321 10.5469 10.0547C10.5469 10.3462 10.311 10.582 10.0195 10.582H3.69141C3.39993 10.582 3.16406 10.3462 3.16406 10.0547C3.16406 9.76321 3.39993 9.52734 3.69141 9.52734ZM3.69141 11.6367H10.0195C10.311 11.6367 10.5469 11.8726 10.5469 12.1641C10.5469 12.4555 10.311 12.6914 10.0195 12.6914H3.69141C3.39993 12.6914 3.16406 12.4555 3.16406 12.1641C3.16406 11.8726 3.39993 11.6367 3.69141 11.6367ZM3.69141 13.7461H7.91016C8.20164 13.7461 8.4375 13.982 8.4375 14.2734C8.4375 14.5649 8.20164 14.8008 7.91016 14.8008H3.69141C3.39993 14.8008 3.16406 14.5649 3.16406 14.2734C3.16406 13.982 3.39993 13.7461 3.69141 13.7461Z"
+                                                        fill="white" />
+                                                    <path
+                                                        d="M10.0195 4.21884H13.4019L9.49219 0.309082V3.6915C9.49219 3.98245 9.72858 4.21884 10.0195 4.21884Z"
+                                                        fill="white" />
+                                                </svg>
+                                                {{ $module->file_url }}
+                                            </span>
+                                        @endif
                                     </p>
                                 </div>
                             </div>
@@ -286,5 +303,105 @@
                 });
             });
         });
+    </script>
+    <script>
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        })
+
+        // Delete module
+
+        function showDeleteConfirm(id) {
+            event.preventDefault();
+            Swal.fire({
+                title: 'Are you sure you want to delete this record?',
+                text: 'If you delete this, it will be gone forever.',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, delete it!',
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    deleteItem(id);
+                }
+            });
+        }
+
+        // Delete Button
+        function deleteItem(id) {
+            let url = "{{ route('admin.modules.destroy', ':id') }}";
+            let csrfToken = '{{ csrf_token() }}';
+            $.ajax({
+                type: "DELETE",
+                url: url.replace(':id', id),
+                headers: {
+                    'X-CSRF-TOKEN': csrfToken
+                },
+                success: function(resp) {
+
+                    if (resp.success === true) {
+                        // show toast message
+                        toastr.success(resp.message);
+                        $("#module-" + id).remove();
+                    } else if (resp.errors) {
+                        toastr.error(resp.errors[0]);
+                    } else {
+                        toastr.error(resp.message);
+                    }
+                },
+                error: function(error) {
+                    // location.reload();
+                }
+            })
+        }
+
+        // Delete video
+        function showDeleteVideoConfirm(id) {
+            event.preventDefault();
+            Swal.fire({
+                title: 'Are you sure you want to delete this record?',
+                text: 'If you delete this, it will be gone forever.',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, delete it!',
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    deleteVideosItem(id);
+                }
+            });
+        }
+
+        // Delete Button
+        function deleteVideosItem(id) {
+            let url = "{{ route('admin.videos.destroy', ':id') }}";
+            let csrfToken = '{{ csrf_token() }}';
+            $.ajax({
+                type: "DELETE",
+                url: url.replace(':id', id),
+                headers: {
+                    'X-CSRF-TOKEN': csrfToken
+                },
+                success: function(resp) {
+
+                    if (resp.success === true) {
+                        // show toast message
+                        toastr.success(resp.message);
+                        $("#video-" + id).remove();
+                    } else if (resp.errors) {
+                        toastr.error(resp.errors[0]);
+                    } else {
+                        toastr.error(resp.message);
+                    }
+                },
+                error: function(error) {
+                    // location.reload();
+                }
+            })
+        }
     </script>
 @endpush

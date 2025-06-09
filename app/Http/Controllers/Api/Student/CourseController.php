@@ -27,7 +27,9 @@ class CourseController extends Controller
                         ->select(DB::raw('count(course_videos.id)'));
                 },
             ])
-            ->whereHas('modules');
+            ->whereHas('modules', function ($query) {
+                $query->whereHas('videos'); // Only modules that have videos
+            });
 
         // Filter by Tag
         if ($request->filled('tag')) {
@@ -144,7 +146,9 @@ class CourseController extends Controller
                             $query->where('user_id', $userId);
                         }
                     ])
-                    ->whereHas('modules')
+                    ->whereHas('modules', function ($query) {
+                        $query->whereHas('videos'); // Only modules that have videos
+                    })
                     ->take($take);
             }
         ])
