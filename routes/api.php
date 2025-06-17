@@ -72,7 +72,7 @@ Route::group(['middleware' => ['jwt.verify']], function () {
         });
 
         Route::controller(VideoController::class)->prefix('instructor')->group(function () {
-            Route::post('/create/video/{id}', 'create');
+//    Route::post('/create/video', 'create');
             Route::delete('/delete/video/{id}', 'delete');
         });
 
@@ -97,3 +97,5 @@ Route::controller(CategoryController::class)->prefix('categories')->group(functi
 Route::controller(TagsController::class)->prefix('tags')->group(function () {
     Route::get('/', 'AllTags');
 });
+
+Route::post('/instructor/create/video', [VideoController::class, 'create']);
