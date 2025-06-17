@@ -9,6 +9,7 @@ use App\Models\CourseWatchHistory;
 use App\Models\Instructor;
 use App\Models\InstructorPayment;
 use App\Models\MembershipHistory;
+use App\Models\Subscription;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Artisan;
@@ -81,7 +82,8 @@ class PaymentController extends Controller
 
     public function change()
     {
-        return view('backend.layouts.payment.change');
+        $subscription = Subscription::first();
+        return view('backend.layouts.payment.change', compact('subscription'));
     }
 
     public function update(Request $request)
