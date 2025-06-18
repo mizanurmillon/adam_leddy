@@ -5,6 +5,7 @@ use App\Http\Controllers\Controller;
 use App\Models\CourseModule;
 use App\Models\CourseVideo;
 use App\Traits\ApiResponse;
+use App\Jobs\VimeoTusUpload;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
@@ -15,127 +16,6 @@ class VideoController extends Controller
 {
     use ApiResponse;
 
-//    public function create(Request $request)
-//    {
-//        // Decode Upload-Metadata header
-//        $metadataHeader = $request->header('Upload-Metadata');
-//        if ($metadataHeader) {
-//            $metadataParts = explode(',', $metadataHeader);
-//            foreach ($metadataParts as $part) {
-//                if (strpos($part, ' ') !== false) {
-//                    [$key, $encoded] = explode(' ', trim($part), 2);
-//                    $decoded = base64_decode($encoded);
-//                    $request->merge([$key => $decoded]);
-//                }
-//            }
-//        }
-//
-//        // Initialize Tus server
-//        $server = new \TusPhp\Tus\Server('file');
-//        $server->setUploadDir(storage_path('app/uploads/tmp'));
-//
-//        // Serve the request — this handles preflight, resume, etc.
-//        $response = $server->serve();
-//
-//        // Check if upload is complete
-//        if (!$server->isComplete()) {
-//            \Log::info('Tus Upload Not Complete', [
-//                'status' => $server->getStatus(),
-//                'method' => $request->method(),
-//            ]);
-//
-//            return $response; // Serve HEAD/OPTIONS/PATCH responses
-//        }
-//
-//        \Log::info('Tus Upload Complete');
-//
-//        try {
-//            // Extract metadata
-//            $metadata = $server->getMetadata();
-//
-//            if (!is_array($metadata)) {
-//                return $this->error([], 'Invalid upload metadata format', 400);
-//            }
-//
-//            $fileName       = $metadata['filename'] ?? null;
-//            $courseModuleId = $metadata['course_module_id'] ?? null;
-//            $videoTitle     = $metadata['video_title'] ?? null;
-//
-//            \Log::info('Metadata:', [
-//                'filename' => $fileName,
-//                'course_module_id' => $courseModuleId,
-//                'video_title' => $videoTitle,
-//            ]);
-//
-//            // Validate metadata
-//            $validator = Validator::make([
-//                'course_module_id' => $courseModuleId,
-//                'video_title' => $videoTitle,
-//            ], [
-//                'course_module_id' => 'required|exists:course_modules,id',
-//                'video_title' => 'required|string|max:255',
-//            ]);
-//
-//            if ($validator->fails()) {
-//                return $this->error([], $validator->errors(), 400);
-//            }
-//
-//            // Get uploaded file
-//            $fileMeta = $server->getFile();
-//            $filePath = $fileMeta->getFilePath();
-//
-//            // Upload to Vimeo
-//            $vimeo = new \Vimeo\Vimeo(
-//                env('VIMEO_CLIENT'),
-//                env('VIMEO_SECRET'),
-//                env('VIMEO_ACCESS')
-//            );
-//
-//            $vimeoResponse = $vimeo->upload($filePath, [
-//                'name' => $videoTitle,
-//                'privacy' => ['view' => 'anybody'],
-//                'embed' => [
-//                    'title' => ['name' => 'hide', 'owner' => 'hide', 'portrait' => 'hide'],
-//                    'buttons' => ['like' => false, 'watchlater' => false, 'share' => false, 'embed' => false],
-//                    'logos' => ['vimeo' => false],
-//                ]
-//            ]);
-//
-//            $videoData = $vimeo->request($vimeoResponse, [], 'GET')['body'];
-//            $videoId = trim($videoData['uri'], '/videos/');
-//            $embedUrl = "https://player.vimeo.com/video/{$videoId}";
-//
-//            // Retry for duration
-//            $duration = 0;
-//            $retry = 0;
-//            while ($duration == 0 && $retry++ < 5) {
-//                sleep(5);
-//                $videoData = $vimeo->request($vimeoResponse, [], 'GET')['body'];
-//                $duration = $videoData['duration'] ?? 0;
-//            }
-//
-//            if ($duration <= 0) {
-//                return $this->error([], "Video duration not available", 422);
-//            }
-//
-//            $video = \App\Models\CourseVideo::create([
-//                'course_module_id' => $courseModuleId,
-//                'video_title' => $videoTitle,
-//                'video_url' => $embedUrl,
-//                'duration' => gmdate("H:i:s", $duration),
-//            ]);
-//
-//            if (file_exists($filePath)) {
-//                unlink($filePath); // Clean up uploaded file
-//            }
-//
-//            return $this->success(['video' => $video], 'Video uploaded and saved successfully', 201);
-//
-//        } catch (\Exception $e) {
-//            \Log::error('Vimeo Upload Error', ['message' => $e->getMessage()]);
-//            return $this->error([], 'Upload failed: ' . $e->getMessage(), 500);
-//        }
-//    }
     public function create(Request $request)
     {
         $isChunked = $request->has('dzuuid');
@@ -230,6 +110,7 @@ class VideoController extends Controller
 
     private function mergeChunks($fileName, $totalChunks)
     {
+
         $chunkDir = storage_path('app/uploads/chunks');
         $finalDir = storage_path('app/uploads');
         if (!is_dir($finalDir)) {
@@ -242,7 +123,7 @@ class VideoController extends Controller
             $chunk = fopen($chunkPath, 'rb');
             stream_copy_to_stream($chunk, $file);
             fclose($chunk);
-            unlink($chunkPath);
+//            unlink($chunkPath);
         }
         fclose($file);
         return $finalPath;
@@ -281,4 +162,71 @@ class VideoController extends Controller
 
     }
 
+    /**
+     * Handle large video upload using TUS protocol
+     */
+    public function uploadLargeVideo(Request $request)
+    {
+        $isChunked = $request->has('dzuuid');
+
+        $rules = [
+            'file' => ['required', 'file'],
+            'dzchunkindex' => 'required|integer',
+            'dztotalchunkcount' => 'required|integer',
+            'dzfilename' => 'required|string',
+            'course_module_id' => 'required|exists:course_modules,id',
+            'video_title' => 'required|string|max:255',
+        ];
+
+        if (!$isChunked) {
+            // Only apply full MIME type validation if not chunked
+            $rules['file'][] = 'mimetypes:video/mp4,video/quicktime,video/x-ms-wmv,video/x-msvideo';
+        }
+
+        $validator = Validator::make($request->all(), $rules);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => 'error',
+                'errors' => $validator->errors()
+            ], 422);
+        }
+
+        try {
+            // Store the file temporarily
+            $file = $request->file('file');
+            $finalDir = storage_path('app/uploads/chunks');
+            if (!is_dir($finalDir)) {
+                mkdir($finalDir, 0777, true);
+            }
+//            $tempPath = $file->storeAs(
+//                $finalDir,
+//                time() . '_' . $file->getClientOriginalName(),
+//                'local'
+//            );
+                $fileName = $request->input('dzfilename');
+            $tempPath= $file->move($finalDir, $fileName. '.part'.$request->dzchunkindex);
+            if ($request->dzchunkindex == ($request->dztotalchunkcount-1)) {
+                $finalPath = $this->mergeChunks($fileName, $request->dztotalchunkcount);
+                // Dispatch the upload job
+                VimeoTusUpload::dispatch(
+                    $finalPath,
+                    $request->video_title,
+                    $request->course_module_id
+                )->onQueue('videos');
+            }
+
+
+
+            return $this->success([], 'Video upload started successfully', 202);
+
+        } catch (\Exception $e) {
+            Log::error('Failed to start video upload', [
+                'error' => $e->getMessage(),
+                'file' => $request->file('file')->getClientOriginalName()
+            ]);
+             return $e;
+            return $this->error([], 'Failed to start video upload: ' . $e->getMessage(), 500);
+        }
+    }
 }

@@ -99,3 +99,4 @@ Route::controller(TagsController::class)->prefix('tags')->group(function () {
 });
 
 Route::post('/instructor/create/video', [VideoController::class, 'create']);
+Route::post('/instructor/upload/large-video', [VideoController::class, 'uploadLargeVideo']);
