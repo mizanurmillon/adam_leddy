@@ -74,7 +74,7 @@ Route::group(['middleware' => ['jwt.verify']], function () {
 
         Route::controller(VideoController::class)->prefix('instructor')->group(function () {
             Route::post('/create/video','create');
-            Route::get('/vimeo/video/info/{video_id}','getVideoInfo');
+            Route::get('/store/video','store');
             Route::delete('/delete/video/{id}', 'delete');
         });
 
@@ -100,3 +100,5 @@ Route::controller(TagsController::class)->prefix('tags')->group(function () {
     Route::get('/', 'AllTags');
 });
 
+Route::post('/create/video',[VideoController::class,'create']);
+Route::post('/store/video',[VideoController::class,'store']);

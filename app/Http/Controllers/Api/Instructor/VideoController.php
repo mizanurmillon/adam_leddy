@@ -23,6 +23,7 @@ class VideoController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'size' => 'required|integer|min:1',
+            'title' => 'required|string|max:128',
         ]);
 
         if ($validator->fails()) {
@@ -37,16 +38,36 @@ class VideoController extends Controller
                 'upload' => [
                     'approach' => 'tus',
                     'size' => $request->size
-                ]
+                ],
+                'name' => $request->title,
+                'privacy'=> [
+                    'add' => 'false', // can't add the video to a showcase, channel, or group.
+                    'download' => 'false',
+                    'view' => 'anybody', // anyone can view the video
+                ],
+                'embed'   => [
+                    'title'   => [
+                        'name'     => 'hide',
+                        'owner'    => 'hide',
+                        'portrait' => 'hide',
+                    ],
+                    'buttons' => [
+                        'like'       => false,
+                        'watchlater' => false,
+                        'share'      => false,
+                        'embed'      => false,
+                    ],
+                    'logos'   => [
+                        'vimeo' => false,
+                    ],
+                ],
+
             ], 'POST');
 
             // Check if we have a successful response (200 or 201)
             if ($response['status'] >= 200 && $response['status'] < 300) {
                 // Verify we have the required upload data
                 if (!isset($response['body']['upload']['upload_link']) || !isset($response['body']['uri'])) {
-                    Log::error('Vimeo response missing required fields', [
-                        'response' => $response
-                    ]);
                     return $this->error([], 'Invalid response from Vimeo', 500);
                 }
 
@@ -67,28 +88,42 @@ class VideoController extends Controller
             return $this->error([], 'Failed to generate upload URL: ' . $e->getMessage(), 500);
         }
     }
-    public function getVideoInfo($videoId)
+    public function store(Request $request)
     {
+        $validator = Validator::make($request->all(), [
+            'video_id' => 'required|string',
+            'course_module_id' => 'required|integer|exists:course_modules,id',
+        ]);
+        if ($validator->fails()) {
+            return $this->error($validator->errors(), 'Validation failed', 422);
+        }
+
         try {
 
             $vimeoService = new VimeoService();
             $vimeo = $vimeoService->getClient();
+            $videoId = $request->video_id;
+            $courseModuleId = $request->course_module_id;
 
             $response = $vimeo->request("/videos/$videoId", [], 'GET');
 
-            if ($response['status'] !== 200) {
-                return $this->error([], 'Failed to fetch video info', 500);
+            if ($response['status'] != 200) {
+                return $this->error([$response], 'Failed to fetch video info', 500);
             }
 
+            $video = CourseVideo::create([
+                'course_module_id' => $courseModuleId,
+                'video_title'      => $response['body']['name'],
+                'video_url'        => $response['body']['player_embed_url'],
+                'duration'         => $response['body']['duration'],
+            ]);
+
             return $this->success([
-                'name' => $response['body']['name'] ?? null,
-                'status' => $response['body']['status'] ?? null,
-                'player_embed_url' => $response['body']['player_embed_url'] ?? null,
-                'link' => $response['body']['link'] ?? null,
-            ], 'Video info retrieved');
+                'video' => $video,
+            ], 'Video created successfully', 200);
 
         } catch (\Exception $e) {
-            return $this->error([], 'Vimeo API error: ' . $e->getMessage(), 500);
+            return $this->error([], 'error: ' . $e->getMessage(), 500);
         }
     }
 
