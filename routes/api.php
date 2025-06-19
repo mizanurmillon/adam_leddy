@@ -11,6 +11,7 @@ use App\Http\Controllers\Api\Instructor\CategoryController;
 use App\Http\Controllers\Api\Instructor\EarningsController;
 use App\Http\Controllers\Api\Instructor\DashboardController;
 use App\Http\Controllers\Api\Instructor\NotificationController;
+use App\Http\Controllers\Api\VimeoController;
 
 Route::controller(RegisterController::class)->prefix('users')->group(function () {
 
@@ -72,7 +73,8 @@ Route::group(['middleware' => ['jwt.verify']], function () {
         });
 
         Route::controller(VideoController::class)->prefix('instructor')->group(function () {
-            Route::post('/create/video/{id}', 'create');
+            Route::post('/create/video','create');
+            Route::get('/store/video','store');
             Route::delete('/delete/video/{id}', 'delete');
         });
 
@@ -97,3 +99,6 @@ Route::controller(CategoryController::class)->prefix('categories')->group(functi
 Route::controller(TagsController::class)->prefix('tags')->group(function () {
     Route::get('/', 'AllTags');
 });
+
+//Route::post('/create/video',[VideoController::class,'create']);
+//Route::post('/store/video',[VideoController::class,'store']);

@@ -40,4 +40,10 @@ return [
         'public' => env('STRIPE_PUBLIC'),
     ],
 
+    'vimeo' => [
+        'client_id' => env('VIMEO_CLIENT'),
+        'client_secret' => env('VIMEO_SECRET'),
+        'access_token' => env('VIMEO_ACCESS'),
+    ],
+
 ];
