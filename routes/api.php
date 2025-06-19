@@ -100,5 +100,5 @@ Route::controller(TagsController::class)->prefix('tags')->group(function () {
     Route::get('/', 'AllTags');
 });
 
-Route::post('/create/video',[VideoController::class,'create']);
-Route::post('/store/video',[VideoController::class,'store']);
+//Route::post('/create/video',[VideoController::class,'create']);
+//Route::post('/store/video',[VideoController::class,'store']);
