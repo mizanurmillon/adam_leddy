@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\Student;
 
 use App\Http\Controllers\Controller;
+use App\Models\Coupon;
 use App\Models\Membership;
 use App\Models\MembershipHistory;
 use App\Models\Student;
@@ -30,6 +31,7 @@ class PaymentController extends Controller
     {
         $validateData = Validator::make($request->all(), [
             'plan_id' => 'required|exists:subscriptions,id',
+            'discount_code' => 'nullable|string|max:255',
         ]);
 
         if ($validateData->fails()) {
@@ -48,6 +50,17 @@ class PaymentController extends Controller
             return $this->error([], 'Subscription plan or Stripe price ID not found.', 200);
         }
 
+        $CouponCode = null;
+        if ($request->discount_code) {
+            $coupon = Coupon::where('code', $request->discount_code)
+                ->where('is_active', true)
+                ->first();
+
+            if ($coupon) {
+                $CouponCode = $coupon->stripe_promotion_code_id;
+            }
+        }
+
         try {
             $checkoutSession = \Stripe\Checkout\Session::create([
                 'payment_method_types' => ['card'],
@@ -55,6 +68,9 @@ class PaymentController extends Controller
                 'line_items' => [[
                     'price' => $subscriptionPlan->stripe_price_id,
                     'quantity' => 1,
+                ]],
+                'discounts' => [[
+                    'promotion_code' => $CouponCode,
                 ]],
                 'customer_email' => $user->email,
                 'success_url' => route('checkout.success') . '?session_id={CHECKOUT_SESSION_ID}',
