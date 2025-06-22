@@ -7,6 +7,7 @@ use App\Models\CourseVideo;
 use App\Services\VimeoService;
 use App\Traits\ApiResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 use Vimeo\Vimeo;
@@ -91,41 +92,64 @@ class VideoController extends Controller
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'video_id' => 'required|string',
-            'course_module_id' => 'required|integer|exists:course_modules,id',
+            'videos' => 'required|array',
+            'videos.*.video_id' => 'required|string',
+            'course_module_title' => 'required|string',
+            'course_module_description' => 'required|string',
+            'course_id' => 'required|integer',
         ]);
         if ($validator->fails()) {
             return $this->error($validator->errors(), 'Validation failed', 422);
         }
-
         try {
+            DB::beginTransaction();
+
+            // Create the course module
+            $module = CourseModule::create([
+                'course_id' => $request->course_id,
+                'title' => $request->course_module_title,
+                'description' => $request->course_module_description,
+            ]);
 
             $vimeoService = new VimeoService();
             $vimeo = $vimeoService->getClient();
-            $videoId = $request->video_id;
-            $courseModuleId = $request->course_module_id;
 
-            $response = $vimeo->request("/videos/$videoId", [], 'GET');
+            $videos = [];
+            foreach ($request->videos as $videoData) {
+                $videoId = $videoData['video_id'];
+                $response = $vimeo->request("/videos/$videoId", [], 'GET');
 
-            if ($response['status'] != 200) {
-                return $this->error([$response], 'Failed to fetch video info', 500);
+                if ($response['status'] != 200) {
+                    DB::rollBack();
+                    return $this->error([$response], 'Failed to fetch video info', 500);
+                }
+
+                $formattedDuration = gmdate("H:i:s", $response['body']['duration']);
+
+                $video = CourseVideo::create([
+                    'course_module_id' => $module->id,
+                    'video_title'      => $response['body']['name'],
+                    'video_url'        => $response['body']['player_embed_url'],
+                    'duration'         => $formattedDuration,
+                ]);
+                $videos[] = $video;
             }
 
-            $video = CourseVideo::create([
-                'course_module_id' => $courseModuleId,
-                'video_title'      => $response['body']['name'],
-                'video_url'        => $response['body']['player_embed_url'],
-                'duration'         => $response['body']['duration'],
-            ]);
+            DB::commit();
 
             return $this->success([
-                'video' => $video,
-            ], 'Video created successfully', 200);
+                'module' => $module,
+                'videos' => $videos,
+            ], 'Module and videos created successfully', 200);
 
         } catch (\Exception $e) {
+            DB::rollBack();
             return $this->error([], 'error: ' . $e->getMessage(), 500);
         }
     }
+
+
+
 
 
     public function delete($id)
