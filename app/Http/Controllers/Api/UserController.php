@@ -33,7 +33,11 @@ class UserController extends Controller
 
         if ($user->role == 'instructor') {
             $user->load('instructor');
+        } else {
+            $user->load('membership');
         }
+
+
         return $this->success($user, 'User data fetched successfully', 200);
     }
 

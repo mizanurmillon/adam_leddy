@@ -5,6 +5,7 @@ use App\Http\Controllers\Web\Backend\UserController;
 use App\Http\Controllers\Web\Backend\PaymentController;
 use App\Http\Controllers\Web\Backend\ApprovalController;
 use App\Http\Controllers\Web\Backend\CategoryController;
+use App\Http\Controllers\Web\Backend\CouponSubscriptionController;
 use App\Http\Controllers\Web\Backend\DashboardController;
 use App\Http\Controllers\Web\Backend\InstructorController;
 use App\Http\Controllers\Web\Backend\CourseManagementController;
@@ -76,4 +77,11 @@ Route::controller(RevenueController::class)->group(function () {
 
 Route::controller(SubscriptionController::class)->group(function () {
     Route::post('/subscription/update', 'update')->name('admin.subscription.update');
+});
+
+Route::controller(CouponSubscriptionController::class)->group(function () {
+    Route::get('/coupons', 'index')->name('admin.coupon.index');
+    Route::post('/coupon/store', 'store')->name('admin.coupon.store');
+    Route::delete('/coupon/{id}/delete', 'destroy')->name('admin.coupon.destroy');
+    Route::post('/coupon/status/{id}', 'status')->name('admin.coupon.status');
 });
