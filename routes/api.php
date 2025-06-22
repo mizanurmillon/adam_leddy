@@ -61,21 +61,22 @@ Route::group(['middleware' => ['jwt.verify']], function () {
 
         Route::controller(CourseController::class)->prefix('instructor')->group(function () {
             Route::post('/create/course', 'create');
-            Route::post('/create/course/module/{id}', 'createModule');
+//            Route::post('/create/course/module/{id}', 'createModule');
             Route::get('/my/courses', 'getCourse');
             Route::get('/course/{id}', 'getCourseDetails');
             Route::post('/edit/course/{id}', 'update');
-            Route::post('/edit/course/module/{id}', 'updateModule');
+//            Route::post('/edit/course/module/{id}', 'updateModule');
             Route::post('/delete/course/{id}', 'delete');
-            Route::post('/delete/course/module/{id}', 'deleteModule');
+//            Route::post('/delete/course/module/{id}', 'deleteModule');
 
             Route::get('/submit/for/approval/{id}', 'submitForApproval');
         });
 
         Route::controller(VideoController::class)->prefix('instructor')->group(function () {
-            Route::post('/create/video','create');
-            Route::get('/store/video','store');
-            Route::delete('/delete/video/{id}', 'delete');
+            Route::post('/create/module/video','create');
+            Route::post('/store/module/video','store');
+            Route::post('/update/module/video/{module_id}','update');
+            Route::delete('/delete/module/video/{module_id}', 'destroy');
         });
 
         Route::controller(DashboardController::class)->prefix('instructor')->group(function () {
