@@ -92,122 +92,46 @@ class VideoController extends Controller
         }
     }
 
+    /**
+     * Store multiple modules and their videos in batch
+     */
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'videos' => 'required|array',
-            'videos.*.video_id' => 'required|string',
-            'course_module_title' => 'required|string',
-            'course_module_description' => 'required|string',
-            'course_id' => 'required|integer',
+            '*' => 'required|array',
+            '*.videos' => 'required|array',
+            '*.videos.*.video_id' => 'required|string',
+            '*.course_module_title' => 'required|string',
+            '*.course_module_description' => 'required|string',
+            '*.course_id' => 'required|integer',
         ]);
 
         if ($validator->fails()) {
-            return $this->error($validator->errors(), 'Validation failed', 422);
+            return $this->error($validator->errors(), $validator->errors()->first(), 422);
         }
+
+        $results = [];
+        DB::beginTransaction();
         try {
-            DB::beginTransaction();
-
-            // Create the course module
-            $module = CourseModule::create([
-                'course_id' => $request->course_id,
-                'module_title' => $request->course_module_title,
-                'description' => $request->course_module_description,
-            ]);
-
             $vimeoService = new VimeoService();
             $vimeo = $vimeoService->getClient();
 
-            $videos = [];
-            foreach ($request->videos as $videoData) {
-                $videoId = $videoData['video_id'];
-                $response = $vimeo->request("/videos/$videoId", [], 'GET');
-
-                if ($response['status'] != 200) {
-                    DB::rollBack();
-                    return $this->error([], 'Failed to fetch video info', 500);
-                }
-
-                $formattedDuration = gmdate("H:i:s", $response['body']['duration']);
-
-                $video = CourseVideo::create([
-                    'course_module_id' => $module->id,
-                    'video_title' => $response['body']['name'],
-                    'video_url' => $response['body']['player_embed_url'],
-                    'duration' => $formattedDuration,
+            foreach ($request->all() as $moduleData) {
+                // Create the course module
+                $module = CourseModule::create([
+                    'course_id' => $moduleData['course_id'],
+                    'module_title' => $moduleData['course_module_title'],
+                    'description' => $moduleData['course_module_description'],
                 ]);
-                $videos[] = $video;
-            }
 
-            DB::commit();
-
-            return $this->success([
-                'module' => $module,
-                'videos' => $videos,
-            ], 'Module and videos created successfully', 200);
-
-        } catch (\Exception $e) {
-            DB::rollBack();
-            return $this->error([], 'error: ' . $e->getMessage(), 500);
-        }
-    }
-
-    public function update(Request $request, $id)
-    {
-        $validator = Validator::make($request->all(), [
-            'videos' => 'required|array',
-            'videos.*.video_id' => 'required|string',
-            'course_module_title' => 'required|string',
-            'course_module_description' => 'required|string',
-        ]);
-
-        if ($validator->fails()) {
-            return $this->error($validator->errors(), 'Validation failed', 422);
-        }
-
-        try {
-            DB::beginTransaction();
-
-            $module = CourseModule::find($id);
-            if (!$module) {
-                return $this->error([], 'Module not found', 404);
-            }
-            $module->update([
-                'module_title' => $request->course_module_title,
-                'description' => $request->course_module_description,
-            ]);
-
-            $vimeoService = new VimeoService();
-            $vimeo = $vimeoService->getClient();
-
-            // Get current videos in DB for the module
-            $existingVideos = $module->videos;
-            $existingVideoIds = $existingVideos->pluck('video_url')->map(function ($url) {
-                preg_match('/video\/(\d+)/', $url, $matches);
-                return $matches[1] ?? null;
-            })->filter()->values()->all();
-            $newVideoIds = collect($request->videos)->pluck('video_id')->all();
-            $videos = [];
-
-            //  Delete videos that are no longer in the request
-            foreach ($existingVideoIds as $videoId) {
-                if (!in_array($videoId, $newVideoIds)) {
-                    $vimeo->request("/videos/$videoId", [], 'DELETE'); // Delete from Vimeo
-                    $video = $existingVideos->firstWhere('video_url', 'like', "%$videoId%");
-                    if ($video) {
-                        $video->delete(); // Delete from DB
-                    }
-                }
-            }
-
-            // Add new videos not already in DB
-            foreach ($newVideoIds as $videoId) {
-                if (!in_array($videoId, $existingVideoIds)) {
+                $videos = [];
+                foreach ($moduleData['videos'] as $videoData) {
+                    $videoId = $videoData['video_id'];
                     $response = $vimeo->request("/videos/$videoId", [], 'GET');
 
                     if ($response['status'] != 200) {
                         DB::rollBack();
-                        return $this->error([$videoId], 'Failed to fetch video info', 500);
+                        return $this->error([], 'Failed to fetch video info', 500);
                     }
 
                     $formattedDuration = gmdate("H:i:s", $response['body']['duration']);
@@ -218,63 +142,153 @@ class VideoController extends Controller
                         'video_url' => $response['body']['player_embed_url'],
                         'duration' => $formattedDuration,
                     ]);
-
                     $videos[] = $video;
                 }
+
+                $results[] = [
+                    'module' => $module,
+                    'videos' => $videos,
+                ];
             }
 
-
             DB::commit();
-
-            return $this->success([
-                'module' => $module
-            ], 'Module and videos updated successfully', 200);
-
+            return $this->success($results, 'Modules and videos created successfully', 200);
         } catch (\Exception $e) {
             DB::rollBack();
             return $this->error([], 'error: ' . $e->getMessage(), 500);
         }
     }
 
-
-    public function destroy($id)
+    /**
+     * Update multiple modules and their videos in batch
+     * Expects array of modules, each with id and videos
+     */
+    public function update(Request $request)
     {
+        $validator = Validator::make($request->all(), [
+            '*' => 'required|array',
+            '*.id' => 'required|integer|exists:course_modules,id',
+            '*.videos' => 'required|array',
+            '*.videos.*.video_id' => 'required|string',
+            '*.course_module_title' => 'required|string',
+            '*.course_module_description' => 'required|string',
+        ]);
+
+        if ($validator->fails()) {
+            return $this->error($validator->errors(), 'Validation failed', 422);
+        }
+
+        $results = [];
+        DB::beginTransaction();
         try {
-            DB::beginTransaction();
-
-            $module = CourseModule::findOrFail($id);
-
             $vimeoService = new VimeoService();
             $vimeo = $vimeoService->getClient();
 
-            // Delete each associated video from Vimeo and DB
-            foreach ($module->videos as $video) {
-                // Extract video ID from the Vimeo URL
-                if (preg_match('/video\/(\d+)/', $video->video_url, $matches)) {
-                    $vimeoVideoId = $matches[1];
-                    try {
-                        $vimeo->request("/videos/$vimeoVideoId", [], 'DELETE');
-                    } catch (\Exception $e) {
-                        // Optional: log error but continue
-                        \Log::warning("Failed to delete Vimeo video $vimeoVideoId: " . $e->getMessage());
+            foreach ($request->all() as $moduleData) {
+                $module = CourseModule::find($moduleData['id']);
+                if (!$module) {
+                    DB::rollBack();
+                    return $this->error([], 'Module not found', 404);
+                }
+                $module->update([
+                    'module_title' => $moduleData['course_module_title'],
+                    'description' => $moduleData['course_module_description'],
+                ]);
+
+                $existingVideos = $module->videos;
+                $existingVideoIds = $existingVideos->pluck('video_url')->map(function ($url) {
+                    preg_match('/video\/(\d+)/', $url, $matches);
+                    return $matches[1] ?? null;
+                })->filter()->values()->all();
+                $newVideoIds = collect($moduleData['videos'])->pluck('video_id')->all();
+                $videos = [];
+
+                // Delete videos that are no longer in the request
+                foreach ($existingVideoIds as $videoId) {
+                    if (!in_array($videoId, $newVideoIds)) {
+                        $vimeo->request("/videos/$videoId", [], 'DELETE');
+                        $video = $existingVideos->firstWhere('video_url', 'like', "%$videoId%");
+                        if ($video) {
+                            $video->delete();
+                        }
                     }
                 }
 
-                $video->delete(); // Delete from DB
+                // Add new videos not already in DB
+                foreach ($newVideoIds as $videoId) {
+                    if (!in_array($videoId, $existingVideoIds)) {
+                        $response = $vimeo->request("/videos/$videoId", [], 'GET');
+                        if ($response['status'] != 200) {
+                            DB::rollBack();
+                            return $this->error([$videoId], 'Failed to fetch video info', 500);
+                        }
+                        $formattedDuration = gmdate("H:i:s", $response['body']['duration']);
+                        $video = CourseVideo::create([
+                            'course_module_id' => $module->id,
+                            'video_title' => $response['body']['name'],
+                            'video_url' => $response['body']['player_embed_url'],
+                            'duration' => $formattedDuration,
+                        ]);
+                        $videos[] = $video;
+                    }
+                }
+
+                $results[] = [
+                    'module' => $module,
+                    'videos' => $module->videos,
+                ];
             }
 
-            // Delete the module itself
-            $module->delete();
-
             DB::commit();
-
-            return $this->success(null, 'Module and associated videos deleted successfully', 200);
-
+            return $this->success($results, 'Modules and videos updated successfully', 200);
         } catch (\Exception $e) {
             DB::rollBack();
             return $this->error([], 'error: ' . $e->getMessage(), 500);
         }
     }
 
+    /**
+     * Delete multiple modules and their videos in batch
+     * Expects array of module ids
+     */
+    public function destroy(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'ids' => 'required|array',
+            'ids.*' => 'required|integer|exists:course_modules,id',
+        ]);
+
+        if ($validator->fails()) {
+            return $this->error($validator->errors(), 'Validation failed', 422);
+        }
+
+        DB::beginTransaction();
+        try {
+            $vimeoService = new VimeoService();
+            $vimeo = $vimeoService->getClient();
+            $deleted = [];
+            foreach ($request->ids as $id) {
+                $module = CourseModule::findOrFail($id);
+                foreach ($module->videos as $video) {
+                    if (preg_match('/video\/(\d+)/', $video->video_url, $matches)) {
+                        $vimeoVideoId = $matches[1];
+                        try {
+                            $vimeo->request("/videos/$vimeoVideoId", [], 'DELETE');
+                        } catch (\Exception $e) {
+                            \Log::warning("Failed to delete Vimeo video $vimeoVideoId: " . $e->getMessage());
+                        }
+                    }
+                    $video->delete();
+                }
+                $module->delete();
+                $deleted[] = $id;
+            }
+            DB::commit();
+            return $this->success(['deleted' => $deleted], 'Modules and associated videos deleted successfully', 200);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return $this->error([], 'error: ' . $e->getMessage(), 500);
+        }
+    }
 
 }

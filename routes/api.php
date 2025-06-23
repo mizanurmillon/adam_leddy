@@ -76,7 +76,7 @@ Route::group(['middleware' => ['jwt.verify']], function () {
             Route::post('/create/module/video','create');
             Route::post('/store/module/video','store');
             Route::post('/update/module/video/{module_id}','update');
-            Route::delete('/delete/module/video/{module_id}', 'destroy');
+            Route::delete('/delete/module/video', 'destroy');
         });
 
         Route::controller(DashboardController::class)->prefix('instructor')->group(function () {
@@ -101,5 +101,5 @@ Route::controller(TagsController::class)->prefix('tags')->group(function () {
     Route::get('/', 'AllTags');
 });
 
-//Route::post('/create/video',[VideoController::class,'create']);
+Route::post('/create/video',[VideoController::class,'create']);
 //Route::post('/store/video',[VideoController::class,'store']);
