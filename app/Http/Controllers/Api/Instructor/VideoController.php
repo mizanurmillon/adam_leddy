@@ -291,4 +291,36 @@ class VideoController extends Controller
         }
     }
 
+    /**
+    * delete vimeo video by id
+    */
+    function destroyVimeo(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'video_id' => 'required|string',
+        ]);
+
+        if ($validator->fails()) {
+            return $this->error($validator->errors(), $validator->errors()->first(), 422);
+        }
+
+        try {
+            $vimeoService = new VimeoService();
+            $vimeo = $vimeoService->getClient();
+
+            $response = $vimeo->request("/videos/{$request->video_id}", [], 'DELETE');
+
+            if ($response['status'] == 204) {
+                return $this->success([], 'Video deleted successfully', 200);
+            } else {
+                return $this->error([], 'Failed to delete video', 500);
+            }
+        } catch (\Exception $e) {
+            Log::error('Vimeo API error', [
+                'error' => $e->getMessage()
+            ]);
+            return $this->error([], 'Failed to delete video: ' . $e->getMessage(), 500);
+        }
+
+    }
 }
