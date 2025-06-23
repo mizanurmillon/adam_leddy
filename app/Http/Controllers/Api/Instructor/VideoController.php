@@ -297,7 +297,7 @@ class VideoController extends Controller
     function destroyVimeo(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'video_id' => 'required|string',
+            'video_id' => 'nullable|string',
         ]);
 
         if ($validator->fails()) {
@@ -309,6 +309,8 @@ class VideoController extends Controller
             $vimeo = $vimeoService->getClient();
 
             $response = $vimeo->request("/videos/{$request->video_id}", [], 'DELETE');
+            //delte from database
+            CourseVideo::where('video_url', 'like', "%{$request->video_id}%")->delete();
 
             if ($response['status'] == 204) {
                 return $this->success([], 'Video deleted successfully', 200);
