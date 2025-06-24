@@ -75,7 +75,7 @@ Route::group(['middleware' => ['jwt.verify']], function () {
         Route::controller(VideoController::class)->prefix('instructor')->group(function () {
             Route::post('/create/module/video','create');
             Route::post('/store/module/video','store');
-            Route::post('/update/module/video/{module_id}','update');
+            Route::post('/update/module/video','update');
             Route::delete('/delete/module/video', 'destroy');
             Route::delete('/delete/vimeo/video', 'destroyVimeo');
         });
