@@ -168,8 +168,8 @@ class VideoController extends Controller
         $validator = Validator::make($request->all(), [
             '*' => 'required|array',
             '*.id' => 'required|integer|exists:course_modules,id',
-            '*.videos' => 'required|array',
-            '*.videos.*.video_id' => 'required|string',
+            '*.videos' => 'nullable|array',
+            '*.videos.*.video_id' => 'nullable|string',
             '*.course_module_title' => 'required|string',
             '*.course_module_description' => 'required|string',
         ]);
@@ -194,45 +194,48 @@ class VideoController extends Controller
                     'module_title' => $moduleData['course_module_title'],
                     'description' => $moduleData['course_module_description'],
                 ]);
+                // check if videos are provided
+                if (isset($moduleData['videos'])){
 
-                $existingVideos = $module->videos;
-                $existingVideoIds = $existingVideos->pluck('video_url')->map(function ($url) {
-                    preg_match('/video\/(\d+)/', $url, $matches);
-                    return $matches[1] ?? null;
-                })->filter()->values()->all();
-                $newVideoIds = collect($moduleData['videos'])->pluck('video_id')->all();
-                $videos = [];
+                    $existingVideos = $module->videos;
+                    $existingVideoIds = $existingVideos->pluck('video_url')->map(function ($url) {
+                        preg_match('/video\/(\d+)/', $url, $matches);
+                        return $matches[1] ?? null;
+                    })->filter()->values()->all();
+                    $newVideoIds = collect($moduleData['videos'])->pluck('video_id')->all();
+                    $videos = [];
 
-                // Delete videos that are no longer in the request
-                foreach ($existingVideoIds as $videoId) {
-                    if (!in_array($videoId, $newVideoIds)) {
-                        $vimeo->request("/videos/$videoId", [], 'DELETE');
-                        $video = $existingVideos->firstWhere('video_url', 'like', "%$videoId%");
-                        if ($video) {
-                            $video->delete();
+                    // Delete videos that are no longer in the request
+                    foreach ($existingVideoIds as $videoId) {
+                        if (!in_array($videoId, $newVideoIds)) {
+                            $vimeo->request("/videos/$videoId", [], 'DELETE');
+                            $video = $existingVideos->firstWhere('video_url', 'like', "%$videoId%");
+                            if ($video) {
+                                $video->delete();
+                            }
                         }
                     }
-                }
 
-                // Add new videos not already in DB
-                foreach ($newVideoIds as $videoId) {
-                    if (!in_array($videoId, $existingVideoIds)) {
-                        $response = $vimeo->request("/videos/$videoId", [], 'GET');
-                        if ($response['status'] != 200) {
-                            DB::rollBack();
-                            return $this->error([$videoId], 'Failed to fetch video info', 500);
+                    // Add new videos not already in DB
+                    foreach ($newVideoIds as $videoId) {
+                        if (!in_array($videoId, $existingVideoIds)) {
+                            $response = $vimeo->request("/videos/$videoId", [], 'GET');
+                            if ($response['status'] != 200) {
+                                DB::rollBack();
+                                return $this->error([$videoId], 'Failed to fetch video info', 500);
+                            }
+                            $formattedDuration = gmdate("H:i:s", $response['body']['duration']);
+                            $video = CourseVideo::create([
+                                'course_module_id' => $module->id,
+                                'video_title' => $response['body']['name'],
+                                'video_url' => $response['body']['player_embed_url'],
+                                'duration' => $formattedDuration,
+                            ]);
+                            $videos[] = $video;
                         }
-                        $formattedDuration = gmdate("H:i:s", $response['body']['duration']);
-                        $video = CourseVideo::create([
-                            'course_module_id' => $module->id,
-                            'video_title' => $response['body']['name'],
-                            'video_url' => $response['body']['player_embed_url'],
-                            'duration' => $formattedDuration,
-                        ]);
-                        $videos[] = $video;
                     }
-                }
 
+                }
                 $results[] = [
                     'module' => $module,
                     'videos' => $module->videos,
