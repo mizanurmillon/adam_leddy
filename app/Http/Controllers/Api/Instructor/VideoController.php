@@ -197,6 +197,7 @@ class VideoController extends Controller
                 if (isset($moduleData['course_module_description'])) {
                     $module->description = $moduleData['course_module_description'];
                 }
+                $module->save();
                 // check if videos are provided
                 if (isset($moduleData['videos'])){
 
