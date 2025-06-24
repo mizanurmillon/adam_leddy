@@ -170,8 +170,8 @@ class VideoController extends Controller
             '*.id' => 'required|integer|exists:course_modules,id',
             '*.videos' => 'nullable|array',
             '*.videos.*.video_id' => 'nullable|string',
-            '*.course_module_title' => 'required|string',
-            '*.course_module_description' => 'required|string',
+            '*.course_module_title' => 'nullable|string',
+            '*.course_module_description' => 'nullable|string',
         ]);
 
         if ($validator->fails()) {
@@ -190,10 +190,13 @@ class VideoController extends Controller
                     DB::rollBack();
                     return $this->error([], 'Module not found', 404);
                 }
-                $module->update([
-                    'module_title' => $moduleData['course_module_title'],
-                    'description' => $moduleData['course_module_description'],
-                ]);
+                // Update module details
+                if (isset($moduleData['course_module_title'])) {
+                    $module->module_title = $moduleData['course_module_title'];
+                }
+                if (isset($moduleData['course_module_description'])) {
+                    $module->description = $moduleData['course_module_description'];
+                }
                 // check if videos are provided
                 if (isset($moduleData['videos'])){
 
