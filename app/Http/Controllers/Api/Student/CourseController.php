@@ -152,9 +152,14 @@ class CourseController extends Controller
                     ->take($take);
             }
         ])
-            ->where('status', 'active')
-            ->whereHas('courses')
-            ->get();
+        ->where('status', 'active')
+        ->whereHas('courses', function ($query) {
+            $query->whereHas('modules', function ($q) {
+                $q->whereHas('videos');
+            });
+        })
+        ->whereHas('courses')
+        ->get();
 
         if ($categories->isEmpty()) {
             return $this->error([], 'Category Not Found', 200);

@@ -82,6 +82,10 @@ class RegisterController extends Controller
             $user->role           = $request->input('role');
             $user->email_verified_at = now();
 
+            if($request->role == 'instructor') {
+                $user->status = 'inactive';
+            }
+
             $user->save();
 
             $user->instructor()->create([
