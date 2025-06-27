@@ -153,11 +153,11 @@ class CourseController extends Controller
             }
         ])
         ->where('status', 'active')
-        ->whereHas('courses', function ($query) {
-            $query->whereHas('modules', function ($q) {
-                $q->whereHas('videos');
-            });
-        })
+        // ->whereHas('courses', function ($query) {
+        //     $query->whereHas('modules', function ($q) {
+        //         $q->whereHas('videos');
+        //     });
+        // })
         ->whereHas('courses')
         ->get();
 
