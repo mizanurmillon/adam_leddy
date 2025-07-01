@@ -20,7 +20,7 @@ class InstructorController extends Controller
 {
     public function index()
     {
-        $instructors       = User::where('role', 'instructor','instructor.courses.courseWatches')->paginate(10);
+        $instructors       = Instructor::with('user', 'courses.courseWatches')->paginate(10);
         $monthlyUsersCount = User::where('role', 'instructor')->whereMonth('created_at', Carbon::now()->month)
             ->whereYear('created_at', Carbon::now()->year)
             ->count();
