@@ -84,13 +84,14 @@ class RegisterController extends Controller
 
             if($request->role == 'instructor') {
                 $user->status = 'inactive';
-                $user->instructor()->create([
-                    'expertise'   => $request->expertise,
-                    'bio'         => $request->bio,
-                ]);
             }
 
             $user->save();
+
+            $user->instructor()->create([
+                'expertise'   => $request->expertise,
+                'bio'         => $request->bio,
+            ]);
 
             // $user->notify(new UserNotification(
             //     message: 'Your account has been created successfully.',

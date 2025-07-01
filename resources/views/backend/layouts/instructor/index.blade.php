@@ -95,17 +95,15 @@
                                 <td class="se-td">{{ $user->first_name }} {{ $user->last_name }}
                                 </td>
                                 <td class="se-td badge text-bg-light">{{ $user->role }}</td>
-                                @if($user->instructor->courses->isEmpty())
-                                    <td class="se-td">00:00:00</td>
-                                @else
+                               
                                 <td class="se-td">
                                     @php
-                                        $totalMinutes = $user->instructor->courses->flatMap->courseWatches->sum('watch_time');
+                                        $courses = optional($user->instructor)->courses;
+                                        $totalMinutes = $courses ? $courses->flatMap->courseWatches->sum('watch_time') : 0;
                                         $time = ($totalMinutes / 1000);
                                     @endphp
                                     {{ gmdate('H:i:s', $time) }}
                                 </td>
-                                @endif
                                 <td class="se-td">
                                     <button
                                         class="btn {{ $user->status == 'active' ? 'btn-success' : 'btn-danger' }}"
