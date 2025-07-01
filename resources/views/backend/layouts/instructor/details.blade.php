@@ -91,7 +91,7 @@
             </div>
 
             <div class="se--courses-layout">
-                <p class="se--common-subtext">Courses From Fionn Byrne</p>
+                <p class="se--common-subtext">Courses From {{ $instructor->user->first_name }} {{ $instructor->user->last_name }}</p>
                 <div class="se--course-content-layout">
                     @foreach ($courses as $course)
                         <a href="{{ route('admin.instructors.video.details', $course->id) }}" class="se--card">

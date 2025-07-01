@@ -82,6 +82,7 @@
                     <thead class="se-thead">
                         <tr class="se-tr">
                             <th class="se-th">Name</th>
+                            <th class="se-th">Role</th>
                             <th class="se-th">Watch Time</th>
                             <th class="se-th">Block/Unblock</th>
                             <th class="se-th">Upload Course Permission</th>
@@ -93,6 +94,7 @@
                             <tr class="se-tr" id="row-{{ $instructor->id }}">
                                 <td class="se-td">{{ $instructor->user->first_name }} {{ $instructor->user->last_name }}
                                 </td>
+                                <td class="se-td badge text-bg-light">{{ $instructor->user->role }}</td>
                                 <td class="se-td">
                                     @php
                                         $totalMinutes = $instructor->courses->flatMap->courseWatches->sum('watch_time');

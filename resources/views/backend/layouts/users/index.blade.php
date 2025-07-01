@@ -95,8 +95,8 @@
             <thead>
                 <tr>
                     <th>Id</th>
-                    <th>First Name</th>
-                    <th>Last Name</th>
+                    <th>Name</th>
+                    <th>Role</th>
                     <th>Email</th>
                 </tr>
             </thead>
@@ -104,8 +104,8 @@
                 @foreach ($users as $index => $user)
                     <tr>
                         <td>{{ $index + 1 }}</td>
-                        <td>{{ $user->first_name }}</td>
-                        <td>{{ $user->last_name }}</td>
+                        <td>{{ $user->first_name }} {{ $user->last_name }}</td>
+                        <td><span class="badge text-bg-light">{{ $user->role }}</span></td>
                         <td>{{ $user->email }}</td>
                     </tr>
                 @endforeach
