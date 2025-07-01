@@ -92,21 +92,21 @@
                     <tbody class="se-tbody">
                         @foreach ($instructors as $instructor)
                             <tr class="se-tr" id="row-{{ $instructor->id }}">
-                                <td class="se-td">{{ $instructor->user->first_name }} {{ $instructor->user->last_name }}
+                                <td class="se-td">{{ $instructor->first_name }} {{ $instructor->last_name }}
                                 </td>
-                                <td class="se-td badge text-bg-light">{{ $instructor->user->role }}</td>
+                                <td class="se-td badge text-bg-light">{{ $instructor->role }}</td>
                                 <td class="se-td">
                                     @php
-                                        $totalMinutes = $instructor->courses->flatMap->courseWatches->sum('watch_time');
+                                        $totalMinutes = $instructor->instructor->courses->flatMap->courseWatches->sum('watch_time');
                                         $time = ($totalMinutes / 1000);
                                     @endphp
                                     {{ gmdate('H:i:s', $time) }}
                                 </td>
                                 <td class="se-td">
                                     <button
-                                        class="btn {{ $instructor->user->status == 'active' ? 'btn-success' : 'btn-danger' }}"
+                                        class="btn {{ $instructor->status == 'active' ? 'btn-success' : 'btn-danger' }}"
                                         id="statusBtn{{ $instructor->id }}">
-                                        {{ $instructor->user->status == 'active' ? 'Active' : 'Blocked' }}
+                                        {{ $instructor->status == 'active' ? 'Active' : 'Blocked' }}
                                     </button>
                                 </td>
 
@@ -114,7 +114,7 @@
                                     <div class="form-check form-switch">
                                         <input class="form-check-input py-lg-3 py-2 px-3 px-lg-4" type="checkbox"
                                             onclick="showStatusChangeAlert({{ $instructor->id }})"
-                                            @if ($instructor->user->status == 'active') checked @endif
+                                            @if ($instructor->status == 'active') checked @endif
                                             id="customSwitch{{ $instructor->id }}">
                                     </div>
                                 </td>
