@@ -20,16 +20,16 @@ class InstructorController extends Controller
 {
     public function index()
     {
-        $instructors       = Instructor::with('user', 'courses.courseWatches')->paginate(10);
+        $users  = User::where('role', 'instructor')->with('instructor.courses', 'instructor.courses.courseWatches')->paginate(10);
         $monthlyUsersCount = User::where('role', 'instructor')->whereMonth('created_at', Carbon::now()->month)
             ->whereYear('created_at', Carbon::now()->year)
             ->count();
-        return view('backend.layouts.instructor.index', compact('instructors', 'monthlyUsersCount'));
+        return view('backend.layouts.instructor.index', compact('users', 'monthlyUsersCount'));
     }
 
     public function details($id)
     {
-        $instructor = Instructor::with('user')->where('id', $id)->first();
+        $user = User::with('instructor')->where('id', $id)->first();
 
         $query = Course::with([
             'instructor:id,user_id',
@@ -42,7 +42,7 @@ class InstructorController extends Controller
                 $query->join('course_videos', 'course_videos.course_module_id', '=', 'course_modules.id')
                     ->select(DB::raw('count(course_videos.id)'));
             }])
-            ->where('instructor_id', $id)
+            ->where('instructor_id', $user->instructor->id)
             ->whereHas('modules', function ($query) {
                 $query->whereHas('videos');
             });
@@ -64,7 +64,7 @@ class InstructorController extends Controller
             $watchData[$data->month - 1] = $data->total_time; // Mapping month index
         }
 
-        return view('backend.layouts.instructor.details', compact('instructor', 'courses', 'months', 'watchData'));
+        return view('backend.layouts.instructor.details', compact('user', 'courses', 'months', 'watchData'));
     }
 
     public function content($id)
@@ -185,15 +185,15 @@ class InstructorController extends Controller
 
     public function status($id)
     {
-        $data = Instructor::with('user')->find($id);
+        $data = User::with('instructor')->where('id', $id)->first();
 
-        if ($data->user->status == 'active') {
+        if ($data->status == 'active') {
 
-            $data->user->status = 'inactive';
-            $data->user->save();
+            $data->status = 'inactive';
+            $data->save();
 
             // Notify the user
-            $data->user->notify(new UserNotification(
+            $data->notify(new UserNotification(
                 message: 'Your account has been blocked.',
                 channels: ['database'],
                 type: NotificationType::ERROR,
@@ -208,11 +208,11 @@ class InstructorController extends Controller
 
         } else {
 
-            $data->user->status = 'active';
-            $data->user->save();
+            $data->status = 'active';
+            $data->save();
 
             // Notify the user
-            $data->user->notify(new UserNotification(
+            $data->notify(new UserNotification(
                 message: 'Your account has been activated.',
                 channels: ['database'],
                 type: NotificationType::SUCCESS,
@@ -229,7 +229,7 @@ class InstructorController extends Controller
 
     public function destroy($id)
     {
-        $instructor = Instructor::find($id);
+        $instructor = User::find($id);
 
         if (! $instructor) {
             return response()->json([

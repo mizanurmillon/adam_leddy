@@ -55,7 +55,7 @@
                             <div class="se--month-row">
                                 <p Month class="se--card-pera">All Time</p>
                             </div>
-                            <p class="se--card--number">{{ $instructors->total() }}</p>
+                            <p class="se--card--number">{{ $users->total() }}</p>
                         </div>
                     </div>
                 </div>
@@ -82,6 +82,7 @@
                     <thead class="se-thead">
                         <tr class="se-tr">
                             <th class="se-th">Name</th>
+                            <th class="se-th">Role</th>
                             <th class="se-th">Watch Time</th>
                             <th class="se-th">Block/Unblock</th>
                             <th class="se-th">Upload Course Permission</th>
@@ -89,38 +90,41 @@
                         </tr>
                     </thead>
                     <tbody class="se-tbody">
-                        @foreach ($instructors as $instructor)
-                            <tr class="se-tr" id="row-{{ $instructor->id }}">
-                                <td class="se-td">{{ $instructor->user->first_name }} {{ $instructor->user->last_name }}
+                        @foreach ($users as $user)
+                            <tr class="se-tr" id="row-{{ $user->id }}">
+                                <td class="se-td">{{ $user->first_name }} {{ $user->last_name }}
                                 </td>
+                                <td class="se-td badge text-bg-light">{{ $user->role }}</td>
+                               
                                 <td class="se-td">
                                     @php
-                                        $totalMinutes = $instructor->courses->flatMap->courseWatches->sum('watch_time');
+                                        $courses = optional($user->instructor)->courses;
+                                        $totalMinutes = $courses ? $courses->flatMap->courseWatches->sum('watch_time') : 0;
                                         $time = ($totalMinutes / 1000);
                                     @endphp
                                     {{ gmdate('H:i:s', $time) }}
                                 </td>
                                 <td class="se-td">
                                     <button
-                                        class="btn {{ $instructor->user->status == 'active' ? 'btn-success' : 'btn-danger' }}"
-                                        id="statusBtn{{ $instructor->id }}">
-                                        {{ $instructor->user->status == 'active' ? 'Active' : 'Blocked' }}
+                                        class="btn {{ $user->status == 'active' ? 'btn-success' : 'btn-danger' }}"
+                                        id="statusBtn{{ $user->id }}">
+                                        {{ $user->status == 'active' ? 'Active' : 'Blocked' }}
                                     </button>
                                 </td>
 
                                 <td class="se-td">
                                     <div class="form-check form-switch">
                                         <input class="form-check-input py-lg-3 py-2 px-3 px-lg-4" type="checkbox"
-                                            onclick="showStatusChangeAlert({{ $instructor->id }})"
-                                            @if ($instructor->user->status == 'active') checked @endif
-                                            id="customSwitch{{ $instructor->id }}">
+                                            onclick="showStatusChangeAlert({{ $user->id }})"
+                                            @if ($user->status == 'active') checked @endif
+                                            id="customSwitch{{ $user->id }}">
                                     </div>
                                 </td>
                                 <td class="se-td">
-                                    <a href="{{ route('admin.instructors.details', $instructor->id) }}"
+                                    <a href="{{ route('admin.instructors.details', $user->id) }}"
                                         class="text-decoration-underline fw-bold text-white">View
                                         Details</a>
-                                    <button onclick="showDeleteConfirm({{ $instructor->id }})"
+                                    <button onclick="showDeleteConfirm({{ $user->id }})"
                                         class="text-decoration-underline fw-bold text-danger bg-transparent border-0">Delete</button>
                                 </td>
                             </tr>
@@ -135,20 +139,20 @@
 
         <div class="robi-pagination">
             {{-- Previous Button --}}
-            @if ($instructors->onFirstPage())
+            @if ($users->onFirstPage())
                 <span class="robi-page disabled">&laquo;</span>
             @else
-                <a href="{{ $instructors->previousPageUrl() }}" class="robi-page">&laquo;</a>
+                <a href="{{ $users->previousPageUrl() }}" class="robi-page">&laquo;</a>
             @endif
 
             @php
-                $start = max(1, $instructors->currentPage() - 2);
-                $end = min($instructors->lastPage(), $instructors->currentPage() + 2);
+                $start = max(1, $users->currentPage() - 2);
+                $end = min($users->lastPage(), $users->currentPage() + 2);
             @endphp
 
             {{-- First Page --}}
             @if ($start > 1)
-                <a href="{{ $instructors->url(1) }}" class="robi-page">1</a>
+                <a href="{{ $users->url(1) }}" class="robi-page">1</a>
             @endif
 
             {{-- Dots before current range --}}
@@ -158,27 +162,27 @@
 
             {{-- Page Numbers --}}
             @for ($page = $start; $page <= $end; $page++)
-                @if ($page == $instructors->currentPage())
+                @if ($page == $users->currentPage())
                     <span class="robi-page active">{{ $page }}</span>
                 @else
-                    <a href="{{ $instructors->url($page) }}" class="robi-page">{{ $page }}</a>
+                    <a href="{{ $users->url($page) }}" class="robi-page">{{ $page }}</a>
                 @endif
             @endfor
 
             {{-- Dots after current range --}}
-            @if ($end < $instructors->lastPage() - 1)
+            @if ($end < $users->lastPage() - 1)
                 <span class="robi-dots">...</span>
             @endif
 
             {{-- Last Page --}}
-            @if ($end < $instructors->lastPage())
-                <a href="{{ $instructors->url($instructors->lastPage()) }}"
-                    class="robi-page">{{ $instructors->lastPage() }}</a>
+            @if ($end < $users->lastPage())
+                <a href="{{ $users->url($users->lastPage()) }}"
+                    class="robi-page">{{ $users->lastPage() }}</a>
             @endif
 
             {{-- Next Button --}}
-            @if ($instructors->hasMorePages())
-                <a href="{{ $instructors->nextPageUrl() }}" class="robi-page">&raquo;</a>
+            @if ($users->hasMorePages())
+                <a href="{{ $users->nextPageUrl() }}" class="robi-page">&raquo;</a>
             @else
                 <span class="robi-page disabled">&raquo;</span>
             @endif
@@ -303,7 +307,7 @@
             let rows = document.querySelectorAll(".se-tbody .se-tr");
 
             rows.forEach(row => {
-                let statusBtn = row.querySelector("td:nth-child(3) button");
+                let statusBtn = row.querySelector("td:nth-child(4) button");
                 let statusText = statusBtn.textContent.trim().toLowerCase();
 
                 if (status === 'all' || statusText === status) {

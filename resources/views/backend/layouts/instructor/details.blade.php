@@ -50,7 +50,7 @@
 @section('content')
 
     @php
-        $isActive = $instructor->user->status == 'active';
+        $isActive = $user->status == 'active';
     @endphp
     <div class="page-header">
         <div class="desktop-sidebar-closer-container">
@@ -60,7 +60,7 @@
             <img class="menu-btn-mobile" src="{{ asset('backend/assets/images/menu.png') }}" alt="" />
 
         </div>
-        <button id="statusButton{{ $instructor->id }}" onclick="showStatusChangeAlert({{ $instructor->id }})" class="{{ $isActive ? 'se--block' : 'se--unblock' }}">
+        <button id="statusButton{{ $user->id }}" onclick="showStatusChangeAlert({{ $user->id }})" class="{{ $isActive ? 'se--block' : 'se--unblock' }}">
             {{ $isActive ? 'Block Instructor' : 'Unblock Instructor' }}
         </button>
     </div>
@@ -68,14 +68,14 @@
 
         <div class=" se--profile-content">
             <div class="se--profile-name-layout">
-                <h1 class="se--profile-name">{{ $instructor->user->first_name }} {{ $instructor->user->last_name }}</h1>
-                <p id="statusText{{ $instructor->id }}" class="{{ $isActive ? 'se--profile-status' : 'se--profile-block' }}">
+                <h1 class="se--profile-name">{{ $user->first_name }} {{ $user->last_name }}</h1>
+                <p id="statusText{{ $user->id }}" class="{{ $isActive ? 'se--profile-status' : 'se--profile-block' }}">
                     {{ $isActive ? 'Active' : 'Inactive' }}
                 </p>
 
             </div>
 
-            <p class="se--profile-email">{{ $instructor->user->email }}</p>
+            <p class="se--profile-email">{{ $user->email }}</p>
 
         </div>
         <div class="se--instructor-course-layout">
@@ -83,15 +83,15 @@
                 <p>Permission to upload courses/lessons</p>
                 <div class="form-check form-switch ">
                     <input class="form-check-input py-lg-3 py-2 px-3 px-lg-4" type="checkbox"
-                        @if ($instructor->user->status == 'active') checked @endif
-                        onclick="showStatusChangeAlert({{ $instructor->id }})" role="switch"
-                        id="customSwitch{{ $instructor->id }}">
+                        @if ($user->status == 'active') checked @endif
+                        onclick="showStatusChangeAlert({{ $user->id }})" role="switch"
+                        id="customSwitch{{ $user->id }}">
                 </div>
 
             </div>
 
             <div class="se--courses-layout">
-                <p class="se--common-subtext">Courses From Fionn Byrne</p>
+                <p class="se--common-subtext">Courses From {{ $user->first_name }} {{ $user->last_name }}</p>
                 <div class="se--course-content-layout">
                     @foreach ($courses as $course)
                         <a href="{{ route('admin.instructors.video.details', $course->id) }}" class="se--card">

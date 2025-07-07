@@ -177,7 +177,7 @@
 
             Swal.fire({
                 title: 'Are you sure?',
-                text: 'Block this Instructor?',
+                text: 'You want to change status?',
                 icon: 'info',
                 showCancelButton: true,
                 confirmButtonText: 'Yes',
