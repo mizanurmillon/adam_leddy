@@ -78,6 +78,7 @@ class PaymentController extends Controller
                 'metadata' => [
                     'user_id' => $user->id,
                     'subscription_id' => $subscriptionPlan->id,
+                    'percent_off' => $coupon->percent_off ?? null,
                     'success_redirect_url' => $request->get('success_redirect_url'),
                     'cancel_redirect_url' => $request->get('cancel_redirect_url'),
                 ],
@@ -106,6 +107,7 @@ class PaymentController extends Controller
             $currentPeriodEnd = Carbon::createFromTimestamp($stripeSubscription->current_period_end);
 
             $metadata = $checkoutSession->metadata;
+            $percent_off = $metadata->percent_off ?? null;
 
             $user = User::find($metadata->user_id);
             $subscriptionPlan = Subscription::find($metadata->subscription_id);
@@ -126,6 +128,7 @@ class PaymentController extends Controller
                 'subscription_id' => $subscriptionPlan->id,
             ], [
                 'price' => $subscriptionPlan->price,
+                'percent_off' => $percent_off,
                 'type' => $subscriptionPlan->type,
                 'stripe_subscription_id' => $subscriptionId,
                 'start_date' => now(),
@@ -137,6 +140,7 @@ class PaymentController extends Controller
             $user->membershipHistories()->create([
                 'subscription_id' => $subscriptionPlan->id,
                 'price' => $subscriptionPlan->price,
+                'percent_off' => $percent_off,
                 'type' => $subscriptionPlan->type,
                 'stripe_subscription_id' => $subscriptionId,
                 'start_date' => now(),
@@ -195,6 +199,7 @@ class PaymentController extends Controller
             'user_id' => $student->user_id,
             'subscription_id' => $membership->subscription_id,
             'price' => $membership->price,
+            'percent_off' => $membership->percent_off ?? null,
             'type' => $membership->type,
             'stripe_subscription_id' => $subscriptionId,
             'start_date' => now(),

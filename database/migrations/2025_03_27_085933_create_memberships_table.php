@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('stripe_subscription_id');
             $table->enum('status', ['active', 'inactive', 'cancelled'])->default('active');
             $table->decimal('price', 8, 2);
+            $table->string('percent_off')->nullable();
             $table->string('type');
             $table->timestamp('start_date')->nullable();
             $table->timestamp('end_date')->nullable();
