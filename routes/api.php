@@ -73,8 +73,8 @@ Route::group(['middleware' => ['jwt.verify']], function () {
         });
 
         Route::controller(VideoController::class)->prefix('instructor')->group(function () {
-            Route::post('/create/video','create');
-            Route::get('/store/video','store');
+            Route::post('/create/video', 'create');
+            Route::get('/store/video', 'store');
             Route::delete('/delete/video/{id}', 'delete');
         });
 
@@ -90,7 +90,6 @@ Route::group(['middleware' => ['jwt.verify']], function () {
             Route::get('/notifications', 'index');
         });
     });
-
 });
 Route::controller(CategoryController::class)->prefix('categories')->group(function () {
     Route::get('/', 'AllCategories');

@@ -34,7 +34,7 @@ class CouponSubscriptionController extends Controller
             $coupon = Coupon::create([
                 'id' => $request->code,
                 'percent_off' => $request->percent_off,
-                'duration' => 'once'
+                'duration' => 'forever'
             ]);
 
             $promotionCode = PromotionCode::create([
@@ -46,7 +46,7 @@ class CouponSubscriptionController extends Controller
             $coupon = ModelsCoupon::create([
                 'code' => $request->code,
                 'percent_off' => $request->percent_off,
-                'duration' => 'once',
+                'duration' => 'forever',
                 'valid_until' => $request->valid_until,
                 'is_active' => true,
                 'stripe_coupon_id' => $coupon->id,
