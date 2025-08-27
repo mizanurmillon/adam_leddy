@@ -55,13 +55,13 @@ class CourseController extends Controller
             'thumbnail'     => $thumbnailName,
         ]);
         $tagData = Tag::where('id', 2)->first();
-        if($tagData){
+        if ($tagData) {
             $tag = CourseTag::create([
                 'course_id' => $course->id,
-                'tag_id'    => $tagData->id 
+                'tag_id'    => $tagData->id
             ]);
         }
-        
+
         $course->load('category');
         return $this->success($course, 'Course created successfully', 200);
     }

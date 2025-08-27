@@ -27,6 +27,7 @@ class VideoController extends Controller
         $validator = Validator::make($request->all(), [
             'size' => 'required|integer|min:1',
             'title' => 'required|string|max:128',
+            'serial_id' => 'nullable|integer',
         ]);
 
         if ($validator->fails()) {
@@ -76,12 +77,12 @@ class VideoController extends Controller
 
                 return $this->success([
                     'upload_link' => $response['body']['upload']['upload_link'],
-                    'video_uri' => $response['body']['uri']
+                    'video_uri' => $response['body']['uri'],
+                    'serial_id' => $request->serial_id ?? null,
                 ], 'Upload URL generated successfully');
             }
 
             return $this->error([], 'Failed to create upload session', 500);
-
         } catch (\Exception $e) {
             Log::error('Vimeo API error', [
                 'error' => $e->getMessage(),
@@ -101,6 +102,7 @@ class VideoController extends Controller
             '*' => 'required|array',
             '*.videos' => 'required|array',
             '*.videos.*.video_id' => 'required|string',
+            '*.videos.*.serial_id' => 'required|integer',
             '*.course_module_title' => 'required|string',
             '*.course_module_description' => 'required|string',
             '*.course_id' => 'required|integer',
@@ -140,6 +142,7 @@ class VideoController extends Controller
                         'course_module_id' => $module->id,
                         'video_title' => $response['body']['name'],
                         'video_url' => $response['body']['player_embed_url'],
+                        'serial_id' => $videoData['serial_id'] ?? null,
                         'duration' => $formattedDuration,
                     ]);
                     $videos[] = $video;
@@ -199,7 +202,7 @@ class VideoController extends Controller
                 }
                 $module->save();
                 // check if videos are provided
-                if (isset($moduleData['videos'])){
+                if (isset($moduleData['videos'])) {
 
                     $existingVideos = $module->videos;
                     $existingVideoIds = $existingVideos->pluck('video_url')->map(function ($url) {
@@ -238,7 +241,6 @@ class VideoController extends Controller
                             $videos[] = $video;
                         }
                     }
-
                 }
                 $results[] = [
                     'module' => $module,
@@ -282,7 +284,7 @@ class VideoController extends Controller
                         try {
                             $vimeo->request("/videos/$vimeoVideoId", [], 'DELETE');
                         } catch (\Exception $e) {
-                            \Log::warning("Failed to delete Vimeo video $vimeoVideoId: " . $e->getMessage());
+                            Log::warning("Failed to delete Vimeo video $vimeoVideoId: " . $e->getMessage());
                         }
                     }
                     $video->delete();
@@ -299,8 +301,8 @@ class VideoController extends Controller
     }
 
     /**
-    * delete vimeo video by id
-    */
+     * delete vimeo video by id
+     */
     function destroyVimeo(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -330,6 +332,5 @@ class VideoController extends Controller
             ]);
             return $this->error([], 'Failed to delete video: ' . $e->getMessage(), 500);
         }
-
     }
 }

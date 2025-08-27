@@ -41,7 +41,7 @@ class CourseModule extends Model
 
     public function videos()
     {
-        return $this->hasMany(CourseVideo::class, 'course_module_id');
+        return $this->hasMany(CourseVideo::class, 'course_module_id')->orderBy('serial_id');
     }
 
     public function courseWatches()
