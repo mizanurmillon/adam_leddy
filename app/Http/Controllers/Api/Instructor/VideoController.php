@@ -318,7 +318,7 @@ class VideoController extends Controller
             $vimeo = $vimeoService->getClient();
 
             $response = $vimeo->request("/videos/{$request->video_id}", [], 'DELETE');
-            //delte from database
+            //delete from database
             CourseVideo::where('video_url', 'like', "%{$request->video_id}%")->delete();
 
             if ($response['status'] == 204) {
