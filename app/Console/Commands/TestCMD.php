@@ -26,8 +26,14 @@ class TestCMD extends Command
      */
     public function handle()
     {
-        $this->info('TestCMD command executed successfully.');
-        Log::info('TestCMD command executed successfully.');
-        return Command::SUCCESS;
+        if (config('app.env') !== 'production') {
+            $this->info('Production TestCMD command executed successfully.');
+            Log::info('Production TestCMD command executed successfully.');
+            return Command::SUCCESS;
+        } else {
+            $this->info('Locally TestCMD command executed successfully.');
+            Log::info('Locally TestCMD command executed successfully.');
+            return Command::SUCCESS;
+        }
     }
 }
