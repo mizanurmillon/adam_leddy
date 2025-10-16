@@ -14,5 +14,5 @@ if (app()->environment('production')) {
     // ✅ Production: Run the payout command on the 1st of each month at 00:01
     Schedule::command(ProcessInstructorPayouts::class)
         ->monthlyOn(1, '00:01');
-    Schedule::command(TestCMD::class)->everyMinute();
+    Schedule::command(TestCMD::class)->daily();
 }
