@@ -127,7 +127,8 @@ class PaymentController extends Controller
             $user->membership()->updateOrCreate([
                 'subscription_id' => $subscriptionPlan->id,
             ], [
-                'price' => $subscriptionPlan->price,
+                'price' => $checkoutSession->amount_total / 100,
+                'original_price' => $checkoutSession->amount_subtotal / 100,
                 'percent_off' => $percent_off,
                 'type' => $subscriptionPlan->type,
                 'stripe_subscription_id' => $subscriptionId,
@@ -139,7 +140,8 @@ class PaymentController extends Controller
             // Save to history
             $user->membershipHistories()->create([
                 'subscription_id' => $subscriptionPlan->id,
-                'price' => $subscriptionPlan->price,
+                'price' => $checkoutSession->amount_total / 100,
+                'original_price' => $checkoutSession->amount_subtotal / 100,
                 'percent_off' => $percent_off,
                 'type' => $subscriptionPlan->type,
                 'stripe_subscription_id' => $subscriptionId,
@@ -189,7 +191,6 @@ class PaymentController extends Controller
 
         if (!$membership) return response()->json(['message' => 'Membership not found'], 404);
 
-
         $stripeSubscription = \Stripe\Subscription::retrieve($subscriptionId);
         $newEndDate = Carbon::createFromTimestamp($stripeSubscription->current_period_end);
 
@@ -198,7 +199,8 @@ class PaymentController extends Controller
         MembershipHistory::create([
             'user_id' => $student->user_id,
             'subscription_id' => $membership->subscription_id,
-            'price' => $membership->price,
+            'price' => $payload['data']['object']['amount_total'] / 100,
+            'original_price' => $payload['data']['object']['amount_subtotal'] / 100,
             'percent_off' => $membership->percent_off ?? null,
             'type' => $membership->type,
             'stripe_subscription_id' => $subscriptionId,
