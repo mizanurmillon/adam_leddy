@@ -59,7 +59,7 @@ class PaymentController extends Controller
                 ? ($perInstructorWatchTime / $courseWatchTime) * 100
                 : 0;
 
-            $perInstructorBalance = ($instructorsTotalRevenue / 100) * $perInstructorPercentage;
+            $perInstructorBalance = floor(($instructorsTotalRevenue / 100) * $perInstructorPercentage);
 
             $instructorEarning = $instructor->payments->sum('price');
 
