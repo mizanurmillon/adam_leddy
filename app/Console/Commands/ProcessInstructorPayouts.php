@@ -33,6 +33,7 @@ class ProcessInstructorPayouts extends Command
      */
     public function handle()
     {
+        Log::info("Starting instructor payouts process...");
         Stripe::setApiKey(config('services.stripe.secret'));
 
         $payouts = Instructor::with('user')->whereNotNull('stripe_account_id')->where('status', 'Enabled')->get();

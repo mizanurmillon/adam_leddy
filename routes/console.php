@@ -15,5 +15,5 @@ if (app()->environment('production')) {
     // Schedule::command(ProcessInstructorPayouts::class)
     //     ->monthlyOn(1, '00:01');
     Schedule::command(ProcessInstructorPayouts::class)->everyMinute();
-    Schedule::command(TestCMD::class)->daily();
+    Schedule::command(TestCMD::class)->everyMinute();
 }
