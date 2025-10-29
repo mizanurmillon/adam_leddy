@@ -44,25 +44,25 @@ class RevenueController extends Controller
         });
 
         // 1. Total revenue (owner’s share = 60%)
-        $total_revenue = MembershipHistory::sum('price') * 0.60;
+        $total_revenue = MembershipHistory::sum('price');
 
         // 2. This month revenue (owner’s share = 60%)
         $monthlyRevenue = MembershipHistory::whereMonth('created_at', Carbon::now()->month)
             ->whereYear('created_at', Carbon::now()->year)
-            ->sum('price') * 0.60;
+            ->sum('price');
 
         // 3. Previous month revenue (owner’s share = 60%)
         $previousMonthlyRevenue = MembershipHistory::whereMonth('created_at', Carbon::now()->subMonth()->month)
             ->whereYear('created_at', Carbon::now()->subMonth()->year)
-            ->sum('price') * 0.60;
+            ->sum('price');
 
         // 4. Past years revenue (before this year, owner’s 60%)
         $pastYearRevenue = MembershipHistory::whereYear('created_at', '<', Carbon::now()->year)
-            ->sum('price') * 0.60;
+            ->sum('price');
 
         // 5. Past 6 months revenue (owner’s share = 60%)
         $pastSixMonthsRevenue = MembershipHistory::where('created_at', '>=', Carbon::now()->subMonths(6))
-            ->sum('price') * 0.60;
+            ->sum('price');
 
         return view('backend.layouts.revenue.index', compact('courses', 'courseData', 'total_revenue', 'monthlyRevenue', 'previousMonthlyRevenue', 'pastYearRevenue', 'pastSixMonthsRevenue'));
     }
