@@ -1,14 +1,19 @@
 <?php
 
 use App\Console\Commands\ProcessInstructorPayouts;
-use Illuminate\Foundation\Inspiring;
-use Illuminate\Support\Facades\Artisan;
+use App\Console\Commands\TestCMD;
 use Illuminate\Support\Facades\Schedule;
 
-Artisan::command('inspire', function () {
-    $this->comment(Inspiring::quote());
-})->purpose('Display an inspiring quote');
+if (app()->environment('local')) {
+    // ✅ Local: Run TestCMD every minute for quick testing
+    Schedule::command(TestCMD::class)->everyMinute();
+    // Schedule::command(ProcessInstructorPayouts::class)->everyMinute();
+}
 
-// Per minute
-Schedule::command(ProcessInstructorPayouts::class)->everyMinute();
-// Schedule::command(ProcessInstructorPayouts::class)->monthlyOn(1, '00:01');
+if (app()->environment('production')) {
+    // ✅ Production: Run the payout command on the 1st of each month at 00:01
+    // Schedule::command(ProcessInstructorPayouts::class)
+    //     ->monthlyOn(1, '00:01');
+    Schedule::command(ProcessInstructorPayouts::class)->daily();
+    Schedule::command(TestCMD::class)->daily();
+}

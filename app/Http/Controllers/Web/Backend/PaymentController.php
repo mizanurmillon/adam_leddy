@@ -26,6 +26,8 @@ class PaymentController extends Controller
             ->whereYear('created_at', $currentYear)
             ->sum('price');
 
+        $instructorsTotalRevenue = $totalBalance * 0.40;
+
         $courseWatchTime = CourseWatchHistory::query()
             ->whereMonth('watched_at', $currentMonth)
             ->whereYear('watched_at', $currentYear)
@@ -57,7 +59,7 @@ class PaymentController extends Controller
                 ? ($perInstructorWatchTime / $courseWatchTime) * 100
                 : 0;
 
-            $perInstructorBalance = (int) floor(($totalBalance / 100) * $perInstructorPercentage);
+            $perInstructorBalance = floor(($instructorsTotalRevenue / 100) * $perInstructorPercentage);
 
             $instructorEarning = $instructor->payments->sum('price');
 

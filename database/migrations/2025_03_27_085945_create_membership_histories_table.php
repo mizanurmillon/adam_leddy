@@ -17,6 +17,7 @@ return new class extends Migration
             $table->foreignId('subscription_id')->constrained()->onDelete('cascade');
             $table->string('stripe_subscription_id');
             $table->decimal('price', 8, 2);
+            $table->decimal('original_price', 8, 2);
             $table->string('percent_off')->nullable();
             $table->string('type');
             $table->timestamp('start_date')->nullable();
